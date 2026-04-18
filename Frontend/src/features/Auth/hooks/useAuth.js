@@ -13,35 +13,40 @@ const useAuth = () => {
     try {
       dispatch(setLoading(true));
       const response = await register(formData);
-      dispatch(setUser(response.data)); // backend sends { data: user }
-
-      return response;
+      dispatch(setUser(response.data));
+      return { success: true, data: response.data };
     } catch (error) {
-      dispatch(setError(error));
+      const errorMsg = error.response?.data?.message || "Registration failed";
+      dispatch(setError(errorMsg));
+      return { success: false, error: errorMsg };
     } finally {
       dispatch(setLoading(false));
     }
   };
+
   const handleLogin = async (formData) => {
     try {
       dispatch(setLoading(true));
       const response = await login(formData);
-      dispatch(setUser(response.data)); // backend sends { data: user }
-      dispatch(setLoading(false));
-      return response;
+      dispatch(setUser(response.data));
+      return { success: true, data: response.data };
     } catch (error) {
-      dispatch(setError(error));
+      const errorMsg = error.response?.data?.message || "Login failed";
+      dispatch(setError(errorMsg));
+      return { success: false, error: errorMsg };
+    } finally {
       dispatch(setLoading(false));
     }
   };
+
   const handleGetProfile = async () => {
     try {
       dispatch(setLoading(true));
       const response = await getProfile();
       dispatch(setUser(response.user));
-      return response;
+      return { success: true, user: response.user };
     } catch (error) {
-      
+      return { success: false, error: error.message };
     } finally {
       dispatch(setLoading(false));
     }

@@ -1,24 +1,39 @@
 @import "tailwindcss";
 
+@theme {
+  --font-serif: "Cormorant Garamond", serif;
+  --font-sans: "Inter", sans-serif;
+  
+  --color-gold: #C9A96E;
+  --color-gold-hover: #b5955f;
+  --color-cream: #fbf9f6;
+  --color-cream-dark: #f5f3f0;
+  --color-charcoal: #1b1c1a;
+  --color-charcoal-light: #7a6e63;
+  
+  --radius-luxury: 3rem;
+  --shadow-luxury: 0px 20px 40px rgba(27, 28, 26, 0.05);
+}
+
+
 body {
     font-family: 'Inter', sans-serif;
 }
-#root::-webkit-scrollbar{
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
     display: none;
-}
-#root{
+  }
+  .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
 }
 
-.no-scrollbar::-webkit-scrollbar {
-    display: none;
-}
-
-.no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}
-.min-h-screen::-webkit-scrollbar {
-    display: none;
+/* Specific to Auth pages to prevent background scrolling on desktop */
+@media (min-width: 1024px) {
+  .auth-page-wrapper {
+    height: 100vh;
+    overflow: hidden;
+  }
 }
