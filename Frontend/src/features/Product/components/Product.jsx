@@ -39,7 +39,7 @@ const Product = ({ product }) => {
       <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-[#f3eee8] shadow-sm group-hover:shadow-luxury transition-all duration-700">
         {/* Images Slider */}
         <Link
-          to={`/product/${product._id}`}
+          to={`/shop/product/${product._id}`}
           className="w-full h-full flex transition-transform duration-700 ease-in-out"
           style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
         >
@@ -104,7 +104,7 @@ const Product = ({ product }) => {
       </div>
 
       {/* Elegant Product Details */}
-      <Link to={`/product/${product._id}`} className="mt-6 space-y-2 group/text">
+      <Link to={`/shop/product/${product._id}`} className="mt-6 space-y-2 group/text">
         <div className="flex justify-between items-start">
           <h3 className="text-[10px] font-black tracking-[0.2em] text-charcoal-light uppercase group-hover/text:text-gold transition-colors duration-300">
             {product.title}

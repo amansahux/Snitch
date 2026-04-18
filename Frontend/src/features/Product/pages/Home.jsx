@@ -80,7 +80,7 @@ const Home = () => {
         </header>
 
         {/* ================= HERO SECTION ================= */}
-        <section className="relative w-full pt-10 sm:pt-16 pb-20 lg:pb-32 overflow-hidden">
+        <section className="relative w-full pt-10 sm:pt-16 pb-20 lg:pb-32 overflow-hidden ">
           <div className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20">
             <div className="grid lg:grid-cols-12 gap-12 lg:gap-20 items-center">
               {/* Left Column: Text Content */}
@@ -248,7 +248,21 @@ const Home = () => {
                 </p>
                 <div className="flex gap-5">
                    <a href="#" className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-gold hover:border-gold transition-all duration-500 text-white/60 hover:text-white">
-                      Insta
+                     <svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  strokeWidth="1.8"
+  strokeLinecap="round"
+  strokeLinejoin="round"
+  width="20"
+  height="20"
+>
+  <rect x="3" y="3" width="18" height="18" rx="5" ry="5" />
+  <path d="M16 11.37a4 4 0 1 1-7.75 1.26 4 4 0 0 1 7.75-1.26z" />
+  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+</svg>
                    </a>
                    <a href="#" className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-gold hover:border-gold transition-all duration-500 text-white/60 hover:text-white">
                       <Globe className="w-4 h-4" />
