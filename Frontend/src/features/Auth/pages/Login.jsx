@@ -9,7 +9,10 @@ import GoogleBtn from "../components/GoogleBtn";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { handleLogin } = useAuth();
+  const { handleLogin, user, loading } = useAuth();
+  // console.log(handleLogin)
+  // console.log(user)
+  // console.log(loading)
   const [showPassword, setShowPassword] = useState(false);
   const {
     register,
@@ -24,10 +27,13 @@ const Login = () => {
     // console.log("Form Data:", data);
 
     const res = await handleLogin(data);
-    console.log(res);
-    if (res.success) {
+    // console.log(res);
+    if (res?.data?.role === "buyer") {
       navigate("/");
+    } else if (res?.data?.role === "seller") {
+      navigate("/seller/dashboard");
     }
+    reset();
   };
 
   return (
@@ -35,7 +41,9 @@ const Login = () => {
       <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-2xl shadow-xl border border-gray-100">
         <div className="text-center">
           <div className="flex justify-center mb-2">
-            <span className="text-4xl font-black tracking-widest text-black uppercase">SNITCH</span>
+            <span className="text-4xl font-black tracking-widest text-black uppercase">
+              SNITCH
+            </span>
           </div>
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900 tracking-tight">
             Welcome back

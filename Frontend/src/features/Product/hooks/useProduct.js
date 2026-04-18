@@ -1,36 +1,66 @@
+import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createProducts, getSellerProducts } from "../services/product.api.js";
-import { setSellerProducts } from "../state/product.slice.js";
+import {
+  createProducts,
+  getAllProducts,
+  getSellerProducts,
+  getProductById
+} from "../services/product.api.js";
+import { setProducts, setSellerProducts } from "../state/product.slice.js";
 
 const useProduct = () => {
   const dispatch = useDispatch();
-  const { sellerProducts } = useSelector((state) => state.product);
+  const { sellerProducts, products } = useSelector((state) => state.product);
 
-  const handleCreateProduct = async (data) => {
+  const handleCreateProduct = useCallback(async (data) => {
     try {
       const response = await createProducts(data);
       return response;
     } catch (error) {
       console.log(error);
     }
-  };
+  }, []);
 
-  const handleGetSellerProducts = async () => {
+  const handleGetSellerProducts = useCallback(async () => {
     try {
       const response = await getSellerProducts();
-      console.log(response)
-      dispatch(setSellerProducts(response.data));
+      if (response?.success) {
+        dispatch(setSellerProducts(response.data));
+      }
       return response;
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [dispatch]);
 
-  
+  const handleGetAllProducts = useCallback(async () => {
+    try {
+      const response = await getAllProducts();
+      if (response?.success) {
+        dispatch(setProducts(response.data));
+      }
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  }, [dispatch]);
+
+  const handleGetProductById = useCallback(async (id) => {
+    try {
+      const response = await getProductById(id);
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
   return {
     sellerProducts,
+    products,
     handleCreateProduct,
     handleGetSellerProducts,
+    handleGetAllProducts,
+    handleGetProductById,
   };
 };
 

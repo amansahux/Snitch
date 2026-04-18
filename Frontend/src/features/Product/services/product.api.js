@@ -21,3 +21,21 @@ export const getSellerProducts = async () => {
     console.log(error);
   }
 };
+
+export const getAllProducts = async () => {
+  try {
+    const response = await API.get("/");
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getProductById = async (id) => {
+  try {
+    const response = await API.get(`/${id}`);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};

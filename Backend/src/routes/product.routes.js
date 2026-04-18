@@ -1,6 +1,8 @@
 import { Router } from "express";
 import {
   createProduct,
+  getAllProducts,
+  getProductById,
   getSellerProducts,
 } from "../controllers/product.controller.js";
 import { authenticateSeller } from "../middlewares/auth.middleware.js";
@@ -19,4 +21,6 @@ productRouter.post(
 );
 
 productRouter.get("/seller", authenticateSeller, getSellerProducts);
+productRouter.get("/", getAllProducts);
+productRouter.get("/:id", getProductById);
 export default productRouter;

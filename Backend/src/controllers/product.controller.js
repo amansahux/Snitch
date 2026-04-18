@@ -57,3 +57,32 @@ export const getSellerProducts = asyncHandler(async (req, res, next) => {
     error: null,
   });
 });
+
+export const getAllProducts = asyncHandler(async (req, res, next) => {
+  const products = await productModel.find().populate("seller", "fullname email");
+
+  return res.status(200).json({
+    message: "Products fetched successfully",
+    success: true,
+    data: products,
+    error: null,
+  });
+});
+
+export const getProductById = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const product = await productModel.findById(id).populate("seller", "fullname email");
+
+  if (!product) {
+    const error = new Error("Product not found");
+    error.statusCode = 404;
+    return next(error);
+  }
+
+  return res.status(200).json({
+    message: "Product fetched successfully",
+    success: true,
+    data: product,
+    error: null,
+  });
+});

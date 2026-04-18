@@ -9,12 +9,14 @@ import {
   TextAreaField,
   SelectField,
   SubmitButton,
-} from "../components/FormElements";
-import { ImageUploadZone } from "../components/ImageUploadZone";
+} from "../components/CreateProduct/FormElements";
+import { ImageUploadZone } from "../components/CreateProduct/ImageUploadZone";
 import useProduct from "../hooks/useProduct";
 
+
 const CreateProduct = () => {
-  const { handleCreateProduct } = useProduct();
+  const { handleCreateProduct} = useProduct();
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
 

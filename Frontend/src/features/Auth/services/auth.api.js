@@ -13,3 +13,8 @@ export const login = async (data) => {
   const response = await API.post("/login", data);
   return response.data;
 };
+
+export const getProfile = async () => {
+  const response = await API.get("/profile");
+  return response.data;
+};

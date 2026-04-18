@@ -2,12 +2,14 @@ import { Router } from "express";
 import { validate } from "../middlewares/zod.middleware.js";
 import { loginSchema, registerSchema } from "../validators/auth.validator.js";
 import {
+  getProfile,
   googleCallback,
   loginController,
   registerController,
 } from "../controllers/auth.controller.js";
 import passport from "passport";
 import config from "../config/config.js";
+import { authenticateUser } from "../middlewares/auth.middleware.js";
 
 const AuthRouter = Router();
 
@@ -28,5 +30,6 @@ AuthRouter.get(
   }),
   googleCallback,
 );
+AuthRouter.get("/profile", authenticateUser, getProfile)
 
 export default AuthRouter;

@@ -2,23 +2,57 @@ import { createBrowserRouter } from "react-router-dom";
 import Login from "../features/Auth/pages/Login.jsx";
 import Register from "../features/Auth/pages/Register.jsx";
 import CreateProduct from "../features/Product/pages/CreateProduct.jsx";
+import Dashboard from "../features/Product/pages/Dashboard.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import { HomeRedirect } from "./components/HomeRedirect.jsx";
+import Home from "../features/Product/pages/Home.jsx";
+import SpecificProduct from "../features/Product/components/SpecificProduct.jsx";
 
 export const routes = createBrowserRouter([
   {
     path: "/",
-    element: <h1>Home</h1>,
+    children: [
+      {
+        index: true,
+        element: (
+          <HomeRedirect>
+            <Home />
+          </HomeRedirect>
+        ),
+      },
+      {
+        path: "product/:id",
+        element: <SpecificProduct />,
+      },
+    ],
   },
   {
-    path:"/login",
-    element:<Login/>
+    path: "/login",
+    element: <Login />,
   },
   {
-    path:"/register",
-    element:<Register/>
+    path: "/register",
+    element: <Register />,
   },
   {
-    path: "/seller/create-product",
-    element:<CreateProduct/>
-  }
+    path: "/seller",
+    children: [
+      {
+        path: "dashboard",
+        element: (
+          <ProtectedRoute role="seller">
+            <Dashboard />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "create-product",
+        element: (
+          <ProtectedRoute role="seller">
+            <CreateProduct />
+          </ProtectedRoute>
+        ),
+      },
+    ],
+  },
 ]);
-

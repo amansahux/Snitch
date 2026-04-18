@@ -31,6 +31,7 @@ export const registerController = asyncHandler(async (req, res, next) => {
     email: user.email,
     fullname: user.fullname,
     contact: user.contact,
+    role: user.role,
   };
 
   // 5. Send response
@@ -56,6 +57,7 @@ export const loginController = asyncHandler(async (req, res, next) => {
     email: user.email,
     fullname: user.fullname,
     contact: user.contact,
+    role: user.role,
   };
   sendTokenResponse(res, userResponse, "User logged in successfully");
 });
@@ -100,7 +102,10 @@ export const googleCallback = asyncHandler(async (req, res, next) => {
     });
 
     // Successfully logged in
-    res.redirect("http://localhost:5173/");
+    const frontendUrl = "http://localhost:5173";
+    const redirectUrl = user.role === "seller" ? `${frontendUrl}/seller/dashboard` : `${frontendUrl}`;
+    
+    res.redirect(redirectUrl);
   } catch (error) {
     console.error("Google Auth Error:", error);
     return res.redirect(
@@ -109,4 +114,25 @@ export const googleCallback = asyncHandler(async (req, res, next) => {
         : "/login",
     );
   }
+});
+
+export const getProfile = asyncHandler(async (req, res, next) => {
+  const user = await userModel.findById(req.user.id);
+  if (!user) {
+    const error = new Error("User not found");
+    error.statusCode = 404;
+    return next(error);
+  }
+  const userResponse = {
+    _id: user._id,
+    email: user.email,
+    fullname: user.fullname,
+    contact: user.contact,
+    role: user.role,
+  };
+  res.status(200).json({
+    success: true,
+    user: userResponse,
+    error: null,
+  });
 });
