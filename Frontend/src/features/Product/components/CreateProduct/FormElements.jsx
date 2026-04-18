@@ -1,5 +1,5 @@
-import React from "react";
-import { Loader2 } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
+import { Loader2, ChevronDown, Check } from "lucide-react";
 
 export const FormWrapper = ({ children, onSubmit, className = "" }) => (
   <form onSubmit={onSubmit} className={`space-y-10 ${className}`}>
@@ -7,27 +7,30 @@ export const FormWrapper = ({ children, onSubmit, className = "" }) => (
   </form>
 );
 
-export const SectionCard = ({ title, description, children }) => (
-  <div className="bg-zinc-900 border border-zinc-800 p-6 shadow-2xl">
-    <div className="border-b border-zinc-800 pb-4 mb-6">
-      <h2 className="text-xl font-semibold text-zinc-100 tracking-wide uppercase">{title}</h2>
-      {description && <p className="text-zinc-500 text-sm mt-1">{description}</p>}
+export const SectionCard = ({ title, description, children, className = "" }) => (
+  <div className={`bg-white rounded-2xl p-8 sm:p-10 shadow-luxury border border-charcoal/5 group transition-all duration-500 hover:shadow-[0_30px_60px_rgba(27,28,26,0.08)] ${className}`}>
+    <div className="mb-8 pl-1">
+      <h2 className="text-2xl font-serif text-charcoal tracking-tight group-hover:text-gold transition-colors duration-500">{title}</h2>
+      {description && <p className="text-charcoal-light text-sm mt-2 font-light">{description}</p>}
     </div>
-    <div className="space-y-6">
+    <div className="space-y-8">
       {children}
     </div>
   </div>
 );
 
-export const FormLabel = ({ htmlFor, children, required }) => (
-  <label htmlFor={htmlFor} className="block text-sm font-medium tracking-wide text-zinc-300 mb-2">
-    {children} {required && <span className="text-red-500">*</span>}
+export const FormLabel = ({ htmlFor, children, required, className = "" }) => (
+  <label 
+    htmlFor={htmlFor} 
+    className={`block text-[10px] uppercase tracking-[0.2em] font-bold text-charcoal-light mb-3 ml-1 ${className}`}
+  >
+    {children} {required && <span className="text-gold ml-0.5">*</span>}
   </label>
 );
 
 export const ErrorMessage = ({ message }) => {
   if (!message) return null;
-  return <p className="text-red-500 text-xs mt-1.5 font-medium tracking-wide">{message}</p>;
+  return <p className="text-red-500 text-[10px] italic mt-2 ml-1 animate-in fade-in slide-in-from-top-1">{message}</p>;
 };
 
 export const InputField = React.forwardRef(
@@ -35,14 +38,18 @@ export const InputField = React.forwardRef(
     return (
       <div className="w-full">
         {label && <FormLabel htmlFor={id} required={required}>{label}</FormLabel>}
-        <input
-          id={id}
-          ref={ref}
-          className={`w-full bg-zinc-950 border ${
-            error ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-zinc-700 focus:border-yellow-500 focus:ring-yellow-500"
-          } text-zinc-100 placeholder-zinc-600 px-4 py-3 outline-none focus:ring-1 transition-colors duration-200 ${className}`}
-          {...props}
-        />
+        <div className="relative">
+          <input
+            id={id}
+            ref={ref}
+            className={`w-full bg-cream-dark/30 rounded-xl border transition-all duration-300 px-6 py-4 outline-none text-charcoal placeholder:text-charcoal/20 ${
+              error 
+              ? "border-red-200 focus:ring-1 focus:ring-red-400" 
+              : "border-transparent focus:border-gold focus:bg-white focus:ring-4 focus:ring-gold/5"
+            } ${className}`}
+            {...props}
+          />
+        </div>
         <ErrorMessage message={error} />
       </div>
     );
@@ -55,14 +62,18 @@ export const TextAreaField = React.forwardRef(
     return (
       <div className="w-full">
         {label && <FormLabel htmlFor={id} required={required}>{label}</FormLabel>}
-        <textarea
-          id={id}
-          ref={ref}
-          className={`w-full bg-zinc-950 border ${
-            error ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-zinc-700 focus:border-yellow-500 focus:ring-yellow-500"
-          } text-zinc-100 placeholder-zinc-600 px-4 py-3 outline-none focus:ring-1 transition-colors duration-200 resize-y min-h-[120px] ${className}`}
-          {...props}
-        />
+        <div className="relative">
+          <textarea
+            id={id}
+            ref={ref}
+            className={`w-full bg-cream-dark/30 rounded-xl border transition-all duration-300 px-6 py-4 outline-none text-charcoal placeholder:text-charcoal/20 resize-none min-h-[160px] ${
+              error 
+              ? "border-red-200 focus:ring-1 focus:ring-red-400" 
+              : "border-transparent focus:border-gold focus:bg-white focus:ring-4 focus:ring-gold/5"
+            } ${className}`}
+            {...props}
+          />
+        </div>
         <ErrorMessage message={error} />
       </div>
     );
@@ -70,33 +81,69 @@ export const TextAreaField = React.forwardRef(
 );
 TextAreaField.displayName = "TextAreaField";
 
+// Custom Premium Select Field
 export const SelectField = React.forwardRef(
-  ({ id, label, options, error, required, className = "", ...props }, ref) => {
+  ({ id, label, options, error, required, value, onChange, className = "", ...props }, ref) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = useRef(null);
+
+    // Get selected option label
+    const selectedOption = options.find((opt) => opt.value === value);
+
+    // Close on click outside
+    useEffect(() => {
+      const handleClickOutside = (event) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+          setIsOpen(false);
+        }
+      };
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const handleSelect = (optionValue) => {
+      onChange(optionValue);
+      setIsOpen(false);
+    };
+
     return (
-      <div className="w-full">
+      <div className="w-full relative" ref={dropdownRef}>
         {label && <FormLabel htmlFor={id} required={required}>{label}</FormLabel>}
-        <div className="relative">
-          <select
-            id={id}
-            ref={ref}
-            className={`w-full bg-zinc-950 border appearance-none ${
-              error ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-zinc-700 focus:border-yellow-500 focus:ring-yellow-500"
-            } text-zinc-100 px-4 py-3 outline-none focus:ring-1 transition-colors duration-200 cursor-pointer ${className}`}
-            {...props}
-          >
-            <option value="" disabled className="text-zinc-500">Select {label}</option>
-            {options.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-zinc-400">
-            <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
-              <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" fillRule="evenodd"></path>
-            </svg>
+        
+        <button
+          type="button"
+          onClick={() => setIsOpen(!isOpen)}
+          className={`w-full flex items-center justify-between bg-cream-dark/30 rounded-xl border transition-all duration-300 px-6 py-4 outline-none text-charcoal text-left ${
+            isOpen ? "border-gold bg-white ring-4 ring-gold/5" : "border-transparent"
+          } ${error ? "border-red-200" : ""} ${className}`}
+        >
+          <span className={selectedOption ? "text-charcoal font-medium" : "text-charcoal/20"}>
+            {selectedOption ? selectedOption.label : `Select ${label}`}
+          </span>
+          <ChevronDown className={`w-4 h-4 text-charcoal/30 transition-transform duration-500 ${isOpen ? "rotate-180 text-gold" : ""}`} />
+        </button>
+
+        {/* Custom Dropdown Menu */}
+        {isOpen && (
+          <div className="absolute z-50 w-full mt-2 bg-white border border-charcoal/10 rounded-xl shadow-[0_20px_40px_rgba(27,28,26,0.1)] backdrop-blur-xl animate-in fade-in zoom-in-95 duration-200 py-2">
+            <div className="max-h-60 overflow-y-auto no-scrollbar">
+              {options.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => handleSelect(option.value)}
+                  className={`w-full flex items-center justify-between px-6 py-3.5 text-sm transition-colors duration-200 hover:bg-gold/5 ${
+                    value === option.value ? "text-gold bg-gold/5 font-bold" : "text-charcoal-light"
+                  }`}
+                >
+                  <span>{option.label}</span>
+                  {value === option.value && <Check className="w-3.5 h-3.5" />}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
+
         <ErrorMessage message={error} />
       </div>
     );
@@ -109,18 +156,22 @@ export const SubmitButton = ({ children, isLoading, disabled, className = "", ..
   return (
     <button
       disabled={isDisabled}
-      className={`w-full md:w-auto relative inline-flex items-center justify-center bg-black border border-yellow-500 text-yellow-500 font-bold uppercase tracking-widest px-8 py-3.5 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:ring-offset-zinc-900 group ${
-        isDisabled ? "opacity-50 cursor-not-allowed" : "hover:bg-yellow-500 hover:text-black cursor-pointer shadow-[0_0_15px_rgba(234,179,8,0.2)] hover:shadow-[0_0_25px_rgba(234,179,8,0.4)]"
+      className={`relative overflow-hidden inline-flex items-center justify-center bg-charcoal text-white font-medium tracking-[0.2em] uppercase text-[10px] px-10 py-4.5 rounded-xl transition-all duration-500 group shadow-luxury ${
+        isDisabled 
+        ? "opacity-50 cursor-not-allowed" 
+        : "hover:bg-gold hover:shadow-[0_20px_40px_rgba(201,169,110,0.3)] hover:-translate-y-1 cursor-pointer"
       } ${className}`}
       {...props}
     >
-      {isLoading ? (
-        <span className="flex items-center gap-2">
-          <Loader2 className="w-5 h-5 animate-spin" /> Processing...
-        </span>
-      ) : (
-        children
-      )}
+      <span className="relative z-10 flex items-center gap-3">
+        {isLoading ? (
+          <Loader2 className="w-3 h-3 animate-spin" />
+        ) : (
+          null
+        )}
+        <span className={isLoading ? "opacity-70" : ""}>{children}</span>
+      </span>
+      <div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white/10 opacity-40 group-hover:animate-shine" />
     </button>
   );
 };
