@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ShoppingBag, Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import useAuth from "../../Auth/hooks/useAuth";
+import useAuth from "../../../Auth/hooks/useAuth";
 
 const Product = ({ product }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -104,7 +104,10 @@ const Product = ({ product }) => {
       </div>
 
       {/* Elegant Product Details */}
-      <Link to={`/shop/product/${product._id}`} className="mt-6 space-y-2 group/text">
+      <Link
+        to={`/shop/product/${product._id}`}
+        className="mt-6 space-y-2 group/text"
+      >
         <div className="flex justify-between items-start">
           <h3 className="text-[10px] font-black tracking-[0.2em] text-charcoal-light uppercase group-hover/text:text-gold transition-colors duration-300">
             {product.title}

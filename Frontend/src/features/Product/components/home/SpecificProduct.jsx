@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import useProduct from "../hooks/useProduct";
-import useAuth from "../../Auth/hooks/useAuth";
+import useProduct from "../../hooks/useProduct";
+import useAuth from "../../../Auth/hooks/useAuth";
 import {
   ShoppingBag,
   Heart,

@@ -7,7 +7,7 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import GuestRoute from "./components/GuestRoute.jsx";
 import { HomeRedirect } from "./components/HomeRedirect.jsx";
 import Home from "../features/Product/pages/Home.jsx";
-import SpecificProduct from "../features/Product/components/SpecificProduct.jsx";
+import SpecificProduct from "../features/Product/components/home/SpecificProduct.jsx";
 
 export const routes = createBrowserRouter([
   {
