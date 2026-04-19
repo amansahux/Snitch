@@ -8,6 +8,8 @@ import GuestRoute from "./components/GuestRoute.jsx";
 import { HomeRedirect } from "./components/HomeRedirect.jsx";
 import Home from "../features/Product/pages/Home.jsx";
 import SpecificProduct from "../features/Product/components/home/SpecificProduct.jsx";
+import Shop from "../features/Product/components/home/Shop.jsx";
+import Inventory from "../features/Product/pages/Inventory.jsx";
 
 export const routes = createBrowserRouter([
   {
@@ -23,7 +25,7 @@ export const routes = createBrowserRouter([
       },
       {
         path: "/shop",
-        element: <h1>AMan</h1>,
+        element: <Shop />,
       },
       {
         path: "/shop/product/:id",
@@ -47,6 +49,7 @@ export const routes = createBrowserRouter([
       </GuestRoute>
     ),
   },
+
   {
     path: "/seller",
     children: [
@@ -63,6 +66,14 @@ export const routes = createBrowserRouter([
         element: (
           <ProtectedRoute role="seller">
             <CreateProduct />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "products",
+        element: (
+          <ProtectedRoute role="seller">
+            <Inventory />
           </ProtectedRoute>
         ),
       },

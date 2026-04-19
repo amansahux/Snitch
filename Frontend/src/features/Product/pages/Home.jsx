@@ -46,6 +46,12 @@ const Home = () => {
             <div className="flex items-center gap-5 text-[11px] uppercase tracking-[0.18em] font-medium text-[#7a6e63]">
               {user ? (
                 <>
+                  <Link
+                    to="/shop"
+                    className="hover:text-[#C9A96E] transition"
+                  >
+                    Shop
+                  </Link>
                   <span className="hidden sm:block text-[#1b1c1a]">
                     {user.fullname}
                   </span>

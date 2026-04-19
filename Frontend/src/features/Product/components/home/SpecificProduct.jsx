@@ -76,6 +76,13 @@ const SpecificProduct = () => {
           className="cursor-pointer hover:text-black transition-colors"
           onClick={() => navigate("/")}
         >
+          Home
+        </span>
+        <span>/</span>
+        <span
+          className="cursor-pointer hover:text-black transition-colors"
+          onClick={() => navigate("/shop")}
+        >
           Shop
         </span>
         <span>/</span>
