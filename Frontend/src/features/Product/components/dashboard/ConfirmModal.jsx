@@ -1,12 +1,12 @@
 import React from "react";
-import { AlertTriangle, Loader2 } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 
 const ConfirmModal = ({
   isOpen,
-  title = "Confirm Action",
-  message = "Are you sure you want to proceed?",
-  confirmLabel = "Confirm",
-  cancelLabel = "Cancel",
+  title = "Confirm Request",
+  message = "Are you sure you want to proceed with this action?",
+  confirmLabel = "Proceed",
+  cancelLabel = "Return",
   isLoading = false,
   onConfirm,
   onCancel,
@@ -15,52 +15,62 @@ const ConfirmModal = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center px-4"
+      className="fixed inset-0 z-[100] flex items-center justify-center px-6"
       role="dialog"
       aria-modal="true"
     >
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+        className="absolute inset-0 bg-charcoal/30 backdrop-blur-xl animate-in fade-in duration-500"
         onClick={onCancel}
       />
 
-      {/* Modal */}
-      <div className="relative w-full max-w-md bg-zinc-900 border border-zinc-700 rounded-2xl shadow-2xl shadow-black/60 p-6 animate-in fade-in zoom-in-95 duration-200">
-        {/* Icon */}
-        <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-red-500/10 border border-red-500/20 mx-auto mb-5">
-          <AlertTriangle className="w-7 h-7 text-red-400" />
-        </div>
+      {/* Modal Container */}
+      <div className="relative w-full max-w-lg bg-white border border-charcoal/5 rounded-[3rem] shadow-luxury p-10 lg:p-14 animate-in fade-in zoom-in-95 duration-500 overflow-hidden">
+        {/* Decorative corner element */}
+        <div className="absolute top-0 right-0 w-24 h-24 bg-gold/5 rounded-full -mr-12 -mt-12"></div>
+        
+        {/* Icon & Heading */}
+        <div className="relative z-10 text-center space-y-8">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-[2rem] bg-cream border border-charcoal/5 text-gold shadow-sm mb-2">
+                <AlertCircle className="w-8 h-8 stroke-[1.5]" />
+            </div>
 
-        {/* Content */}
-        <div className="text-center mb-8">
-          <h2 className="text-lg font-bold text-zinc-100 mb-2 tracking-tight">
-            {title}
-          </h2>
-          <p className="text-zinc-400 text-sm leading-relaxed">{message}</p>
+            <div className="space-y-4">
+                <div className="inline-flex items-center gap-3">
+                    <span className="w-6 h-[1px] bg-gold"></span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gold">Archival Action</span>
+                </div>
+                <h2 className="text-3xl lg:text-4xl font-serif text-charcoal leading-tight">
+                    {title}
+                </h2>
+                <p className="text-charcoal-light font-light text-sm lg:text-base leading-relaxed max-w-sm mx-auto">
+                    {message}
+                </p>
+            </div>
         </div>
 
         {/* Actions */}
-        <div className="flex gap-3">
+        <div className="relative z-10 flex flex-col sm:flex-row gap-4 mt-12 pt-6">
           <button
             onClick={onCancel}
             disabled={isLoading}
-            className="flex-1 px-4 py-2.5 rounded-xl border border-zinc-700 text-zinc-300 font-semibold text-sm hover:border-zinc-500 hover:text-white transition-colors duration-200 disabled:opacity-50 cursor-pointer"
+            className="flex-1 px-8 py-5 rounded-2xl bg-cream border border-charcoal/5 text-charcoal-light font-bold text-[10px] uppercase tracking-[0.2em] hover:text-charcoal hover:border-charcoal/20 transition-all duration-300 disabled:opacity-50 cursor-pointer"
           >
             {cancelLabel}
           </button>
           <button
             onClick={onConfirm}
             disabled={isLoading}
-            className="flex-1 px-4 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white font-bold text-sm transition-colors duration-200 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+            className="flex-1 px-8 py-5 rounded-2xl bg-charcoal text-white font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-gold hover:shadow-luxury transition-all duration-500 disabled:opacity-50 flex items-center justify-center gap-3 cursor-pointer"
           >
             {isLoading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Deleting...
-              </>
+                <>
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                    <span className="animate-pulse">Processing...</span>
+                </>
             ) : (
-              confirmLabel
+                confirmLabel
             )}
           </button>
         </div>

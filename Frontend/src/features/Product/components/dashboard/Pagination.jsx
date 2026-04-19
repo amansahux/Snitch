@@ -28,56 +28,57 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   };
 
   return (
-    <div className="flex items-center justify-between px-6 py-4 border-t border-zinc-800">
+    <div className="flex items-center justify-between px-8 py-8 border-t border-charcoal/5">
       {/* Info */}
-      <p className="text-sm text-zinc-500">
-        Page{" "}
-        <span className="font-semibold text-zinc-300">{currentPage}</span> of{" "}
-        <span className="font-semibold text-zinc-300">{totalPages}</span>
-      </p>
+      <div className="hidden sm:flex items-center gap-3">
+        <div className="w-1.5 h-1.5 rounded-full bg-gold"></div>
+        <p className="text-[10px] font-black uppercase tracking-[0.25em] text-charcoal/30">
+            Navigation <span className="text-charcoal-light mx-2">/</span> Sequence {currentPage} of {totalPages}
+        </p>
+      </div>
 
       {/* Pages */}
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-2">
         {/* Prev */}
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200 cursor-pointer"
-          aria-label="Previous page"
+          className="flex items-center justify-center w-12 h-12 rounded-xl bg-cream border border-charcoal/5 text-charcoal/40 hover:text-gold hover:border-gold hover:shadow-luxury disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-500 cursor-pointer"
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
 
         {/* Page numbers */}
-        {getPages().map((page, idx) =>
-          page === "..." ? (
-            <span
-              key={`dots-${idx}`}
-              className="flex items-center justify-center w-8 h-8 text-zinc-500 text-sm"
-            >
-              …
-            </span>
-          ) : (
-            <button
-              key={page}
-              onClick={() => onPageChange(page)}
-              className={`flex items-center justify-center w-8 h-8 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${
-                page === currentPage
-                  ? "bg-yellow-500 text-black shadow-[0_0_10px_rgba(234,179,8,0.3)]"
-                  : "text-zinc-400 hover:text-white hover:bg-zinc-700"
-              }`}
-            >
-              {page}
-            </button>
-          )
-        )}
+        <div className="flex items-center gap-1.5 px-1.5 py-1 bg-cream border border-charcoal/5 rounded-2xl">
+            {getPages().map((page, idx) =>
+            page === "..." ? (
+                <span
+                key={`dots-${idx}`}
+                className="flex items-center justify-center w-8 h-8 text-charcoal/20 text-[10px] font-bold"
+                >
+                …
+                </span>
+            ) : (
+                <button
+                key={page}
+                onClick={() => onPageChange(page)}
+                className={`flex items-center justify-center w-10 h-10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-500 cursor-pointer ${
+                    page === currentPage
+                    ? "bg-white text-gold shadow-luxury border border-charcoal/5 translate-y-[-2px]"
+                    : "text-charcoal/30 hover:text-charcoal hover:bg-white/50"
+                }`}
+                >
+                {page}
+                </button>
+            )
+            )}
+        </div>
 
         {/* Next */}
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200 cursor-pointer"
-          aria-label="Next page"
+          className="flex items-center justify-center w-12 h-12 rounded-xl bg-cream border border-charcoal/5 text-charcoal/40 hover:text-gold hover:border-gold hover:shadow-luxury disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-500 cursor-pointer"
         >
           <ChevronRight className="w-4 h-4" />
         </button>

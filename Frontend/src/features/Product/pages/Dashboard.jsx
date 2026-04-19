@@ -99,14 +99,14 @@ const applyFilters = (products, filters) => {
 
 // ─── Stats Card ───────────────────────────────────────────────────────────────
 const StatCard = ({ label, value, sub, accent }) => (
-  <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 hover:border-zinc-700 transition-colors duration-200">
-    <p className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-2">
+  <div className="bg-[#c9a96e]  rounded-2xl p-5 hover:border-zinc-700 transition-colors duration-200">
+    <p className="text-xs font-semibold text-black uppercase tracking-widest mb-2">
       {label}
     </p>
-    <p className={`text-2xl font-black tracking-tight ${accent || "text-zinc-100"}`}>
+    <p className={`text-2xl font-black tracking-tight ${accent || "text-black"}`}>
       {value}
     </p>
-    {sub && <p className="text-xs text-zinc-600 mt-1">{sub}</p>}
+    {sub && <p className="text-xs text-black mt-1">{sub}</p>}
   </div>
 );
 
@@ -221,7 +221,7 @@ const Dashboard = () => {
         />
 
         {/* Page body */}
-        <main className="flex-1 p-4 lg:p-6 xl:p-8 space-y-6 overflow-x-hidden">
+        <main className="flex-1 p-4 lg:p-6 xl:p-8 space-y-6 overflow-x-hidden bg-[#FBF9F6]">
           {/* ── Stats Row ────────────────────────────────────────────────── */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <StatCard
@@ -253,10 +253,10 @@ const Dashboard = () => {
           {/* ── Products Panel ───────────────────────────────────────────── */}
           <div className="bg-zinc-950 border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl shadow-black/20">
             {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-800">
+            <div className="flex items-center justify-between px-5 py-4 bg-[#FBF9F6]">
               <div className="flex items-center gap-2.5">
-                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
-                  <Package className="w-4 h-4 text-yellow-500" />
+                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#FBF9F6] border border-[#FBF9F6]">
+                  <Package className="w-4 h-4 text-[#C9A96E]" />
                 </div>
                 <div>
                   <h2 className="text-sm font-bold text-zinc-100 tracking-wide">
@@ -273,8 +273,8 @@ const Dashboard = () => {
               {/* Add Product CTA (desktop) */}
               <button
                 onClick={() => navigate("/seller/create-product")}
-                className="hidden sm:inline-flex items-center gap-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-400 text-black font-bold text-sm rounded-xl transition-all duration-200 shadow-[0_0_15px_rgba(234,179,8,0.2)] hover:shadow-[0_0_25px_rgba(234,179,8,0.4)] cursor-pointer"
-              >
+                className="hidden sm:inline-flex items-center gap-2 px-4 py-2 bg-[#C9A96E] hover:bg-[#C9A96E]/80 text-black font-bold text-sm rounded-xl transition-all duration-200 shadow-[0_0_15px_rgba(234,179,8,0.2)] hover:shadow-[0_0_25px_rgba(234,179,8,0.4)] cursor-pointer"
+              >                                                                 
                 <Plus className="w-4 h-4" strokeWidth={2.5} />
                 Add Product
               </button>

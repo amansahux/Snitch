@@ -1,5 +1,5 @@
 import React from "react";
-import { Search, SlidersHorizontal, RotateCcw, LayoutGrid, List } from "lucide-react";
+import { Search, RotateCcw, LayoutGrid, List, ChevronDown } from "lucide-react";
 
 const CATEGORIES = [
   "All",
@@ -11,18 +11,18 @@ const CATEGORIES = [
 ];
 
 const STOCK_OPTIONS = [
-  { value: "", label: "All Stock" },
+  { value: "", label: "Availability" },
   { value: "in_stock", label: "In Stock" },
-  { value: "low_stock", label: "Low Stock (≤10)" },
-  { value: "out_of_stock", label: "Out of Stock" },
+  { value: "low_stock", label: "Low Capacity" },
+  { value: "out_of_stock", label: "Exhausted" },
 ];
 
 const SORT_OPTIONS = [
-  { value: "newest", label: "Newest First" },
-  { value: "oldest", label: "Oldest First" },
-  { value: "price_asc", label: "Price: Low → High" },
-  { value: "price_desc", label: "Price: High → Low" },
-  { value: "name_asc", label: "Name: A → Z" },
+  { value: "newest", label: "Latest Arrival" },
+  { value: "oldest", label: "Originals First" },
+  { value: "price_asc", label: "Valuation Low" },
+  { value: "price_desc", label: "Valuation High" },
+  { value: "name_asc", label: "Identity A-Z" },
 ];
 
 const FilterPanel = ({ filters, onChange, onReset, view, onViewChange }) => {
@@ -36,75 +36,70 @@ const FilterPanel = ({ filters, onChange, onReset, view, onViewChange }) => {
     filters.stock;
 
   return (
-    <div className="p-4 border-b border-zinc-800 space-y-4">
-      {/* Row 1: Search + Sort + View Toggle */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        {/* Search */}
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
+    <div className="p-8 space-y-8 bg-white border-b border-charcoal/5">
+      {/* Search & Layout Controls */}
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Luxury Search */}
+        <div className="flex-1 relative group">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-charcoal/20 group-focus-within:text-gold transition-colors" />
           <input
-            id="dashboard-search"
             type="text"
-            placeholder="Search products..."
+            placeholder="Search piece identity..."
             value={filters.search}
             onChange={(e) => handleChange("search", e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500/30 transition-colors"
+            className="w-full pl-12 pr-4 py-4 bg-cream border border-charcoal/5 rounded-2xl text-[11px] font-bold tracking-widest text-charcoal placeholder-charcoal/30 focus:outline-none focus:border-gold focus:ring-4 focus:ring-gold/5 transition-all"
           />
         </div>
 
-        {/* Sort */}
-        <select
-          id="dashboard-sort"
-          value={filters.sort}
-          onChange={(e) => handleChange("sort", e.target.value)}
-          className="px-3 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-sm text-zinc-300 focus:outline-none focus:border-yellow-500 transition-colors appearance-none cursor-pointer min-w-[160px]"
-        >
-          {SORT_OPTIONS.map((o) => (
-            <option key={o.value} value={o.value}>
-              {o.label}
-            </option>
-          ))}
-        </select>
-
-        {/* View Toggle */}
-        <div className="flex bg-zinc-800 border border-zinc-700 rounded-lg overflow-hidden">
-          <button
-            onClick={() => onViewChange("list")}
-            title="List view"
-            className={`flex items-center justify-center w-10 h-10 transition-colors cursor-pointer ${
-              view === "list"
-                ? "bg-yellow-500 text-black"
-                : "text-zinc-400 hover:text-white"
-            }`}
-          >
-            <List className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => onViewChange("grid")}
-            title="Grid view"
-            className={`flex items-center justify-center w-10 h-10 transition-colors cursor-pointer ${
-              view === "grid"
-                ? "bg-yellow-500 text-black"
-                : "text-zinc-400 hover:text-white"
-            }`}
-          >
-            <LayoutGrid className="w-4 h-4" />
-          </button>
+        {/* View Selection */}
+        <div className="flex items-center gap-3">
+            <div className="bg-cream border border-charcoal/5 p-1 rounded-[1.25rem] flex items-center">
+                <button
+                    onClick={() => onViewChange("list")}
+                    className={`flex items-center justify-center w-12 h-12 rounded-[1rem] transition-all duration-500 cursor-pointer ${
+                    view === "list"
+                        ? "bg-white text-gold shadow-luxury"
+                        : "text-charcoal/30 hover:text-charcoal"
+                    }`}
+                >
+                    <List className="w-5 h-5 transition-transform group-hover:scale-110" />
+                </button>
+                <button
+                    onClick={() => onViewChange("grid")}
+                    className={`flex items-center justify-center w-12 h-12 rounded-[1rem] transition-all duration-500 cursor-pointer ${
+                    view === "grid"
+                        ? "bg-white text-gold shadow-luxury"
+                        : "text-charcoal/30 hover:text-charcoal"
+                    }`}
+                >
+                    <LayoutGrid className="w-5 h-5" />
+                </button>
+            </div>
+            
+            {hasActiveFilters && (
+                <button
+                    onClick={onReset}
+                    className="flex items-center justify-center w-14 h-14 bg-cream border border-charcoal/5 rounded-[1.25rem] text-charcoal/30 hover:text-gold hover:border-gold transition-all cursor-pointer group"
+                    title="Reset Filter"
+                >
+                    <RotateCcw className="w-4 h-4 group-hover:rotate-[-180deg] transition-transform duration-700" />
+                </button>
+            )}
         </div>
       </div>
 
-      {/* Row 2: Filters */}
-      <div className="flex flex-wrap gap-3 items-center">
-        {/* Category */}
-        <div className="flex items-center gap-1.5 bg-zinc-800 border border-zinc-700 rounded-lg px-1 py-1">
+      {/* Filter Row */}
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 pt-4">
+        {/* Category Pills */}
+        <div className="flex flex-wrap items-center gap-2">
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
               onClick={() => handleChange("category", cat)}
-              className={`px-3 py-1 rounded-md text-xs font-semibold transition-all duration-150 cursor-pointer ${
+              className={`px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-500 cursor-pointer ${
                 filters.category === cat || (!filters.category && cat === "All")
-                  ? "bg-yellow-500 text-black shadow-sm"
-                  : "text-zinc-400 hover:text-white"
+                  ? "bg-gold text-white shadow-luxury"
+                  : "bg-cream text-charcoal-light border border-charcoal/5 hover:border-gold hover:text-gold"
               }`}
             >
               {cat}
@@ -112,53 +107,59 @@ const FilterPanel = ({ filters, onChange, onReset, view, onViewChange }) => {
           ))}
         </div>
 
-        {/* Stock filter */}
-        <select
-          id="dashboard-stock-filter"
-          value={filters.stock}
-          onChange={(e) => handleChange("stock", e.target.value)}
-          className="px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-sm text-zinc-300 focus:outline-none focus:border-yellow-500 transition-colors appearance-none cursor-pointer"
-        >
-          {STOCK_OPTIONS.map((o) => (
-            <option key={o.value} value={o.value}>
-              {o.label}
-            </option>
-          ))}
-        </select>
+        {/* Dropdowns & Range */}
+        <div className="flex flex-wrap items-center gap-4">
+             {/* Stock Dropdown */}
+             <div className="relative group/select">
+                <select
+                    value={filters.stock}
+                    onChange={(e) => handleChange("stock", e.target.value)}
+                    className="pl-5 pr-10 py-3 bg-cream border border-charcoal/5 rounded-xl text-[10px] font-bold uppercase tracking-widest text-charcoal appearance-none focus:outline-none focus:border-gold transition-all cursor-pointer min-w-[150px]"
+                >
+                    {STOCK_OPTIONS.map((o) => (
+                    <option key={o.value} value={o.value}>
+                        {o.label}
+                    </option>
+                    ))}
+                </select>
+                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-3 h-3 text-charcoal/30 pointer-events-none group-focus-within/select:rotate-180 transition-transform" />
+            </div>
 
-        {/* Price range */}
-        <div className="flex items-center gap-2">
-          <input
-            id="dashboard-min-price"
-            type="number"
-            min="0"
-            placeholder="Min ₹"
-            value={filters.minPrice}
-            onChange={(e) => handleChange("minPrice", e.target.value)}
-            className="w-20 px-2.5 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-sm text-zinc-300 placeholder-zinc-600 focus:outline-none focus:border-yellow-500 transition-colors"
-          />
-          <span className="text-zinc-600 text-sm">—</span>
-          <input
-            id="dashboard-max-price"
-            type="number"
-            min="0"
-            placeholder="Max ₹"
-            value={filters.maxPrice}
-            onChange={(e) => handleChange("maxPrice", e.target.value)}
-            className="w-20 px-2.5 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-sm text-zinc-300 placeholder-zinc-600 focus:outline-none focus:border-yellow-500 transition-colors"
-          />
+            {/* Sort Dropdown */}
+            <div className="relative group/select">
+                <select
+                    value={filters.sort}
+                    onChange={(e) => handleChange("sort", e.target.value)}
+                    className="pl-5 pr-10 py-3 bg-cream border border-charcoal/5 rounded-xl text-[10px] font-bold uppercase tracking-widest text-charcoal appearance-none focus:outline-none focus:border-gold transition-all cursor-pointer min-w-[150px]"
+                >
+                    {SORT_OPTIONS.map((o) => (
+                    <option key={o.value} value={o.value}>
+                        {o.label}
+                    </option>
+                    ))}
+                </select>
+                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-3 h-3 text-charcoal/30 pointer-events-none group-focus-within/select:rotate-180 transition-transform" />
+            </div>
+
+            {/* Price Inputs */}
+            <div className="flex items-center gap-2 p-1 bg-cream border border-charcoal/5 rounded-xl">
+                 <input
+                    type="number"
+                    placeholder="Min"
+                    value={filters.minPrice}
+                    onChange={(e) => handleChange("minPrice", e.target.value)}
+                    className="w-20 px-4 py-2 bg-transparent text-[10px] font-bold text-charcoal placeholder-charcoal/20 focus:outline-none"
+                 />
+                 <span className="text-charcoal/10 px-1">/</span>
+                 <input
+                    type="number"
+                    placeholder="Max"
+                    value={filters.maxPrice}
+                    onChange={(e) => handleChange("maxPrice", e.target.value)}
+                    className="w-20 px-4 py-2 bg-transparent text-[10px] font-bold text-charcoal placeholder-charcoal/20 focus:outline-none"
+                 />
+            </div>
         </div>
-
-        {/* Reset */}
-        {hasActiveFilters && (
-          <button
-            onClick={onReset}
-            className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-zinc-400 hover:text-yellow-400 border border-zinc-700 hover:border-yellow-500/50 rounded-lg transition-colors cursor-pointer"
-          >
-            <RotateCcw className="w-3 h-3" />
-            Reset
-          </button>
-        )}
       </div>
     </div>
   );

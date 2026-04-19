@@ -4,7 +4,7 @@ import ActionDropdown from "./ActionDropdown";
 import SkeletonLoader from "./SkeletonLoader";
 import EmptyState from "./EmptyState";
 
-const PLACEHOLDER_IMG = "https://placehold.co/48x48/1c1c1c/555?text=IMG";
+const PLACEHOLDER_IMG = "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=100";
 
 const formatPrice = (price, currency = "INR") => {
   const symbols = { INR: "₹", USD: "$", EUR: "€", GBP: "£" };
@@ -23,7 +23,7 @@ const formatDate = (dateStr) => {
 
 const TH = ({ children, className = "" }) => (
   <th
-    className={`px-6 py-3.5 text-left text-xs font-semibold text-zinc-500 uppercase tracking-widest whitespace-nowrap ${className}`}
+    className={`px-8 py-6 text-left text-[9px] font-black uppercase tracking-[0.3em] text-charcoal/25 border-b border-charcoal/5 ${className}`}
   >
     {children}
   </th>
@@ -39,22 +39,22 @@ const ProductTable = ({
   onResetFilters,
 }) => {
   return (
-    <div className="w-full overflow-x-auto">
-      <table className="w-full min-w-[700px] border-collapse">
+    <div className="w-full overflow-x-auto no-scrollbar">
+      <table className="w-full min-w-[800px] border-collapse">
         {/* Head */}
-        <thead className="bg-zinc-900/80 border-b border-zinc-800">
-          <tr>
-            <TH>Product</TH>
-            <TH>Category</TH>
-            <TH>Price</TH>
-            <TH>Stock</TH>
+        <thead>
+          <tr className="bg-cream/30">
+            <TH>Legacy Item</TH>
+            <TH>Collection</TH>
+            <TH>Valuation</TH>
+            <TH>Capacity</TH>
             <TH>Status</TH>
-            <TH>Added</TH>
+            <TH>Logged</TH>
             <TH className="text-right">Actions</TH>
           </tr>
         </thead>
 
-        <tbody>
+        <tbody className="bg-white">
           {isLoading ? (
             <SkeletonLoader count={5} view="table" />
           ) : products.length === 0 ? (
@@ -77,76 +77,85 @@ const ProductTable = ({
               return (
                 <tr
                   key={product._id}
-                  className="border-b border-zinc-800/50 hover:bg-zinc-800/30 transition-colors duration-150 group"
+                  className="group hover:bg-gold/5 transition-all duration-500 border-b border-charcoal/5"
                 >
                   {/* Product */}
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-lg overflow-hidden bg-zinc-800 flex-shrink-0 ring-1 ring-zinc-700">
+                  <td className="px-8 py-5">
+                    <div className="flex items-center gap-4">
+                      <div className="w-14 h-14 rounded-2xl overflow-hidden bg-cream border border-charcoal/5 p-1 shadow-sm flex-shrink-0 group-hover:shadow-luxury transition-all duration-500">
                         <img
                           src={image}
                           alt={product?.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          className="w-full h-full object-cover rounded-xl group-hover:scale-110 transition-transform duration-700"
                           onError={(e) =>
                             (e.currentTarget.src = PLACEHOLDER_IMG)
                           }
                         />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold text-zinc-100 truncate max-w-[180px]">
-                          {product?.title || "Untitled"}
+                        <p className="text-xs font-bold text-charcoal tracking-tight group-hover:text-gold transition-colors truncate max-w-[200px]">
+                          {product?.title || "Untitled Fragment"}
                         </p>
-                        <p className="text-xs text-zinc-500 truncate max-w-[180px]">
-                          {product?.description?.substring(0, 40)}
-                          {product?.description?.length > 40 ? "..." : ""}
+                        <p className="text-[10px] text-charcoal-light font-medium uppercase tracking-tight truncate max-w-[200px]">
+                          {product?.description?.substring(0, 45)}
+                          {product?.description?.length > 45 ? "..." : ""}
                         </p>
                       </div>
                     </div>
                   </td>
 
                   {/* Category */}
-                  <td className="px-6 py-4">
-                    <span className="text-sm text-zinc-300 bg-zinc-800 px-2.5 py-1 rounded-lg border border-zinc-700 font-medium">
-                      {product?.category || "Uncategorized"}
+                  <td className="px-8 py-5">
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-charcoal/40 bg-cream-dark/30 px-3 py-1.5 rounded-lg border border-charcoal/5">
+                      {product?.category || "Neutral"}
                     </span>
                   </td>
 
                   {/* Price */}
-                  <td className="px-6 py-4">
-                    <span className="text-sm font-bold text-yellow-500">
+                  <td className="px-8 py-5">
+                    <span className="text-[11px] font-black text-charcoal tracking-widest">
                       {price}
                     </span>
                   </td>
 
                   {/* Stock */}
-                  <td className="px-6 py-4">
-                    <span
-                      className={`text-sm font-semibold ${
-                        (product?.stock ?? 0) === 0
-                          ? "text-red-400"
-                          : (product?.stock ?? 0) <= 10
-                          ? "text-yellow-400"
-                          : "text-zinc-300"
-                      }`}
-                    >
-                      {product?.stock ?? 0}
-                    </span>
+                  <td className="px-8 py-5">
+                    <div className="flex items-center gap-2">
+                        <div className={`w-1.5 h-1.5 rounded-full ${
+                            (product?.stock ?? 0) === 0
+                            ? "bg-red-400"
+                            : (product?.stock ?? 0) <= 10
+                            ? "bg-gold animate-pulse"
+                            : "bg-emerald-400"
+                        }`} />
+                        <span
+                        className={`text-[11px] font-bold ${
+                            (product?.stock ?? 0) === 0
+                            ? "text-red-400"
+                            : (product?.stock ?? 0) <= 10
+                            ? "text-gold"
+                            : "text-charcoal-light"
+                        }`}
+                        >
+                            {product?.stock ?? 0}
+                        </span>
+                    </div>
                   </td>
 
                   {/* Status */}
-                  <td className="px-6 py-4">
+                  <td className="px-8 py-5">
                     <StatusBadge status={product?.status || "active"} />
                   </td>
 
                   {/* Date */}
-                  <td className="px-6 py-4">
-                    <span className="text-sm text-zinc-500">
+                  <td className="px-8 py-5">
+                    <span className="text-[10px] font-bold text-charcoal/30 uppercase tracking-widest">
                       {formatDate(product?.createdAt)}
                     </span>
                   </td>
 
                   {/* Actions */}
-                  <td className="px-6 py-4 text-right">
+                  <td className="px-8 py-5 text-right">
                     <ActionDropdown
                       onView={() => onView?.(product)}
                       onEdit={() => onEdit?.(product)}

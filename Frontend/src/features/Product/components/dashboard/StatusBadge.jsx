@@ -2,24 +2,24 @@ import React from "react";
 
 const STATUS_CONFIG = {
   active: {
-    label: "Active",
-    classes: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30",
+    label: "ARCHIVED",
+    classes: "bg-emerald-50 text-emerald-600 border-emerald-100",
     dot: "bg-emerald-400",
   },
   inactive: {
-    label: "Inactive",
-    classes: "bg-zinc-500/10 text-zinc-400 border border-zinc-500/30",
-    dot: "bg-zinc-400",
+    label: "HIDDEN",
+    classes: "bg-charcoal/5 text-charcoal/40 border-charcoal/10",
+    dot: "bg-charcoal/20",
   },
   out_of_stock: {
-    label: "Out of Stock",
-    classes: "bg-red-500/10 text-red-400 border border-red-500/30",
+    label: "EXHAUSTED",
+    classes: "bg-red-50 text-red-600 border-red-100",
     dot: "bg-red-400",
   },
   low_stock: {
-    label: "Low Stock",
-    classes: "bg-yellow-500/10 text-yellow-400 border border-yellow-500/30",
-    dot: "bg-yellow-400",
+    label: "LIMITED",
+    classes: "bg-gold/5 text-gold border-gold/10",
+    dot: "bg-gold",
   },
 };
 
@@ -28,9 +28,9 @@ const StatusBadge = ({ status = "active" }) => {
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold tracking-wide ${config.classes}`}
+      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-[9px] font-black tracking-[0.2em] uppercase border transition-all duration-300 ${config.classes}`}
     >
-      <span className={`w-1.5 h-1.5 rounded-full ${config.dot} animate-pulse`} />
+      <span className={`w-1 h-1 rounded-full ${config.dot} shadow-sm translate-y-[0.5px]`} />
       {config.label}
     </span>
   );
