@@ -12,17 +12,15 @@ const Home = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
-
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      await handleGetAllProducts();
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        await handleGetAllProducts();
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchProducts();
   }, [handleGetAllProducts]);
 
@@ -203,12 +201,20 @@ const Home = () => {
                 </p>
               </div>
 
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 lg:gap-10">
                 <button
-                  onClick={() => handleGetAllProducts()}
-                  className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-charcoal-light hover:text-gold transition-colors duration-300"
+                  onClick={fetchProducts}
+                  className="flex items-center cursor-pointer gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-charcoal-light hover:text-gold transition-colors duration-300"
                 >
                   <span>Refresh Catalog</span>
+                </button>
+                <button
+                  onClick={() => {
+                    navigate("/shop");
+                  }}
+                  className="flex items-center cursor-pointer gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-charcoal-light hover:text-gold transition-colors duration-300"
+                >
+                  <span>View All</span>
                 </button>
                 <div className="w-12 h-[1px] bg-charcoal/5 hidden sm:block"></div>
               </div>
@@ -217,9 +223,7 @@ const Home = () => {
             {/* Product Grid */}
             <div className="relative">
               {loading ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 lg:gap-12 animate-in fade-in duration-500">
-                  <Skeleton />
-                </div>
+                <Skeleton />
               ) : products?.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-16 sm:gap-y-20">
                   {products.slice(0, 8).map((product, idx) => (

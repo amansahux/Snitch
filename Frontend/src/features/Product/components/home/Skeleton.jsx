@@ -4,12 +4,12 @@ const Skeleton = () => {
   return (
     <div className="min-h-screen bg-white font-sans animate-pulse">
       {/* Header Skeleton */}
-      <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-sm border-b border-black/[0.03]">
+      {/* <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-sm border-b border-black/[0.03]">
         <div className="max-w-7xl mx-auto px-6 h-28 flex flex-col items-center justify-center gap-3">
           <div className="h-10 w-48 bg-gray-200 rounded-md"></div>
           <div className="h-3 w-36 bg-gray-100 rounded"></div>
         </div>
-      </header>
+      </header> */}
 
       {/* Main Content Skeleton */}
       <main className="max-w-7xl mx-auto px-6 py-16">
