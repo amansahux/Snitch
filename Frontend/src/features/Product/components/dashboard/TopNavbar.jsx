@@ -76,7 +76,7 @@ const TopNavbar = ({ onMenuClick, pageTitle = "Dashboard", user }) => {
                     <Sparkles className="w-2.5 h-2.5" /> Luxury Tier
                 </p>
             </div>
-            <div className="w-10 h-10 rounded-full bg-charcoal text-white flex items-center justify-center text-xs font-bold ring-4 ring-gold/5 cursor-pointer hover:bg-gold transition-all duration-300">
+            <div className="w-10 h-10 rounded-full bg-[#C9A96E] text-white flex items-center justify-center text-xs font-bold ring-4 ring-gold/5 cursor-pointer hover:bg-gold transition-all duration-300">
                 {initials}
             </div>
         </div>

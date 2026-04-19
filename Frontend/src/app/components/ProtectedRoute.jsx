@@ -1,14 +1,13 @@
 import React from "react";
 import useAuth from "../../features/Auth/hooks/useAuth.js";
 import { Navigate } from "react-router-dom";
-import Loader from "./Loader.jsx";
 
 const ProtectedRoute = ({ children, role }) => {
   const { user, loading } = useAuth();
 
-  // Still fetching auth state — don't redirect yet
+  // Still fetching auth state — render children so they can show their own skeletons
   if (loading) {
-    return <Loader />;
+    return children;
   }
 
   // Not logged in — send to login

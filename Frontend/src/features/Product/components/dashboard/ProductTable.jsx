@@ -43,7 +43,7 @@ const ProductTable = ({
       <table className="w-full min-w-[800px] border-collapse">
         {/* Head */}
         <thead>
-          <tr className="bg-cream/30">
+          <tr className="bg-[#FBF9F6]">
             <TH>Legacy Item</TH>
             <TH>Collection</TH>
             <TH>Valuation</TH>

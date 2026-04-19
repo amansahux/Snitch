@@ -13,12 +13,13 @@ import {
 import { ImageUploadZone } from "../components/CreateProduct/ImageUploadZone";
 import useProduct from "../hooks/useProduct";
 import { toast } from "react-hot-toast";
-import { ArrowRight, Sparkles } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ArrowRight, Sparkles, SquareArrowRightExit } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 
 const CreateProduct = () => {
   const { handleCreateProduct } = useProduct();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate()
 
   const {
     register,
@@ -54,6 +55,7 @@ const CreateProduct = () => {
       data.images.forEach((img) => URL.revokeObjectURL(img.preview));
       toast.success("Product published successfully!", { id: loadingToast });
       reset();
+      navigate("/seller/dashboard")
     } catch (error) {
       console.error("Submission error:", error);
       toast.error("Failed to publish product.", { id: loadingToast });
@@ -78,6 +80,20 @@ const CreateProduct = () => {
       </nav>
 
       <div className="max-w-6xl mx-auto px-6 pt-4 lg:pt-12 pb-8">
+
+        {/* Back Button */}
+        <button 
+          onClick={() => navigate(-1)}
+          className="group flex items-center gap-3 text-charcoal/40 hover:text-gold transition-all duration-500 mb-10 animate-in fade-in slide-in-from-left-4 duration-700"
+        >
+          <div className="w-10 h-10 rounded-full border border-charcoal/10 flex items-center justify-center group-hover:border-gold group-hover:bg-gold/5 transition-all duration-500">
+            <SquareArrowRightExit size={18} className="rotate-180 group-hover:-translate-x-0.5 transition-transform" />
+          </div>
+          <div className="flex flex-col items-start">
+            <span className="text-[9px] font-black uppercase tracking-[0.3em] leading-none mb-1">Return</span>
+            <span className="text-[10px] font-serif italic text-charcoal/30 group-hover:text-charcoal transition-colors">to Dashboard</span>
+          </div>
+        </button>
         {/* Editorial Header Section */}
         <header className="mb-16 space-y-4">
           <div className="flex items-center gap-3 animate-in fade-in slide-in-from-left-4 duration-700">

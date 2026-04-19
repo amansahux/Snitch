@@ -3,8 +3,8 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const HomeRedirect = ({ children }) => {
-  const { user, loading } = useAuth();
-  if (loading) return null; // Global Loader already handles this, but safe to return null
+  const {loading } = useAuth();
+  if (loading) return children;
 
   return children;
 };

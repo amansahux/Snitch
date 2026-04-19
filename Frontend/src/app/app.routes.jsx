@@ -4,6 +4,7 @@ import Register from "../features/Auth/pages/Register.jsx";
 import CreateProduct from "../features/Product/pages/CreateProduct.jsx";
 import Dashboard from "../features/Product/pages/Dashboard.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import GuestRoute from "./components/GuestRoute.jsx";
 import { HomeRedirect } from "./components/HomeRedirect.jsx";
 import Home from "../features/Product/pages/Home.jsx";
 import SpecificProduct from "../features/Product/components/SpecificProduct.jsx";
@@ -32,11 +33,19 @@ export const routes = createBrowserRouter([
   },
   {
     path: "/login",
-    element: <Login />,
+    element: (
+      <GuestRoute>
+        <Login />
+      </GuestRoute>
+    ),
   },
   {
     path: "/register",
-    element: <Register />,
+    element: (
+      <GuestRoute>
+        <Register />
+      </GuestRoute>
+    ),
   },
   {
     path: "/seller",
