@@ -12,3 +12,12 @@ export const createVariant = async (productId, data) => {
         console.log(error);
     }
 }
+
+export const getVariants = async (productId) => {
+    try {
+        const response = await API.get(`/get-variants/${productId}`);
+        return response.data;
+    } catch (error) {
+        console.log(error);
+    }
+}

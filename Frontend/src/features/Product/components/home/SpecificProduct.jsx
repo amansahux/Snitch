@@ -7,36 +7,26 @@ import {
   Heart,
   Share2,
   ChevronLeft,
-  ChevronRight,
   Star,
   Truck,
   RotateCcw,
   ShieldCheck,
   ArrowRight,
-  ChevronUp,
-  ChevronDown,
 } from "lucide-react";
 import ProductDetailsSkeleton from "./ProductDetailsSkeleton";
 
 const SpecificProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { handleGetProductById } = useProduct();
+  const { handleGetProductById, handleGetVariant } = useProduct();
   const { user } = useAuth();
 
   const [product, setProduct] = useState(null);
+  const [variants, setVariants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState(0);
-  const [selectedSize, setSelectedSize] = useState("");
+  const [activeVariant, setActiveVariant] = useState(null); // null means Primary Product is selected
 
-  const sizes =
-    product?.category === "Tops" || product?.category === "Outerwear"
-      ? product?.size || ["S", "M", "L", "XL", "XXL"]
-      : product?.category === "Footwear"
-        ? product?.size || ["6", "7", "8", "9", "10"]
-        : product?.category === "Bottoms"
-          ? product?.size || ["38", "40", "42", "44", "46"]
-          : null;
   const benefits = [
     {
       icon: <Truck size={18} />,
@@ -60,16 +50,28 @@ const SpecificProduct = () => {
   }, [id]);
 
   useEffect(() => {
-    const fetchProduct = async () => {
+    const fetchData = async () => {
       setLoading(true);
-      const response = await handleGetProductById(id);
-      if (response?.success) {
-        setProduct(response.data);
+      try {
+        const [prodRes, variantRes] = await Promise.all([
+          handleGetProductById(id),
+          handleGetVariant(id),
+        ]);
+
+        if (prodRes?.success) {
+          setProduct(prodRes.data);
+        }
+        if (variantRes?.success) {
+          setVariants(variantRes.variants || []);
+        }
+      } catch (error) {
+        console.error("Fetch error:", error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
-    fetchProduct();
-  }, [id, handleGetProductById]);
+    fetchData();
+  }, [id, handleGetProductById, handleGetVariant]);
 
   if (loading) {
     return <ProductDetailsSkeleton />;
@@ -91,6 +93,31 @@ const SpecificProduct = () => {
     );
   }
 
+  // Selected Item Logic: Prioritize active variant, then fallback to product/hardcoded values
+  const selectedItem = activeVariant || product;
+
+  // Fallback Values (as requested)
+  const displayTitle = product.title;
+  const displayDescription = product.description;
+
+  const displaySellingPrice =
+    selectedItem.price?.amount || selectedItem.price.selling;
+  const displayMrp = selectedItem.price?.mrp || 799;
+  const displayStock = selectedItem.stock || 49;
+
+  const displaySize = selectedItem.size || "M";
+  const displayColor = selectedItem.color || "Black";
+  const displayFit = selectedItem.fit || "Slim";
+  const displayMaterial =
+    selectedItem.material || "Polyester";
+
+  // Gallery Logic: Use selected variant images if available, otherwise base product images
+  const displayImages =
+    (activeVariant?.images?.length > 0
+      ? activeVariant.images
+      : product.images) || [];
+  const safeActiveImage = activeImage < displayImages.length ? activeImage : 0;
+
   return (
     <div className="min-h-screen bg-[#fbf9f6] font-sans selection:bg-[#C9A96E] selection:text-white">
       {/* Premium Breadcrumb */}
@@ -104,15 +131,15 @@ const SpecificProduct = () => {
           </span>
           <span className="text-[#e8e2da]">/</span>
           <span
-            onClick={() => {
-              navigate("/shop");
-            }}
+            onClick={() => navigate("/shop")}
             className="text-[#1b1c1a]/40 cursor-pointer"
           >
             {product?.category || "Shop"}
           </span>
           <span className="text-[#e8e2da]">/</span>
-          <span className="text-[#1b1c1a]">{product.title}</span>
+          <span className="text-[#1b1c1a] truncate max-w-[150px]">
+            {displayTitle}
+          </span>
         </div>
         <button
           onClick={() => navigate(-1)}
@@ -133,27 +160,30 @@ const SpecificProduct = () => {
             {/* Main Visual */}
             <div className="flex-1 relative aspect-[4/5] overflow-hidden rounded-3xl bg-[#f3eee8] shadow-2xl group">
               <img
-                src={product.images?.[activeImage]?.url}
-                alt={product.title}
+                src={
+                  displayImages[safeActiveImage]?.url ||
+                  "/placeholder-image.jpg"
+                }
+                alt={displayTitle}
                 className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
               />
               <div className="absolute inset-x-0 bottom-0 p-8 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                 <p className="text-white text-[10px] uppercase tracking-widest font-black">
-                  Perspective {activeImage + 1} of {product.images.length}
+                  Perspective {safeActiveImage + 1} of {displayImages.length}
                 </p>
               </div>
             </div>
 
             {/* Thumbnail Selection */}
             <div className="flex md:flex-col gap-4 overflow-x-auto md:overflow-visible w-full md:w-28 no-scrollbar">
-              {product.images?.map((img, idx) => (
+              {displayImages.map((img, idx) => (
                 <button
                   key={idx}
                   onClick={() => setActiveImage(idx)}
-                  className={`flex-shrink-0 aspect-[4/5] w-20 md:w-full rounded-2xl overflow-hidden border-2 transition-all duration-500 hover:shadow-lg ${activeImage === idx ? "border-[#C9A96E] scale-95" : "border-transparent opacity-50 hover:opacity-100"}`}
+                  className={`flex-shrink-0 aspect-[4/5] w-20 md:w-full rounded-2xl overflow-hidden border-2 transition-all duration-500 hover:shadow-lg ${safeActiveImage === idx ? "border-[#C9A96E] scale-95" : "border-transparent opacity-50 hover:opacity-100"}`}
                 >
                   <img
-                    src={img.url}
+                    src={img.url || "/placeholder-image.jpg"}
                     className="w-full h-full object-cover"
                     alt=""
                   />
@@ -169,93 +199,195 @@ const SpecificProduct = () => {
             <div className="flex items-center gap-3">
               <span className="w-6 h-[1px] bg-[#C9A96E]"></span>
               <span className="text-[10px] tracking-[0.4em] text-[#C9A96E] uppercase font-black">
-                Premium Archive
+                Premium Collection
               </span>
             </div>
 
-            <h1 className="text-5xl lg:text-7xl font-serif text-[#1b1c1a] leading-none tracking-tight">
-              {product.title}
+            <h1 className="text-4xl lg:text-6xl font-serif text-[#1b1c1a] leading-tight tracking-tight">
+              {displayTitle}
             </h1>
 
-            <div className="flex items-center justify-between">
-              <span className="text-4xl font-serif text-[#1b1c1a]">
-                ₹{product.price?.amount?.toLocaleString()}
-              </span>
-              <div className="flex items-center gap-1.5 p-2 bg-[#f3eee8] rounded-full px-4">
+            <div className="flex items-center gap-6">
+              <div className="space-y-1">
+                <span className="text-4xl font-serif text-[#1b1c1a]">
+                  ₹{displaySellingPrice.toLocaleString()}
+                </span>
+                {displayMrp > displaySellingPrice && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-[#7a6e63] line-through decoration-[#C9A96E]/50">
+                      ₹{displayMrp.toLocaleString()}
+                    </span>
+                    <span className="text-[10px] font-black text-[#C9A96E] uppercase tracking-tighter">
+                      Save{" "}
+                      {Math.round(
+                        ((displayMrp - displaySellingPrice) / displayMrp) * 100,
+                      )}
+                      %
+                    </span>
+                  </div>
+                )}
+              </div>
+              <div className="flex items-center gap-1.5 p-2 bg-[#f3eee8] rounded-full px-4 ml-auto">
                 <Star size={12} fill="#C9A96E" className="text-[#C9A96E]" />
                 <span className="text-[10px] font-black text-[#1b1c1a] mt-0.5">
-                  {product?.rating?.toFixed(1) || "4.9 Rare Piece"}
+                  {product?.rating?.toFixed(1) || "4.9 Rare"}
                 </span>
               </div>
             </div>
 
             <p className="text-[#7a6e63] leading-relaxed text-lg font-inter font-light">
-              {product.description}
+              {displayDescription}
             </p>
           </div>
 
-          {/* Size Curator */}
-          {sizes ? (
-            <div className="space-y-10">
-              <div className="space-y-6">
-                <div className="flex justify-between items-end">
-                  <div className="space-y-1">
-                    <p className="text-[9px] font-black uppercase tracking-widest text-[#7a6e63]/50">
-                      Curated Dimensions
-                    </p>
-                    <p className="text-sm font-black uppercase tracking-widest text-[#1b1c1a]">
-                      Select Size
-                    </p>
-                  </div>
-                  <button className="text-[9px] font-black uppercase tracking-widest text-[#C9A96E] border-b border-[#C9A96E] pb-0.5">
-                    Size Protocol
-                  </button>
+          {/* Image-Based Variant Selector */}
+          <div className="space-y-10">
+            <div className="space-y-6">
+              <div className="flex justify-between items-end">
+                <div className="space-y-1">
+                  <p className="text-[9px] font-black uppercase tracking-widest text-[#7a6e63]/50">
+                    Artisanal Selection
+                  </p>
+                  <p className="text-sm font-black uppercase tracking-widest text-[#1b1c1a]">
+                    Select Variation
+                  </p>
                 </div>
-                <div className="grid grid-cols-5 gap-3">
-                  {sizes.map((size) => (
-                    <button
-                      key={size}
-                      onClick={() => setSelectedSize(size)}
-                      className={`h-16 cursor-pointer flex items-center justify-center text-[11px] font-black rounded-2xl transition-all duration-500 border ${selectedSize === size ? "bg-[#1b1c1a] text-white border-[#1b1c1a] shadow-xl" : "bg-white border-[#e8e2da] text-[#7a6e63] hover:border-[#C9A96E] hover:text-[#C9A96E]"}`}
-                    >
-                      {size}
-                    </button>
-                  ))}
+                <div className="text-[9px] font-black uppercase tracking-widest text-[#C9A96E]/60">
+                  Ref: {selectedItem._id || product._id || "N/A"}
                 </div>
               </div>
 
-              {/* Action Matrix */}
-              <div className="space-y-4">
+              <div className="flex gap-4 overflow-x-auto py-4 no-scrollbar -mx-2 px-2">
+                {/* Primary Product Thumbnail */}
                 <button
-                  onClick={() =>
-                    user ? console.log("Added") : navigate("/login")
-                  }
-                  className="w-full cursor-pointer h-20 bg-[#1b1c1a] text-white text-[11px] font-black uppercase tracking-[0.4em] hover:bg-[#C9A96E] transition-all rounded-2xl flex items-center justify-center gap-4 shadow-luxury active:scale-[0.98] group"
+                  onClick={() => {
+                    setActiveVariant(null);
+                    setActiveImage(0);
+                  }}
+                  className={`flex-shrink-0 w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all duration-500 ${activeVariant === null ? "border-[#1b1c1a] scale-110 shadow-2xl z-10" : "border-[#e8e2da] opacity-70 hover:opacity-100"}`}
                 >
-                  Add to Inventory{" "}
-                  <ArrowRight
-                    size={16}
-                    className="group-hover:translate-x-1 transition-transform"
+                  <img
+                    src={product.images?.[0]?.url || "/placeholder-image.jpg"}
+                    alt="Original"
+                    className="w-full h-full object-cover"
                   />
                 </button>
-                <div className="flex gap-4">
-                  <button className="flex-1 h-16 cursor-pointer border border-[#e8e2da] text-[#1b1c1a] text-[10px] font-black uppercase tracking-widest hover:border-[#1b1c1a] transition-all rounded-2xl group flex items-center justify-center gap-3">
-                    <Heart
-                      size={14}
-                      className="group-hover:scale-110  transition-transform"
-                    />{" "}
-                    Save to Wishlist
-                  </button>
-                  <button className="w-16 cursor-pointer h-16 border border-[#e8e2da] flex items-center justify-center rounded-2xl hover:border-[#C9A96E] group transition-all">
-                    <Share2
-                      size={14}
-                      className="text-[#7a6e63] group-hover:text-[#C9A96E]"
+
+                {/* Variants Thumbnails */}
+                {variants.map((v, i) => (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      setActiveVariant(v);
+                      setActiveImage(0);
+                    }}
+                    className={`flex-shrink-0 w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all duration-500 ${activeVariant?._id === v._id ? "border-[#1b1c1a] scale-110 shadow-2xl z-10" : "border-[#e8e2da] opacity-70 hover:opacity-100"}`}
+                  >
+                    <img
+                      src={
+                        v.images?.[0]?.url ||
+                        product.images?.[0]?.url ||
+                        "/placeholder-image.jpg"
+                      }
+                      alt={`Variant ${i}`}
+                      className="w-full h-full object-cover"
                     />
                   </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Technical Specifications */}
+            <div className="p-8 bg-[#f3eee8]/50 rounded-3xl border border-[#e8e2da]/30 space-y-6">
+              <p className="text-[9px] font-black uppercase tracking-[0.3em] text-[#C9A96E]">
+                Specifications
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8">
+                <div className="space-y-1">
+                  <p className="text-[8px] uppercase tracking-widest text-[#7a6e63]">
+                    Material
+                  </p>
+                  <p className="text-[11px] font-black text-[#1b1c1a] uppercase">
+                    {displayMaterial}
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[8px] uppercase tracking-widest text-[#7a6e63]">
+                    Fit
+                  </p>
+                  <p className="text-[11px] font-black text-[#1b1c1a] uppercase">
+                    {displayFit}
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[8px] uppercase tracking-widest text-[#7a6e63]">
+                    Color
+                  </p>
+                  <p className="text-[11px] font-black text-[#1b1c1a] uppercase">
+                    {displayColor}
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[8px] uppercase tracking-widest text-[#7a6e63]">
+                    Size
+                  </p>
+                  <p className="text-[11px] font-black text-[#1b1c1a] uppercase">
+                    {displaySize}
+                  </p>
+                </div>
+                <div className="space-y-1 md:col-span-2">
+                  <p className="text-[8px] uppercase tracking-widest text-[#7a6e63]">
+                    Inventory
+                  </p>
+                  <p
+                    className={`text-[11px] font-black uppercase ${displayStock > 0 ? "text-[#1b1c1a]" : "text-red-500"}`}
+                  >
+                    {displayStock > 0
+                      ? `${displayStock} Pieces Available`
+                      : "Temporarily Out of Stock"}
+                  </p>
                 </div>
               </div>
             </div>
-          ) : null}
+
+            {/* Action Matrix */}
+            <div className="space-y-4">
+              <button
+                disabled={displayStock <= 0}
+                onClick={() =>
+                  user ? console.log("Added") : navigate("/login")
+                }
+                className={`w-full cursor-pointer h-20 text-[11px] font-black uppercase tracking-[0.4em] transition-all rounded-2xl flex items-center justify-center gap-4 shadow-luxury active:scale-[0.98] group ${displayStock > 0 ? "bg-[#1b1c1a] text-white hover:bg-[#C9A96E]" : "bg-[#e8e2da] text-[#7a6e63] cursor-not-allowed"}`}
+              >
+                {displayStock > 0 ? (
+                  <>
+                    Add to Inventory{" "}
+                    <ArrowRight
+                      size={16}
+                      className="group-hover:translate-x-1 transition-transform"
+                    />
+                  </>
+                ) : (
+                  "Sold Out"
+                )}
+              </button>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button className="flex-1 h-16 cursor-pointer border border-[#e8e2da] text-[#1b1c1a] text-[10px] font-black uppercase tracking-widest hover:border-[#1b1c1a] transition-all rounded-2xl group flex items-center justify-center gap-3">
+                  <Heart
+                    size={14}
+                    className="group-hover:scale-110 transition-transform"
+                  />{" "}
+                  Save to Wishlist
+                </button>
+                <button className="w-full sm:w-16 cursor-pointer h-16 border border-[#e8e2da] flex items-center justify-center rounded-2xl hover:border-[#C9A96E] group transition-all">
+                  <Share2
+                    size={14}
+                    className="text-[#7a6e63] group-hover:text-[#C9A96E]"
+                  />
+                </button>
+              </div>
+            </div>
+          </div>
 
           {/* Luxury Benefits */}
           <div className="grid grid-cols-1 gap-8 py-10 border-y border-[#e8e2da]">
@@ -278,7 +410,7 @@ const SpecificProduct = () => {
 
           {/* Atelier Attribution */}
           <div className="p-10 bg-white rounded-3xl border border-[#e8e2da]/50 space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-[#f3eee8] rounded-full flex items-center justify-center text-[#C9A96E] font-serif text-xl border border-[#e8e2da]">
                   {product.seller?.fullname?.[0] || "S"}
@@ -288,11 +420,11 @@ const SpecificProduct = () => {
                     Curated By
                   </p>
                   <p className="text-sm font-black uppercase tracking-widest text-[#1b1c1a]">
-                    {product.seller?.fullname}
+                    {product.seller?.fullname || "Principal Artisan"}
                   </p>
                 </div>
               </div>
-              <button className="text-[9px] font-black uppercase tracking-widest text-[#C9A96E]">
+              <button className="text-[9px] font-black uppercase tracking-widest text-[#C9A96E] self-start sm:self-center">
                 View Atelier
               </button>
             </div>
@@ -309,7 +441,7 @@ const SpecificProduct = () => {
         <div className="text-4xl font-serif font-black tracking-[0.5em] text-[#1b1c1a]">
           SNICH<span className="text-[#C9A96E]">.</span>
         </div>
-        <div className="flex gap-8 text-[9px] font-black uppercase tracking-[0.3em] text-[#7a6e63]">
+        <div className="flex flex-wrap justify-center gap-8 text-[9px] font-black uppercase tracking-[0.3em] text-[#7a6e63]">
           <span className="hover:text-[#C9A96E] cursor-pointer transition-colors">
             Privacy
           </span>

@@ -68,3 +68,23 @@ export const createVariantController = asyncHandler(async (req, res, next) => {
     variant,
   });
 });
+
+export const getVariantController = asyncHandler(async (req, res, next) => {
+  const { productId } = req.params;
+
+  const product = await productModel.findById(productId);
+
+  if (!product) {
+    const error = new Error("Product not found");
+    error.statusCode = 404;
+    return next(error);
+  }
+
+  const variants = await VariantModel.find({ product: productId });
+
+  return res.status(200).json({
+    success: true,
+    message: "Variants fetched successfully",
+    variants,
+  });
+});

@@ -8,7 +8,7 @@ import {
   updateProduct,
 } from "../services/product.api.js";
 import { setProducts, setSellerProducts } from "../state/product.slice.js";
-import { createVariant } from "../services/variant.api.js";
+import { createVariant, getVariants } from "../services/variant.api.js";
 
 const useProduct = () => {
   const dispatch = useDispatch();
@@ -74,6 +74,19 @@ const useProduct = () => {
     }
   }, []);
 
+  const handleGetVariant = useCallback(
+    async (id) => {
+      try {
+        const response = await getVariants(id);
+        // console.log(response);
+        return response;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [dispatch],
+  );
+
   return {
     sellerProducts,
     products,
@@ -83,6 +96,7 @@ const useProduct = () => {
     handleGetProductById,
     handleUpdateProduct,
     handleAddVariant,
+    handleGetVariant,
   };
 };
 
