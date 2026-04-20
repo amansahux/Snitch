@@ -6,9 +6,9 @@ import {
   getSellerProducts,
   getProductById,
   updateProduct,
-  addVariant
 } from "../services/product.api.js";
 import { setProducts, setSellerProducts } from "../state/product.slice.js";
+import { createVariant } from "../services/variant.api.js";
 
 const useProduct = () => {
   const dispatch = useDispatch();
@@ -67,7 +67,7 @@ const useProduct = () => {
 
   const handleAddVariant = useCallback(async (id, data) => {
     try {
-      const response = await addVariant(id, data);
+      const response = await createVariant(id, data);
       return response;
     } catch (error) {
       console.log(error);

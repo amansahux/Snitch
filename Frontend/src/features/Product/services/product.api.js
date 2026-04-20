@@ -40,15 +40,6 @@ export const getProductById = async (id) => {
   }
 };
 
-export const addVariant = async (id, data) => {
-  try {
-    const response = await API.post(`/add-variant/${id}`, data);
-    return response.data;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 export const updateProduct = async (id, data) => {
   try {
     const response = await API.post(`/update/${id}`, data);

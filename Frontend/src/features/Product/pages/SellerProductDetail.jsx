@@ -72,6 +72,7 @@ const SellerProductDetail = () => {
     if (response?.success) {
       fetchProduct();
     }
+    console.log(response);
   };
 
   if (loading) {
