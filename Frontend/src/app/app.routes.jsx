@@ -10,6 +10,7 @@ import Home from "../features/Product/pages/Home.jsx";
 import SpecificProduct from "../features/Product/components/home/SpecificProduct.jsx";
 import Shop from "../features/Product/components/home/Shop.jsx";
 import Inventory from "../features/Product/pages/Inventory.jsx";
+import SellerProductDetail from "../features/Product/pages/SellerProductDetail.jsx";
 
 export const routes = createBrowserRouter([
   {
@@ -74,6 +75,14 @@ export const routes = createBrowserRouter([
         element: (
           <ProtectedRoute role="seller">
             <Inventory />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "products/:id",
+        element: (
+          <ProtectedRoute role="seller">
+            <SellerProductDetail />
           </ProtectedRoute>
         ),
       },

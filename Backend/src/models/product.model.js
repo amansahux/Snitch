@@ -34,6 +34,14 @@ const productSchema = new mongoose.Schema(
         },
       },
     ],
+    stock: {
+      type: Number,
+      default: 0,
+    },
+    category: {
+      type: String,
+      enum: ["Tops", "Bottoms", "Outerwear", "Footwear"],
+    },
 
     variants: [
       {
@@ -57,11 +65,6 @@ const productSchema = new mongoose.Schema(
           amount: {
             type: Number,
             required: true,
-          },
-          currency: {
-            type: String,
-            enum: ["USD", "EUR", "GBP", "JPY", "INR"],
-            default: "INR",
           },
         },
       },

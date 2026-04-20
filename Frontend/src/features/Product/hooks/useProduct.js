@@ -4,7 +4,9 @@ import {
   createProducts,
   getAllProducts,
   getSellerProducts,
-  getProductById
+  getProductById,
+  updateProduct,
+  addVariant
 } from "../services/product.api.js";
 import { setProducts, setSellerProducts } from "../state/product.slice.js";
 
@@ -54,6 +56,24 @@ const useProduct = () => {
     }
   }, []);
 
+  const handleUpdateProduct = useCallback(async (id, data) => {
+    try {
+      const response = await updateProduct(id, data);
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  const handleAddVariant = useCallback(async (id, data) => {
+    try {
+      const response = await addVariant(id, data);
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
   return {
     sellerProducts,
     products,
@@ -61,6 +81,8 @@ const useProduct = () => {
     handleGetSellerProducts,
     handleGetAllProducts,
     handleGetProductById,
+    handleUpdateProduct,
+    handleAddVariant,
   };
 };
 

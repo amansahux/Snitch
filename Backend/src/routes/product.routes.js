@@ -1,14 +1,16 @@
 import { Router } from "express";
 import {
+  addVariant,
   createProduct,
   getAllProducts,
   getProductById,
   getSellerProducts,
+  updateProduct,
 } from "../controllers/product.controller.js";
 import { authenticateSeller } from "../middlewares/auth.middleware.js";
 import upload from "../middlewares/multer.middleware.js";
 import { validate } from "../middlewares/zod.middleware.js";
-import { createProductSchema } from "../validators/product.validator.js";
+import { addVariantSchema, createProductSchema, updateProductSchema } from "../validators/product.validator.js";
 
 const productRouter = Router();
 
@@ -19,7 +21,8 @@ productRouter.post(
   validate(createProductSchema),
   createProduct,
 );
-
+productRouter.post("/update/:id", authenticateSeller, upload.array("images", 7), validate(updateProductSchema), updateProduct )
+productRouter.post("/add-variant/:id", authenticateSeller, upload.array("images", 7), validate(addVariantSchema), addVariant)
 productRouter.get("/seller", authenticateSeller, getSellerProducts);
 productRouter.get("/", getAllProducts);
 productRouter.get("/:id", getProductById);

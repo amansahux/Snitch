@@ -25,3 +25,13 @@ export const productValidationSchema = z.object({
     .min(1, { message: "You must upload at least 1 image" })
     .max(7, { message: "You can upload a maximum of 7 images" }),
 });
+
+export const updateProductSchema = z.object({
+  title: z.string().min(3, "Title must be at least 3 characters"),
+  description: z.string().min(10, "Description must be at least 10 characters"),
+  price: z.object({
+    amount: z.preprocess((val) => Number(val), z.number().min(1, "Price must be greater than 0")),
+  }),
+  category: z.string().min(1, "Please select a category"),
+  stock: z.preprocess((val) => Number(val), z.number().min(0, "Stock cannot be negative")),
+});

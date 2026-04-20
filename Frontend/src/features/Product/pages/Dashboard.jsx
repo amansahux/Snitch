@@ -173,12 +173,11 @@ const Dashboard = () => {
   const handleResetFilters = () => setFilters(DEFAULT_FILTERS);
 
   const handleView = (product) => {
-    // Navigate to product detail (future route)
-    console.log("View product:", product._id);
+    navigate(`/seller/products/${product._id}`);
   };
 
   const handleEdit = (product) => {
-    navigate(`/seller/edit-product/${product._id}`);
+    navigate(`/seller/products/${product._id}`, { state: { openEdit: true } });
   };
 
   const handleDeleteClick = (product) => setConfirmDelete(product);

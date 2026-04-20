@@ -7,7 +7,6 @@ const CATEGORIES = [
   "Bottoms",
   "Outerwear",
   "Footwear",
-  "Accessories",
 ];
 
 const STOCK_OPTIONS = [

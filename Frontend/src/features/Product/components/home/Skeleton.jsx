@@ -28,17 +28,17 @@ const Skeleton = () => {
                 </div>
 
                 {/* Price */}
-                <div className="h-4 w-20 bg-gray-200 rounded"></div>
+                {/* <div className="h-4 w-20 bg-gray-200 rounded"></div> */}
 
                 {/* Button */}
-                <div className="h-11 w-full bg-black/10 rounded-xl"></div>
+                {/* <div className="h-11 w-full bg-black/10 rounded-xl"></div> */}
               </div>
             ))}
         </div>
       </main>
 
       {/* Footer Skeleton */}
-      <footer className="py-20 border-t border-black/[0.03]">
+      {/* <footer className="py-20 border-t border-black/[0.03]">
         <div className="flex flex-col items-center justify-center gap-6">
           <div className="flex gap-8">
             <div className="h-3 w-20 bg-gray-200 rounded"></div>
@@ -48,7 +48,7 @@ const Skeleton = () => {
 
           <div className="h-3 w-40 bg-gray-100 rounded"></div>
         </div>
-      </footer>
+      </footer> */}
     </div>
   );
 };

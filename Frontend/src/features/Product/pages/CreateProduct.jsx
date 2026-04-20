@@ -75,7 +75,7 @@ const CreateProduct = () => {
           SNICH<span className="text-gold">.</span>
         </Link>
         <div className="hidden lg:flex items-center gap-6">
-            <span className="text-[10px] uppercase font-bold tracking-widest text-charcoal/30">Admin Dashboard</span>
+            <span className="text-[10px] uppercase font-bold tracking-widest text-[#C9A96E]">Admin Dashboard</span>
         </div>
       </nav>
 
@@ -84,7 +84,7 @@ const CreateProduct = () => {
         {/* Back Button */}
         <button 
           onClick={() => navigate(-1)}
-          className="group flex items-center gap-3 text-charcoal/40 hover:text-gold transition-all duration-500 mb-10 animate-in fade-in slide-in-from-left-4 duration-700"
+          className="group flex items-center cursor-pointer gap-3 text-charcoal/40 hover:text-gold transition-all duration-500 mb-10 animate-in fade-in slide-in-from-left-4 duration-700"
         >
           <div className="w-10 h-10 rounded-full border border-charcoal/10 flex items-center justify-center group-hover:border-gold group-hover:bg-gold/5 transition-all duration-500">
             <SquareArrowRightExit size={18} className="rotate-180 group-hover:-translate-x-0.5 transition-transform" />

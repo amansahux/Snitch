@@ -42,6 +42,7 @@ export const InputField = React.forwardRef(
           <input
             id={id}
             ref={ref}
+            onWheel={(e) => e.target.type === "number" && e.target.blur()}
             className={`w-full bg-cream-dark/30 rounded-xl border transition-all duration-300 px-6 py-4 outline-none text-charcoal placeholder:text-charcoal/20 ${
               error 
               ? "border-red-200 focus:ring-1 focus:ring-red-400" 
