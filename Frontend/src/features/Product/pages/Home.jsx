@@ -44,7 +44,7 @@ const Home = () => {
 
           <div className="flex items-center gap-10 md:gap-14 text-[10px] uppercase tracking-[0.3em] font-black text-[#7a6e63]">
             <Link to="/shop" className="hover:text-[#C9A96E] transition-all">
-              Archive
+              Shop
             </Link>
             {user ? (
               <div className="flex items-center gap-10">

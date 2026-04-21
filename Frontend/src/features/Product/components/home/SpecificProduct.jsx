@@ -14,14 +14,19 @@ import {
   ArrowRight,
 } from "lucide-react";
 import ProductDetailsSkeleton from "./ProductDetailsSkeleton";
+import Product from "./Product";
+import useCart from "../../../cart/hooks/useCart";
 
 const SpecificProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { handleGetProductById, handleGetVariant } = useProduct();
+  const { handleGetProductById, handleGetVariant, handleGetSimilarProducts } =
+    useProduct();
+  const { handleAddToCart } = useCart();
   const { user } = useAuth();
 
   const [product, setProduct] = useState(null);
+  const [similarProducts, setSimilarProducts] = useState([]);
   const [variants, setVariants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState(0);
@@ -48,30 +53,45 @@ const SpecificProduct = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const [prodRes, variantRes] = await Promise.all([
+        handleGetProductById(id),
+        handleGetVariant(id),
+      ]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const [prodRes, variantRes] = await Promise.all([
-          handleGetProductById(id),
-          handleGetVariant(id),
-        ]);
-
-        if (prodRes?.success) {
-          setProduct(prodRes.data);
-        }
-        if (variantRes?.success) {
-          setVariants(variantRes.variants || []);
-        }
-      } catch (error) {
-        console.error("Fetch error:", error);
-      } finally {
-        setLoading(false);
+      if (prodRes?.success) {
+        setProduct(prodRes.data);
       }
-    };
+      if (variantRes?.success) {
+        setVariants(variantRes.variants || []);
+      }
+    } catch (error) {
+      console.error("Fetch error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const fetchSimilarProducts = async () => {
+    setLoading(true);
+    try {
+      const res = await handleGetSimilarProducts(id);
+      // console.log(res)
+      if (res?.success) {
+        setSimilarProducts(res.data);
+      }
+    } catch (error) {
+      console.error("Fetch error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
     fetchData();
-  }, [id, handleGetProductById, handleGetVariant]);
+    fetchSimilarProducts();
+  }, [id, handleGetProductById, handleGetVariant, handleGetSimilarProducts]);
+  // console.log(similarProducts);
 
   if (loading) {
     return <ProductDetailsSkeleton />;
@@ -100,15 +120,15 @@ const SpecificProduct = () => {
   const displayTitle = product.title;
   const displayDescription = product.description;
 
-  const displaySellingPrice = selectedItem.price?.selling || selectedItem.price?.amount || 0;
+  const displaySellingPrice =
+    selectedItem.price?.selling || selectedItem.price?.amount || 0;
   const displayMrp = selectedItem.price?.mrp || displaySellingPrice || 0;
   const displayStock = selectedItem.stock || 49;
 
   const displaySize = selectedItem.size || "M";
   const displayColor = selectedItem.color || "Black";
   const displayFit = selectedItem.fit || "Slim";
-  const displayMaterial =
-    selectedItem.material || "Polyester";
+  const displayMaterial = selectedItem.material || "Polyester";
 
   // Gallery Logic: Use selected variant images if available, otherwise base product images
   const displayImages =
@@ -133,7 +153,7 @@ const SpecificProduct = () => {
             onClick={() => navigate("/shop")}
             className="text-[#1b1c1a]/40 cursor-pointer"
           >
-          Shop
+            Shop
           </span>
           <span className="text-[#e8e2da]">/</span>
           <span className="text-[#1b1c1a] truncate max-w-[150px]">
@@ -373,13 +393,18 @@ const SpecificProduct = () => {
               <button
                 disabled={displayStock <= 0}
                 onClick={() =>
-                  user ? console.log("Added") : navigate("/login")
+                  user
+                    ? handleAddToCart({
+                        productId: product?._id,
+                        variantId: activeVariant?._id,
+                      })
+                    : navigate("/login")
                 }
                 className={`w-full cursor-pointer h-20 text-[11px] font-black uppercase tracking-[0.4em] transition-all rounded-2xl flex items-center justify-center gap-4 shadow-luxury active:scale-[0.98] group ${displayStock > 0 ? "bg-[#1b1c1a] text-white hover:bg-[#C9A96E]" : "bg-[#e8e2da] text-[#7a6e63] cursor-not-allowed"}`}
               >
                 {displayStock > 0 ? (
                   <>
-                    Add to Inventory{" "}
+                    Add to Cart{" "}
                     <ArrowRight
                       size={16}
                       className="group-hover:translate-x-1 transition-transform"
@@ -389,7 +414,7 @@ const SpecificProduct = () => {
                   "Sold Out"
                 )}
               </button>
-              {/* <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-4">
                 <button className="flex-1 h-16 cursor-pointer border border-[#e8e2da] text-[#1b1c1a] text-[10px] font-black uppercase tracking-widest hover:border-[#1b1c1a] transition-all rounded-2xl group flex items-center justify-center gap-3">
                   <Heart
                     size={14}
@@ -403,11 +428,9 @@ const SpecificProduct = () => {
                     className="text-[#7a6e63] group-hover:text-[#C9A96E]"
                   />
                 </button>
-              </div> */}
+              </div>
             </div>
           </div>
-
-      
 
           {/* Atelier Attribution */}
           {/* <div className="p-10 bg-white rounded-3xl border border-[#e8e2da]/50 space-y-6">
@@ -436,7 +459,28 @@ const SpecificProduct = () => {
           </div> */}
         </div>
       </main>
+      {similarProducts.length > 0 && (
+        <section className="max-w-[1440px] mx-auto px-6 lg:px-12 py-32 border-t border-[#e8e2da]">
+          <div className="flex flex-col items-center gap-4 mb-20 text-center">
+            <div className="flex items-center gap-3">
+              <span className="w-6 h-[1px] bg-[#C9A96E]"></span>
+              <span className="text-[10px] tracking-[0.4em] text-[#C9A96E] uppercase font-black">
+                You May Also Admire
+              </span>
+              <span className="w-6 h-[1px] bg-[#C9A96E]"></span>
+            </div>
+            <h2 className="text-4xl lg:text-5xl font-serif text-[#1b1c1a] tracking-tight">
+              Complementary Archive
+            </h2>
+          </div>
 
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
+            {similarProducts.map((p) => (
+              <Product key={p._id} product={p} />
+            ))}
+          </div>
+        </section>
+      )}
       {/* Brand Signifier */}
       <footer className="py-24 bg-[#f3eee8]/30 border-t border-[#e8e2da] flex flex-col items-center gap-6">
         <div className="text-4xl font-serif font-black tracking-[0.5em] text-[#1b1c1a]">

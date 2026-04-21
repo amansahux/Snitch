@@ -21,7 +21,7 @@ const SellerProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { handleGetProductById, handleUpdateProduct, handleAddVariant } =
+  const { handleGetProductById, handleGetVariant, handleUpdateProduct, handleAddVariant } =
     useProduct();
 
   const [product, setProduct] = useState(null);
@@ -29,6 +29,7 @@ const SellerProductDetail = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("details"); // "details" | "variants"
   const [activeImage, setActiveImage] = useState(0);
+  const [variants, setVariants] = useState(null);
 
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isVariantModalOpen, setIsVariantModalOpen] = useState(false);
@@ -55,9 +56,18 @@ const SellerProductDetail = () => {
     setLoading(false);
   }, [id, handleGetProductById]);
 
+  const fetchVariants = useCallback(async () => {
+    const response = await handleGetVariant(id);
+    if (response?.success) {
+      setVariants(response.variants);
+    }
+    // console.log(response)
+  }, [id, handleGetVariant]);
+
   useEffect(() => {
     fetchProduct();
-  }, [fetchProduct]);
+    fetchVariants();
+  }, [fetchProduct, fetchVariants]);
 
   const onUpdateProduct = async (data) => {
     const response = await handleUpdateProduct(id, data);
@@ -71,8 +81,9 @@ const SellerProductDetail = () => {
     const response = await handleAddVariant(id, data);
     if (response?.success) {
       fetchProduct();
+      fetchVariants();
     }
-    console.log(response);
+    // console.log(response);
   };
 
   if (loading) {
@@ -105,7 +116,8 @@ const SellerProductDetail = () => {
       </div>
     );
   }
-
+console.log(variants)
+// console.log(product._id)
   return (
     <div className="min-h-screen bg-[#fbf9f6] flex font-sans overflow-x-hidden selection:bg-[#C9A96E] selection:text-white">
       {/* Sidebar Component */}
@@ -200,7 +212,12 @@ const SellerProductDetail = () => {
                     {product.title}
                   </h1>
                   <p className="text-3xl font-serif text-[#C9A96E]">
-                    ₹{(product.price?.selling || product.price?.amount || 0).toLocaleString()}
+                    ₹
+                    {(
+                      product.price?.selling ||
+                      product.price?.amount ||
+                      0
+                    ).toLocaleString()}
                   </p>
                 </div>
 
@@ -251,7 +268,7 @@ const SellerProductDetail = () => {
                   onClick={() => setActiveTab("variants")}
                   className={`text-[11px] font-black uppercase tracking-[0.3em] pb-4 border-b-2 transition-all whitespace-nowrap ${activeTab === "variants" ? "text-[#1b1c1a] border-[#C9A96E]" : "text-[#7a6e63]/40 border-transparent hover:text-[#7a6e63]"}`}
                 >
-                  Variation Archive ({product.variants?.length || 0})
+                  Variation Archive ({variants?.length || 0})
                 </button>
               </div>
 
@@ -284,7 +301,7 @@ const SellerProductDetail = () => {
                     </h3>
                     <button
                       onClick={() => setIsVariantModalOpen(true)}
-                      className="flex items-center gap-3 px-6 py-3 border border-[#e8e2da] rounded-full text-[10px] font-black uppercase tracking-widest text-[#1b1c1a] hover:border-[#C9A96E] hover:text-[#C9A96E] transition-all w-full sm:w-auto justify-center"
+                      className="flex cursor-pointer items-center gap-3 px-6 py-3 border border-[#e8e2da] rounded-full text-[10px] font-black uppercase tracking-widest text-[#1b1c1a] hover:border-[#C9A96E] hover:text-[#C9A96E] transition-all w-full sm:w-auto justify-center"
                     >
                       <Plus size={14} />
                       Add Variation
@@ -292,48 +309,64 @@ const SellerProductDetail = () => {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                    {product.variants?.map((v, idx) => (
+                    {variants?.map((v, idx) => (
                       <div
                         key={idx}
-                        className="bg-white p-8 rounded-2xl border border-[#e8e2da]/40 hover:shadow-2xl transition-all group"
+                        className="bg-white p-6 rounded-2xl border border-[#e8e2da] hover:border-[#C9A96E]/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-500 group relative flex flex-col h-full"
                       >
+                        {/* Top Section */}
                         <div className="flex justify-between items-start mb-6">
-                          <div className="bg-[#f3eee8] p-4 rounded-xl group-hover:bg-[#C9A96E]/10 transition-colors">
-                            <ImageIcon size={20} className="text-[#C9A96E]" />
+                          <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-[#f3eee8] border border-[#e8e2da]/50 group-hover:border-[#C9A96E]/30 transition-colors flex items-center justify-center shrink-0">
+                            {v?.images?.[0]?.url ? (
+                              <img src={v.images[0].url} alt="Variant" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                            ) : (
+                              <ImageIcon size={20} className="text-[#C9A96E]/50 group-hover:text-[#C9A96E] transition-colors" />
+                            )}
                           </div>
-                          <span className="text-[14px] font-serif text-[#C9A96E]">
-                            ₹{(v.price?.selling || v.price?.amount || 0).toLocaleString()}
-                          </span>
+                          
+                          <div className="text-right">
+                            <span className="inline-block bg-[#fbf9f6] text-[#C9A96E] px-3 py-1.5 rounded-full text-[12px] font-black tracking-widest border border-[#e8e2da]/50 shadow-sm group-hover:bg-[#C9A96E] group-hover:text-white transition-colors duration-500">
+                              ₹{(v.price?.selling || v.price?.amount || 0).toLocaleString()}
+                            </span>
+                          </div>
                         </div>
-                        <div className="space-y-4">
+
+                        {/* Middle Attributes */}
+                        <div className="flex-1 space-y-4">
                           <div className="flex flex-wrap gap-2">
                             {v.attributes &&
                               Object.entries(v.attributes).map(([key, val]) => (
-                                <span
+                                <div
                                   key={key}
-                                  className="bg-[#fbf9f6] px-3 py-1 rounded text-[10px] uppercase tracking-wider text-[#7a6e63] border border-[#e8e2da]"
+                                  className="flex flex-col bg-[#fbf9f6] px-3 py-1.5 rounded-lg border border-[#e8e2da]/60 group-hover:border-[#e8e2da] transition-colors"
                                 >
-                                  {key}: {val}
-                                </span>
+                                  <span className="text-[8px] font-black uppercase tracking-[0.2em] text-[#7a6e63]/60 mb-0.5">{key}</span>
+                                  <span className="text-[12px] font-serif text-[#1b1c1a]">{val}</span>
+                                </div>
                               ))}
                           </div>
-                          <div className="pt-4 border-t border-[#e8e2da]/40 flex justify-between items-center">
+                        </div>
+
+                        {/* Bottom Actions */}
+                        <div className="pt-5 mt-5 border-t border-[#e8e2da]/40 flex justify-between items-center mt-auto">
+                          <div className="flex items-center gap-2">
+                            <div className={`w-2 h-2 rounded-full ${v.stock > 0 ? 'bg-green-500/80' : 'bg-red-500/80'}`}></div>
                             <p className="text-[10px] font-black uppercase tracking-widest text-[#7a6e63]">
-                              Stock: {v.stock} pcs
+                              {v.stock} in Stock
                             </p>
-                            <div className="flex gap-4">
-                              <button className="text-[#7a6e63] hover:text-[#1b1c1a] transition-colors">
-                                <Edit size={14} />
-                              </button>
-                              <button className="text-[#7a6e63] hover:text-red-500 transition-colors">
-                                <Trash2 size={14} />
-                              </button>
-                            </div>
                           </div>
+                          {/* <div className="flex gap-2">
+                            <button className="p-2 bg-[#fbf9f6] text-[#7a6e63] rounded-lg hover:bg-[#1b1c1a] hover:text-white transition-all duration-300">
+                              <Edit size={14} />
+                            </button>
+                            <button className="p-2 bg-[#fbf9f6] text-[#7a6e63] rounded-lg hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-all duration-300">
+                              <Trash2 size={14} />
+                            </button>
+                          </div> */}
                         </div>
                       </div>
                     ))}
-                    {(!product.variants || product.variants.length === 0) && (
+                    {(!variants || variants.length === 0) && (
                       <div className="col-span-full py-20 text-center bg-[#f3eee8]/30 rounded-3xl border-2 border-dashed border-[#e8e2da]">
                         <p className="text-xl font-serif text-[#7a6e63]/50 italic">
                           No variations found in this archive.

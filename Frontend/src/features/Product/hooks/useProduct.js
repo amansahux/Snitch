@@ -7,6 +7,7 @@ import {
   getProductById,
   updateProduct,
   deleteProduct,
+  getSimilarProducts,
 } from "../services/product.api.js";
 import { setProducts, setSellerProducts } from "../state/product.slice.js";
 import { createVariant, getVariants } from "../services/variant.api.js";
@@ -95,6 +96,14 @@ const useProduct = () => {
     },
     [dispatch],
   );
+  const handleGetSimilarProducts = useCallback(async (id) => {
+    try {
+      const response = await getSimilarProducts(id);
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
 
   return {
     sellerProducts,
@@ -107,6 +116,7 @@ const useProduct = () => {
     handleUpdateProduct,
     handleAddVariant,
     handleGetVariant,
+    handleGetSimilarProducts
   };
 };
 

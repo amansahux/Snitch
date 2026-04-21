@@ -57,3 +57,12 @@ export const updateProduct = async (id, data) => {
     console.log(error);
   }
 };
+
+export const getSimilarProducts = async (id) => {
+  try {
+    const response = await API.get(`/similar/${id}`);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};

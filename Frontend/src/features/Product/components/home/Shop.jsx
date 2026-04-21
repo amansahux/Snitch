@@ -8,13 +8,15 @@ const Shop = () => {
   const { products, handleGetAllProducts } = useProduct();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("Newest");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [priceRange, setPriceRange] = useState(10000); // Max price
   const [isLoading, setIsLoading] = useState(true);
+  // console.log(products.length);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -57,19 +59,28 @@ const Shop = () => {
 
     // Sort logic
     switch (sortBy) {
-      case "Price Low to High":
-        result.sort((a, b) => a.price.amount - b.price.amount);
+      case "Low to High":
+        result.sort((a, b) => {
+          const priceA = a.price?.selling || a.price?.amount || 0;
+          const priceB = b.price?.selling || b.price?.amount || 0;
+          return priceA - priceB;
+        });
         break;
-      case "Price High to Low":
-        result.sort((a, b) => b.price.amount - a.price.amount);
+      case "High to Low":
+        result.sort((a, b) => {
+          const priceA = a.price?.selling || a.price?.amount || 0;
+          const priceB = b.price?.selling || b.price?.amount || 0;
+          return priceB - priceA;
+        });
         break;
       case "Popular":
         // Fallback to title if no popularity metric
         result.sort((a, b) => b.title.localeCompare(a.title));
         break;
       default: // Newest
-        // Assuming _id or a timestamp exists, here just reverse as fallback
-        result.reverse();
+        result.sort(
+          (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0),
+        );
     }
 
     return result;
@@ -78,7 +89,7 @@ const Shop = () => {
   const resetFilters = () => {
     setSearchQuery("");
     setSelectedCategory("All");
-    setPriceRange(10000);
+    setPriceRange(100000);
     setSortBy("Newest");
   };
 
@@ -133,46 +144,54 @@ const Shop = () => {
               />
             </div>
 
-            <div className="flex items-center gap-6 w-full md:w-auto ml-auto">
+            <div className="flex items-center gap-4 w-full md:w-auto ml-auto">
               {/* Premium Custom Dropdown */}
               <div className="relative flex-1 md:flex-none">
                 <button
                   onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
-                  className="w-full md:w-[200px] flex items-center justify-between px-6 py-2.5 bg-white border border-gold/10 rounded-full text-[10px] font-black uppercase tracking-widest hover:border-gold/40 transition-all active:scale-[0.98] group"
+                  className="w-full md:w-[180px] flex items-center justify-between px-4 sm:px-6 py-2.5 bg-white border border-gold/10 rounded-full text-[10px] font-black uppercase tracking-widest hover:border-gold/40 transition-all active:scale-[0.98] group"
                 >
-                  <span className="text-charcoal/40 group-hover:text-gold transition-colors">Sort:</span>
-                  <span className="text-charcoal ml-2 font-black">{sortBy}</span>
-                  <ChevronDown 
-                    size={14} 
-                    className={`ml-2 text-charcoal/30 transition-transform duration-500 ${isSortDropdownOpen ? "rotate-180 text-gold" : ""}`} 
+                  <span className="text-charcoal/40 group-hover:text-gold transition-colors">
+                    Sort:
+                  </span>
+                  <span className="text-charcoal ml-2 font-black">
+                    {sortBy}
+                  </span>
+                  <ChevronDown
+                    size={14}
+                    className={`ml-2 text-charcoal/30 transition-transform duration-500 ${isSortDropdownOpen ? "rotate-180 text-gold" : ""}`}
                   />
                 </button>
 
                 {/* Dropdown Menu */}
                 {isSortDropdownOpen && (
                   <>
-                    <div 
-                      className="fixed inset-0 z-40 bg-transparent" 
+                    <div
+                      className="fixed inset-0 z-40 bg-transparent"
                       onClick={() => setIsSortDropdownOpen(false)}
                     />
                     <div className="absolute top-[calc(100%+8px)] right-0 w-full md:w-[220px] bg-white rounded-2xl border border-gold/10 shadow-[0_20px_50px_rgba(0,0,0,0.1)] py-2 z-50 animate-in fade-in slide-in-from-top-4 duration-300">
-                      {["Newest", "Low to High", "High to Low", "Popular"].map((option) => (
-                        <button
-                          key={option}
-                          onClick={() => {
-                            setSortBy(option);
-                            setIsSortDropdownOpen(false);
-                          }}
-                          className={`w-full text-left px-6 py-3 text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-between group/opt ${
-                            sortBy === option ? "text-gold bg-gold/5" : "text-charcoal hover:bg-gold/5"
-                          }`}
-                        >
-                          {option}
-                          {sortBy === option && (
-                            <div className="w-1.5 h-1.5 rounded-full bg-gold animate-pulse"></div>
-                          )}
-                        </button>
-                      ))}
+                      {["Newest", "Low to High", "High to Low", "Popular"].map(
+                        (option) => (
+                          <button
+                            key={option}
+                            onClick={() => {
+                              setSortBy(option);
+                              setIsSortDropdownOpen(false);
+                            }}
+                            className={`w-full text-left px-6 py-3 text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-between group/opt ${
+                              sortBy === option
+                                ? "text-gold bg-gold/5"
+                                : "text-charcoal hover:bg-gold/5"
+                            }`}
+                          >
+                            {option}
+                            {sortBy === option && (
+                              <div className="w-1.5 h-1.5 rounded-full bg-gold animate-pulse"></div>
+                            )}
+                          </button>
+                        ),
+                      )}
                     </div>
                   </>
                 )}
@@ -214,7 +233,7 @@ const Shop = () => {
               </ul>
             </div>
 
-            <div>
+            {/* <div>
               <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-charcoal mb-6 flex items-center justify-between">
                 Price Range
                 <span className="w-8 h-[1px] bg-gold/30"></span>
@@ -223,7 +242,7 @@ const Shop = () => {
                 <input
                   type="range"
                   min="0"
-                  max="10000"
+                  max="100000"
                   step="500"
                   value={priceRange}
                   onChange={(e) => setPriceRange(Number(e.target.value))}
@@ -236,7 +255,7 @@ const Shop = () => {
                   </span>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             <div>
               <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-charcoal mb-6 flex items-center justify-between">
@@ -364,7 +383,7 @@ const Shop = () => {
                   <input
                     type="range"
                     min="0"
-                    max="10000"
+                    max="100000"
                     step="500"
                     value={priceRange}
                     onChange={(e) => setPriceRange(Number(e.target.value))}

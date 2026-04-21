@@ -5,6 +5,7 @@ import {
   getAllProducts,
   getProductById,
   getSellerProducts,
+  similarProduct,
   updateProduct,
 } from "../controllers/product.controller.js";
 import { authenticateSeller } from "../middlewares/auth.middleware.js";
@@ -26,4 +27,5 @@ productRouter.post("/update/:id", authenticateSeller, upload.array("images", 7),
 productRouter.get("/seller", authenticateSeller, getSellerProducts);
 productRouter.get("/", getAllProducts);
 productRouter.get("/:id", getProductById);
+productRouter.get("/similar/:id", similarProduct)
 export default productRouter;

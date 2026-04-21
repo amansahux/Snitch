@@ -1,9 +1,22 @@
 import { asyncHandler } from "../middlewares/asyncHandler.middleware.js";
 import uploadFile from "../services/storage.service.js";
 import productModel from "../models/product.model.js";
+import mongoose from "mongoose";
 
 export const createProduct = asyncHandler(async (req, res, next) => {
-  const { title, description, mrp, selling, currency, size, color, fit, material, category, stock } = req.body;
+  const {
+    title,
+    description,
+    mrp,
+    selling,
+    currency,
+    size,
+    color,
+    fit,
+    material,
+    category,
+    stock,
+  } = req.body;
   const seller = req.user.id; // decoded JWT payload contains "id"
 
   if (!req.files || req.files.length === 0) {
@@ -127,8 +140,20 @@ export const getProductById = asyncHandler(async (req, res, next) => {
 });
 
 export const updateProduct = asyncHandler(async (req, res, next) => {
-  const { title, description, mrp, selling, currency, category, stock, existingImages, size, color, fit, material } =
-    req.body;
+  const {
+    title,
+    description,
+    mrp,
+    selling,
+    currency,
+    category,
+    stock,
+    existingImages,
+    size,
+    color,
+    fit,
+    material,
+  } = req.body;
   console.log("BODY:", req.body);
   console.log("FILES:", req.files);
   const seller = req.user.id;
@@ -271,6 +296,73 @@ export const addVariant = asyncHandler(async (req, res, next) => {
     message: "Variant added successfully",
     success: true,
     data: product,
+    error: null,
+  });
+});
+
+export const similarProduct = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const product = await productModel.findById(id);
+
+  if (!product) {
+    const error = new Error("Product not found");
+    error.statusCode = 404;
+    return next(error);
+  }
+
+  const similarProducts = await productModel.aggregate([
+    {
+      $match: {
+        _id: { $ne: new mongoose.Types.ObjectId(id) },
+        category: product.category,
+      },
+    },
+    {
+      $addFields: {
+        score: {
+          $add: [
+            {
+              $cond: [{ $eq: ["$color", product.color] }, 3, 0],
+            },
+            {
+              $cond: [{ $eq: ["$fit", product.fit] }, 2, 0],
+            },
+            {
+              $cond: [{ $eq: ["$material", product.material] }, 2, 0],
+            },
+          ],
+        },
+      },
+    },
+    {
+      $sort: {
+        score: -1,
+        createdAt: -1,
+      },
+    },
+    {
+      $limit: 4,
+    },
+    {
+      $project: {
+        title: 1,
+        description: 1,
+        category: 1,
+        color: 1,
+        fit: 1,
+        material: 1,
+        price: 1,
+        images: 1,
+        stock: 1,
+        score: 1,
+      },
+    },
+  ]);
+
+  return res.status(200).json({
+    message: "Similar products fetched successfully",
+    success: true,
+    data: similarProducts,
     error: null,
   });
 });
