@@ -52,6 +52,34 @@ export const createProduct = asyncHandler(async (req, res, next) => {
   });
 });
 
+export const deleteProduct = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const seller = req.user.id;
+
+  const product = await productModel.findById(id);
+
+  if (!product) {
+    const error = new Error("Product not found");
+    error.statusCode = 404;
+    return next(error);
+  }
+
+  if (product.seller.toString() !== seller) {
+    const error = new Error("Unauthorized");
+    error.statusCode = 401;
+    return next(error);
+  }
+
+  await product.deleteOne();
+
+  return res.status(200).json({
+    message: "Product deleted successfully",
+    success: true,
+    data: null,
+    error: null,
+  });
+});
+
 export const getSellerProducts = asyncHandler(async (req, res, next) => {
   const seller = req.user.id;
 

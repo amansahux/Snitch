@@ -13,6 +13,15 @@ export const createProducts = async (data) => {
   }
 };
 
+export const deleteProduct = async (id) => {
+  try {
+    const response = await API.delete(`/delete/${id}`);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const getSellerProducts = async () => {
   try {
     const response = await API.get("/seller");

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import {
-  addVariant,
   createProduct,
+  deleteProduct,
   getAllProducts,
   getProductById,
   getSellerProducts,
@@ -21,6 +21,7 @@ productRouter.post(
   validate(createProductSchema),
   createProduct,
 );
+productRouter.delete("/delete/:id", authenticateSeller, deleteProduct)
 productRouter.post("/update/:id", authenticateSeller, upload.array("images", 7), validate(updateProductSchema), updateProduct )
 productRouter.get("/seller", authenticateSeller, getSellerProducts);
 productRouter.get("/", getAllProducts);

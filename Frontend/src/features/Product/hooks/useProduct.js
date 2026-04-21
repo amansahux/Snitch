@@ -6,6 +6,7 @@ import {
   getSellerProducts,
   getProductById,
   updateProduct,
+  deleteProduct,
 } from "../services/product.api.js";
 import { setProducts, setSellerProducts } from "../state/product.slice.js";
 import { createVariant, getVariants } from "../services/variant.api.js";
@@ -23,6 +24,14 @@ const useProduct = () => {
     }
   }, []);
 
+  const handleDeleteProduct = useCallback(async (id) => {
+    try {
+      const response = await deleteProduct(id);
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
   const handleGetSellerProducts = useCallback(async () => {
     try {
       const response = await getSellerProducts();
@@ -91,6 +100,7 @@ const useProduct = () => {
     sellerProducts,
     products,
     handleCreateProduct,
+    handleDeleteProduct,
     handleGetSellerProducts,
     handleGetAllProducts,
     handleGetProductById,

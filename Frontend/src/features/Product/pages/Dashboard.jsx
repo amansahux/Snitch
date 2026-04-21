@@ -116,7 +116,8 @@ const StatCard = ({ label, value, sub, accent }) => (
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { sellerProducts, handleGetSellerProducts } = useProduct();
+  const { sellerProducts, handleGetSellerProducts, handleDeleteProduct } =
+    useProduct();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -163,7 +164,9 @@ const Dashboard = () => {
       (p) => getProductStock(p) === 0,
     ).length;
 
-    const productsWithPrice = sellerProducts.filter(p => getProductPrice(p) > 0);
+    const productsWithPrice = sellerProducts.filter(
+      (p) => getProductPrice(p) > 0,
+    );
     const avgPrice =
       productsWithPrice.length > 0
         ? Math.round(
@@ -193,8 +196,7 @@ const Dashboard = () => {
     if (!confirmDelete) return;
     setIsDeleting(true);
     try {
-      // await deleteProduct(confirmDelete._id);  ← wire up when API ready
-      console.log("Delete:", confirmDelete._id);
+      await handleDeleteProduct(confirmDelete._id);
       await handleGetSellerProducts(); // refresh list
     } catch (err) {
       console.error(err);
