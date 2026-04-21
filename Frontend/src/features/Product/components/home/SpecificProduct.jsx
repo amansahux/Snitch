@@ -15,15 +15,15 @@ import {
 } from "lucide-react";
 import ProductDetailsSkeleton from "./ProductDetailsSkeleton";
 import Product from "./Product";
-import useCart from "../../../cart/hooks/useCart";
 
 const SpecificProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { handleGetProductById, handleGetVariant, handleGetSimilarProducts } =
     useProduct();
-  const { handleAddToCart } = useCart();
   const { user } = useAuth();
+
+  
 
   const [product, setProduct] = useState(null);
   const [similarProducts, setSimilarProducts] = useState([]);
@@ -394,10 +394,7 @@ const SpecificProduct = () => {
                 disabled={displayStock <= 0}
                 onClick={() =>
                   user
-                    ? handleAddToCart({
-                        productId: product?._id,
-                        variantId: activeVariant?._id,
-                      })
+                    ? console.log("Added")
                     : navigate("/login")
                 }
                 className={`w-full cursor-pointer h-20 text-[11px] font-black uppercase tracking-[0.4em] transition-all rounded-2xl flex items-center justify-center gap-4 shadow-luxury active:scale-[0.98] group ${displayStock > 0 ? "bg-[#1b1c1a] text-white hover:bg-[#C9A96E]" : "bg-[#e8e2da] text-[#7a6e63] cursor-not-allowed"}`}
