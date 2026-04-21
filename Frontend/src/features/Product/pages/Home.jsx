@@ -70,9 +70,9 @@ const Home = () => {
                 </Link>
                 <Link
                   to="/register"
-                  className="hidden sm:block px-8 py-3 bg-[#1b1c1a] text-white rounded-full hover:bg-[#C9A96E] transition-all"
+                  className="hidden md:block hover:text-[#C9A96E] transition-all"
                 >
-                  Join Atelier
+                Sign up
                 </Link>
               </div>
             )}
