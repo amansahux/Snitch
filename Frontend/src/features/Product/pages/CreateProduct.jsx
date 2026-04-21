@@ -32,8 +32,15 @@ const CreateProduct = () => {
     defaultValues: {
       title: "",
       description: "",
-      price: "",
+      mrp: "",
+      selling: "",
       currency: "INR",
+      size: "M",
+      color: "",
+      fit: "Regular",
+      material: "",
+      category: "Tops",
+      stock: "",
       images: [],
     },
   });
@@ -45,13 +52,20 @@ const CreateProduct = () => {
       const formData = new FormData();
       formData.append("title", data.title);
       formData.append("description", data.description);
-      formData.append("priceAmount", data.price);
-      formData.append("priceCurrency", data.currency);
+      formData.append("mrp", data.mrp);
+      formData.append("selling", data.selling);
+      formData.append("currency", data.currency);
+      formData.append("size", data.size);
+      formData.append("color", data.color);
+      formData.append("fit", data.fit);
+      formData.append("material", data.material);
+      formData.append("category", data.category);
+      formData.append("stock", data.stock);
       data.images.forEach((imgObj) => {
         formData.append("images", imgObj.file);
       });
 
-      const res = await handleCreateProduct(formData);
+      await handleCreateProduct(formData);
       data.images.forEach((img) => URL.revokeObjectURL(img.preview));
       toast.success("Product published successfully!", { id: loadingToast });
       reset();
@@ -171,14 +185,23 @@ const CreateProduct = () => {
                 >
                     <div className="space-y-6">
                         <InputField
-                            id="price"
+                            id="mrp"
                             type="number"
-                            step="0.01"
-                            label="Retail Price"
+                            label="MRP"
                             placeholder="0.00"
                             required
-                            {...register("price")}
-                            error={errors.price?.message}
+                            {...register("mrp")}
+                            error={errors.mrp?.message}
+                        />
+
+                        <InputField
+                            id="selling"
+                            type="number"
+                            label="Selling Price"
+                            placeholder="0.00"
+                            required
+                            {...register("selling")}
+                            error={errors.selling?.message}
                         />
 
                         <Controller
@@ -200,6 +223,99 @@ const CreateProduct = () => {
                                     error={errors.currency?.message}
                                 />
                             )}
+                        />
+
+                        <Controller
+                            name="size"
+                            control={control}
+                            render={({ field: { value, onChange } }) => (
+                                <SelectField
+                                    id="size"
+                                    label="Size"
+                                    required
+                                    options={[
+                                        { value: "XS", label: "XS" },
+                                        { value: "S", label: "S" },
+                                        { value: "M", label: "M" },
+                                        { value: "L", label: "L" },
+                                        { value: "XL", label: "XL" },
+                                        { value: "XXL", label: "XXL" },
+                                    ]}
+                                    value={value}
+                                    onChange={onChange}
+                                    error={errors.size?.message}
+                                />
+                            )}
+                        />
+
+                        <InputField
+                            id="color"
+                            label="Color"
+                            placeholder="e.g. Midnight Black"
+                            required
+                            {...register("color")}
+                            error={errors.color?.message}
+                        />
+
+                        <Controller
+                            name="fit"
+                            control={control}
+                            render={({ field: { value, onChange } }) => (
+                                <SelectField
+                                    id="fit"
+                                    label="Fit"
+                                    required
+                                    options={[
+                                        { value: "Slim", label: "Slim" },
+                                        { value: "Regular", label: "Regular" },
+                                        { value: "Relaxed", label: "Relaxed" },
+                                        { value: "Oversized", label: "Oversized" },
+                                    ]}
+                                    value={value}
+                                    onChange={onChange}
+                                    error={errors.fit?.message}
+                                />
+                            )}
+                        />
+
+                        <InputField
+                            id="material"
+                            label="Material"
+                            placeholder="e.g. 100% Organic Cotton"
+                            required
+                            {...register("material")}
+                            error={errors.material?.message}
+                        />
+
+                        <Controller
+                            name="category"
+                            control={control}
+                            render={({ field: { value, onChange } }) => (
+                                <SelectField
+                                    id="category"
+                                    label="Category"
+                                    required
+                                    options={[
+                                        { value: "Tops", label: "Tops" },
+                                        { value: "Bottoms", label: "Bottoms" },
+                                        { value: "Outerwear", label: "Outerwear" },
+                                        { value: "Footwear", label: "Footwear" },
+                                    ]}
+                                    value={value}
+                                    onChange={onChange}
+                                    error={errors.category?.message}
+                                />
+                            )}
+                        />
+
+                        <InputField
+                            id="stock"
+                            type="number"
+                            label="Initial Stock Level"
+                            placeholder="e.g. 50"
+                            required
+                            {...register("stock")}
+                            error={errors.stock?.message}
                         />
 
                         <div className="pt-4 border-t border-charcoal/5">

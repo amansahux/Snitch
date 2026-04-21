@@ -100,9 +100,8 @@ const SpecificProduct = () => {
   const displayTitle = product.title;
   const displayDescription = product.description;
 
-  const displaySellingPrice =
-    selectedItem.price?.amount || selectedItem.price.selling;
-  const displayMrp = selectedItem.price?.mrp || 799;
+  const displaySellingPrice = selectedItem.price?.selling || selectedItem.price?.amount || 0;
+  const displayMrp = selectedItem.price?.mrp || displaySellingPrice || 0;
   const displayStock = selectedItem.stock || 49;
 
   const displaySize = selectedItem.size || "M";
@@ -134,7 +133,7 @@ const SpecificProduct = () => {
             onClick={() => navigate("/shop")}
             className="text-[#1b1c1a]/40 cursor-pointer"
           >
-            {product?.category || "Shop"}
+          Shop
           </span>
           <span className="text-[#e8e2da]">/</span>
           <span className="text-[#1b1c1a] truncate max-w-[150px]">
@@ -155,7 +154,7 @@ const SpecificProduct = () => {
 
       <main className="max-w-[1440px] mx-auto px-6 lg:px-12 pb-32 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24">
         {/* Gallery Section */}
-        <div className="lg:col-span-7 flex flex-col items-center gap-8">
+        <div className="lg:col-span-7 flex flex-col items-center gap-12">
           <div className="w-full flex flex-col md:flex-row-reverse gap-6">
             {/* Main Visual */}
             <div className="flex-1 relative aspect-[4/5] overflow-hidden rounded-3xl bg-[#f3eee8] shadow-2xl group">
@@ -190,6 +189,25 @@ const SpecificProduct = () => {
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Luxury Benefits moved for better layout balance */}
+          <div className="w-full grid grid-cols-1 gap-10 py-12 border-y border-[#e8e2da]">
+            {benefits.map((b, i) => (
+              <div key={i} className="flex items-center gap-8 group px-4">
+                <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-[#C9A96E] shadow-sm group-hover:bg-[#C9A96E] group-hover:text-white transition-all duration-500 border border-[#e8e2da]/50">
+                  {b.icon}
+                </div>
+                <div className="space-y-1.5">
+                  <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#1b1c1a]">
+                    {b.title}
+                  </p>
+                  <p className="text-[13px] text-[#7a6e63] font-inter font-light">
+                    {b.text}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -371,7 +389,7 @@ const SpecificProduct = () => {
                   "Sold Out"
                 )}
               </button>
-              <div className="flex flex-col sm:flex-row gap-4">
+              {/* <div className="flex flex-col sm:flex-row gap-4">
                 <button className="flex-1 h-16 cursor-pointer border border-[#e8e2da] text-[#1b1c1a] text-[10px] font-black uppercase tracking-widest hover:border-[#1b1c1a] transition-all rounded-2xl group flex items-center justify-center gap-3">
                   <Heart
                     size={14}
@@ -385,31 +403,14 @@ const SpecificProduct = () => {
                     className="text-[#7a6e63] group-hover:text-[#C9A96E]"
                   />
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
 
-          {/* Luxury Benefits */}
-          <div className="grid grid-cols-1 gap-8 py-10 border-y border-[#e8e2da]">
-            {benefits.map((b, i) => (
-              <div key={i} className="flex gap-5 group">
-                <div className="w-12 h-12 bg-[#f3eee8] rounded-2xl flex items-center justify-center text-[#C9A96E] group-hover:bg-[#C9A96E] group-hover:text-white transition-all duration-500">
-                  {b.icon}
-                </div>
-                <div className="space-y-1">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-[#1b1c1a]">
-                    {b.title}
-                  </p>
-                  <p className="text-[11px] text-[#7a6e63] leading-relaxed">
-                    {b.text}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
+      
 
           {/* Atelier Attribution */}
-          <div className="p-10 bg-white rounded-3xl border border-[#e8e2da]/50 space-y-6">
+          {/* <div className="p-10 bg-white rounded-3xl border border-[#e8e2da]/50 space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-[#f3eee8] rounded-full flex items-center justify-center text-[#C9A96E] font-serif text-xl border border-[#e8e2da]">
@@ -432,7 +433,7 @@ const SpecificProduct = () => {
               "This piece embodies our dedication to architectural silhouettes
               and sustainable luxury. Available in strictly limited allotments."
             </p>
-          </div>
+          </div> */}
         </div>
       </main>
 

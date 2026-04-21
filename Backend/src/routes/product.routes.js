@@ -10,7 +10,7 @@ import {
 import { authenticateSeller } from "../middlewares/auth.middleware.js";
 import upload from "../middlewares/multer.middleware.js";
 import { validate } from "../middlewares/zod.middleware.js";
-import { addVariantSchema, createProductSchema, updateProductSchema } from "../validators/product.validator.js";
+import { createProductSchema, updateProductSchema } from "../validators/product.validator.js";
 
 const productRouter = Router();
 
@@ -22,7 +22,6 @@ productRouter.post(
   createProduct,
 );
 productRouter.post("/update/:id", authenticateSeller, upload.array("images", 7), validate(updateProductSchema), updateProduct )
-productRouter.post("/add-variant/:id", authenticateSeller, upload.array("images", 7), validate(addVariantSchema), addVariant)
 productRouter.get("/seller", authenticateSeller, getSellerProducts);
 productRouter.get("/", getAllProducts);
 productRouter.get("/:id", getProductById);

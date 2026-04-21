@@ -3,7 +3,7 @@ import uploadFile from "../services/storage.service.js";
 import productModel from "../models/product.model.js";
 
 export const createProduct = asyncHandler(async (req, res, next) => {
-  const { title, description, priceAmount, priceCurrency } = req.body;
+  const { title, description, mrp, selling, currency, size, color, fit, material, category, stock } = req.body;
   const seller = req.user.id; // decoded JWT payload contains "id"
 
   if (!req.files || req.files.length === 0) {
@@ -30,9 +30,16 @@ export const createProduct = asyncHandler(async (req, res, next) => {
     title,
     description,
     price: {
-      amount: priceAmount,
-      currency: priceCurrency || "INR",
+      mrp: Number(mrp),
+      selling: Number(selling),
+      currency: currency || "INR",
     },
+    size,
+    color,
+    fit,
+    material,
+    category,
+    stock: Number(stock),
     seller,
     images,
   });
@@ -92,7 +99,7 @@ export const getProductById = asyncHandler(async (req, res, next) => {
 });
 
 export const updateProduct = asyncHandler(async (req, res, next) => {
-  const { title, description, priceAmount, category, stock, existingImages } =
+  const { title, description, mrp, selling, currency, category, stock, existingImages, size, color, fit, material } =
     req.body;
   console.log("BODY:", req.body);
   console.log("FILES:", req.files);
@@ -133,9 +140,15 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
 
   if (title) product.title = title;
   if (description) product.description = description;
-  if (priceAmount) product.price.amount = priceAmount;
+  if (mrp) product.price.mrp = Number(mrp);
+  if (selling) product.price.selling = Number(selling);
+  if (currency) product.price.currency = currency;
   if (category) product.category = category;
   if (stock) product.stock = stock;
+  if (size) product.size = size;
+  if (color) product.color = color;
+  if (fit) product.fit = fit;
+  if (material) product.material = material;
 
   // Handle Images Merge
   let finalImages = [];

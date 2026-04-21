@@ -10,16 +10,31 @@ export const productValidationSchema = z.object({
     .string()
     .min(20, { message: "Description must be at least 20 characters long" }),
   
-  price: z.coerce
-    .number({ invalid_type_error: "Price must be a number" })
-    .positive({ message: "Price must be greater than 0" }),
+  mrp: z.coerce
+    .number({ invalid_type_error: "MRP must be a number" })
+    .positive({ message: "MRP must be greater than 0" }),
+  
+  selling: z.coerce
+    .number({ invalid_type_error: "Selling price must be a number" })
+    .positive({ message: "Selling price must be greater than 0" }),
   
   currency: z.enum(["INR", "USD", "EUR", "GBP"], {
     errorMap: () => ({ message: "Please select a valid currency" }),
   }),
 
-  // The images array is validated further in the component (for file typing/size), 
-  // but we ensure it meets the count requirements here.
+  size: z.enum(["XS", "S", "M", "L", "XL", "XXL"], {
+    errorMap: () => ({ message: "Please select a valid size" }),
+  }),
+  color: z.string().min(1, "Color is required"),
+  fit: z.enum(["Slim", "Regular", "Relaxed", "Oversized"]).default("Regular"),
+  material: z.string().min(1, "Material is required"),
+  category: z.enum(["Tops", "Bottoms", "Outerwear", "Footwear"], {
+    errorMap: () => ({ message: "Please select a valid category" }),
+  }),
+  stock: z.coerce
+    .number({ invalid_type_error: "Stock must be a number" })
+    .min(0, { message: "Stock cannot be negative" }),
+
   images: z
     .array(z.any())
     .min(1, { message: "You must upload at least 1 image" })
@@ -27,11 +42,40 @@ export const productValidationSchema = z.object({
 });
 
 export const updateProductSchema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters"),
-  description: z.string().min(10, "Description must be at least 10 characters"),
-  price: z.object({
-    amount: z.preprocess((val) => Number(val), z.number().min(1, "Price must be greater than 0")),
-  }),
-  category: z.string().min(1, "Please select a category"),
-  stock: z.preprocess((val) => Number(val), z.number().min(0, "Stock cannot be negative")),
+  title: z.string().min(3, "Title must be at least 3 characters").optional(),
+  description: z.string().min(10, "Description must be at least 10 characters").optional(),
+  mrp: z.preprocess((val) => Number(val), z.number().min(1, "MRP must be greater than 0")).optional(),
+  selling: z.preprocess((val) => Number(val), z.number().min(1, "Selling price must be greater than 0")).optional(),
+  category: z.string().min(1, "Please select a category").optional(),
+  stock: z.preprocess((val) => Number(val), z.number().min(0, "Stock cannot be negative")).optional(),
+  size: z.enum(["XS", "S", "M", "L", "XL", "XXL"]).optional(),
+  color: z.string().optional(),
+  fit: z.enum(["Slim", "Regular", "Relaxed", "Oversized"]).optional(),
+  material: z.string().optional(),
 });
+export const addVariantSchema = z.object({
+  size: z.enum(["XS", "S", "M", "L", "XL", "XXL"], {
+    errorMap: () => ({ message: "Please select a valid size" }),
+  }),
+  color: z.string().min(1, "Color is required").trim(),
+  fit: z.enum(["Slim", "Regular", "Relaxed", "Oversized"], {
+    errorMap: () => ({ message: "Please select a fit type" }),
+  }),
+  material: z.string().min(1, "Material is required"),
+  price: z.object({
+    mrp: z.preprocess(
+      (val) => Number(val),
+      z.number().min(1, "MRP is required"),
+    ),
+    selling: z.preprocess(
+      (val) => Number(val),
+      z.number().min(1, "Selling price is required"),
+    ),
+    currency: z.string().default("INR"),
+  }),
+  stock: z.preprocess(
+    (val) => Number(val),
+    z.number().min(0, "Stock cannot be negative"),
+  ),
+});
+  

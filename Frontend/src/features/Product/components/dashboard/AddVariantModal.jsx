@@ -9,32 +9,9 @@ import {
   SelectField,
 } from "../CreateProduct/FormElements";
 import { ImageUploadZone } from "../CreateProduct/ImageUploadZone";
+import { addVariantSchema } from "../../validation/product.validation.js";
 
-const addVariantSchema = z.object({
-  size: z.enum(["XS", "S", "M", "L", "XL", "XXL"], {
-    errorMap: () => ({ message: "Please select a valid size" }),
-  }),
-  color: z.string().min(1, "Color is required").trim(),
-  fit: z.enum(["Slim", "Regular", "Relaxed", "Oversized"], {
-    errorMap: () => ({ message: "Please select a fit type" }),
-  }),
-  material: z.string().min(1, "Material is required"),
-  price: z.object({
-    mrp: z.preprocess(
-      (val) => Number(val),
-      z.number().min(1, "MRP is required"),
-    ),
-    selling: z.preprocess(
-      (val) => Number(val),
-      z.number().min(1, "Selling price is required"),
-    ),
-    currency: z.string().default("INR"),
-  }),
-  stock: z.preprocess(
-    (val) => Number(val),
-    z.number().min(0, "Stock cannot be negative"),
-  ),
-});
+
 
 const AddVariantModal = ({ isOpen, onClose, onAdd }) => {
   const [images, setImages] = useState([]);

@@ -70,7 +70,7 @@ const ProductTable = ({
                 product?.images?.[0] ||
                 PLACEHOLDER_IMG;
               const price = formatPrice(
-                product?.price?.amount ?? product?.price,
+                product?.price?.selling,
                 product?.price?.currency
               );
 

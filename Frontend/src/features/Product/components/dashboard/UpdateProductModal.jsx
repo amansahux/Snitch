@@ -28,11 +28,15 @@ const UpdateProductModal = ({ isOpen, onClose, product, onUpdate }) => {
     defaultValues: {
       title: product?.title || "",
       description: product?.description || "",
-      price: {
-        amount: product?.price?.amount || 0,
-      },
+      mrp: product?.price?.mrp || 0,
+      selling: product?.price?.selling || 0,
+      currency: product?.price?.currency || "INR",
       category: product?.category || "",
       stock: product?.stock || 0,
+      size: product?.size || "M",
+      color: product?.color || "",
+      fit: product?.fit || "Regular",
+      material: product?.material || "",
     },
   });
 
@@ -45,11 +49,15 @@ const UpdateProductModal = ({ isOpen, onClose, product, onUpdate }) => {
         reset({
           title: product.title,
           description: product.description,
-          price: {
-            amount: product.price?.amount || 0,
-          },
+          mrp: product.price?.mrp || 0,
+          selling: product.price?.selling || 0,
+          currency: product.price?.currency || "INR",
           category: product.category,
           stock: product.stock,
+          size: product.size || "M",
+          color: product.color || "",
+          fit: product.fit || "Regular",
+          material: product.material || "",
         });
 
         // Initialize images from product ONLY ONCE
@@ -85,9 +93,15 @@ const UpdateProductModal = ({ isOpen, onClose, product, onUpdate }) => {
     const formData = new FormData();
     formData.append("title", data.title);
     formData.append("description", data.description);
-    formData.append("priceAmount", data.price.amount);
+    formData.append("mrp", data.mrp);
+    formData.append("selling", data.selling);
+    formData.append("currency", data.currency);
     formData.append("category", data.category);
     formData.append("stock", data.stock);
+    formData.append("size", data.size);
+    formData.append("color", data.color);
+    formData.append("fit", data.fit);
+    formData.append("material", data.material);
 
     const existingUrls = images
       .filter((img) => img.isExisting)
@@ -157,18 +171,73 @@ const UpdateProductModal = ({ isOpen, onClose, product, onUpdate }) => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <InputField
-              id="price"
-              label="Valuation (₹)"
+              id="mrp"
+              label="MRP (₹)"
               type="number"
-              error={errors.price?.amount?.message}
-              {...register("price.amount")}
+              error={errors.mrp?.message}
+              {...register("mrp")}
             />
+            <InputField
+              id="selling"
+              label="Selling Price (₹)"
+              type="number"
+              error={errors.selling?.message}
+              {...register("selling")}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <InputField
               id="stock"
               label="Inventory Level"
               type="number"
               error={errors.stock?.message}
               {...register("stock")}
+            />
+            <InputField
+              id="color"
+              label="Color / Wash"
+              placeholder="e.g. Midnight Black"
+              error={errors.color?.message}
+              {...register("color")}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <SelectField
+              id="size"
+              label="Size"
+              options={[
+                { label: "XS", value: "XS" },
+                { label: "S", value: "S" },
+                { label: "M", value: "M" },
+                { label: "L", value: "L" },
+                { label: "XL", value: "XL" },
+                { label: "XXL", value: "XXL" },
+              ]}
+              value={watch("size")}
+              onChange={(val) => setValue("size", val)}
+              error={errors.size?.message}
+            />
+            <SelectField
+              id="fit"
+              label="Fit"
+              options={[
+                { label: "Slim", value: "Slim" },
+                { label: "Regular", value: "Regular" },
+                { label: "Relaxed", value: "Relaxed" },
+                { label: "Oversized", value: "Oversized" },
+              ]}
+              value={watch("fit")}
+              onChange={(val) => setValue("fit", val)}
+              error={errors.fit?.message}
+            />
+            <InputField
+              id="material"
+              label="Material"
+              placeholder="e.g. Premium Cotton"
+              error={errors.material?.message}
+              {...register("material")}
             />
           </div>
 

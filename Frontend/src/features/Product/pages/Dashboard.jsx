@@ -29,7 +29,7 @@ const DEFAULT_FILTERS = {
 };
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
-const getProductPrice = (p) => p?.price?.amount ?? p?.price ?? 0;
+const getProductPrice = (p) => p?.price?.selling || p?.price?.amount || 0;
 
 const getProductStock = (p) => p?.stock ?? 0;
 
@@ -42,14 +42,14 @@ const applyFilters = (products, filters) => {
     result = result.filter(
       (p) =>
         p.title?.toLowerCase().includes(q) ||
-        p.description?.toLowerCase().includes(q)
+        p.description?.toLowerCase().includes(q),
     );
   }
 
   // Category
   if (filters.category && filters.category !== "All") {
     result = result.filter(
-      (p) => p.category?.toLowerCase() === filters.category.toLowerCase()
+      (p) => p.category?.toLowerCase() === filters.category.toLowerCase(),
     );
   }
 
@@ -58,7 +58,7 @@ const applyFilters = (products, filters) => {
     result = result.filter((p) => getProductStock(p) > 10);
   } else if (filters.stock === "low_stock") {
     result = result.filter(
-      (p) => getProductStock(p) > 0 && getProductStock(p) <= 10
+      (p) => getProductStock(p) > 0 && getProductStock(p) <= 10,
     );
   } else if (filters.stock === "out_of_stock") {
     result = result.filter((p) => getProductStock(p) === 0);
@@ -67,12 +67,12 @@ const applyFilters = (products, filters) => {
   // Price
   if (filters.minPrice) {
     result = result.filter(
-      (p) => getProductPrice(p) >= Number(filters.minPrice)
+      (p) => getProductPrice(p) >= Number(filters.minPrice),
     );
   }
   if (filters.maxPrice) {
     result = result.filter(
-      (p) => getProductPrice(p) <= Number(filters.maxPrice)
+      (p) => getProductPrice(p) <= Number(filters.maxPrice),
     );
   }
 
@@ -103,7 +103,9 @@ const StatCard = ({ label, value, sub, accent }) => (
     <p className="text-xs font-semibold text-black uppercase tracking-widest mb-2">
       {label}
     </p>
-    <p className={`text-2xl font-black tracking-tight ${accent || "text-black"}`}>
+    <p
+      className={`text-2xl font-black tracking-tight ${accent || "text-black"}`}
+    >
       {value}
     </p>
     {sub && <p className="text-xs text-black mt-1">{sub}</p>}
@@ -137,10 +139,13 @@ const Dashboard = () => {
   // ── Filtered & paginated products ─────────────────────────────────────────
   const filteredProducts = useMemo(
     () => applyFilters(sellerProducts, filters),
-    [sellerProducts, filters]
+    [sellerProducts, filters],
   );
 
-  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / ITEMS_PER_PAGE));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredProducts.length / ITEMS_PER_PAGE),
+  );
 
   const paginatedProducts = useMemo(() => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -155,13 +160,15 @@ const Dashboard = () => {
     const total = sellerProducts.length;
     const inStock = sellerProducts.filter((p) => getProductStock(p) > 0).length;
     const outOfStock = sellerProducts.filter(
-      (p) => getProductStock(p) === 0
+      (p) => getProductStock(p) === 0,
     ).length;
+
+    const productsWithPrice = sellerProducts.filter(p => getProductPrice(p) > 0);
     const avgPrice =
-      total > 0
+      productsWithPrice.length > 0
         ? Math.round(
-            sellerProducts.reduce((acc, p) => acc + getProductPrice(p), 0) /
-              total
+            productsWithPrice.reduce((acc, p) => acc + getProductPrice(p), 0) /
+              productsWithPrice.length,
           )
         : 0;
 
@@ -263,7 +270,8 @@ const Dashboard = () => {
                   </h2>
                   {!isLoading && (
                     <p className="text-[11px] text-zinc-500">
-                      {filteredProducts.length} of {sellerProducts.length} products
+                      {filteredProducts.length} of {sellerProducts.length}{" "}
+                      products
                     </p>
                   )}
                 </div>
@@ -273,7 +281,7 @@ const Dashboard = () => {
               <button
                 onClick={() => navigate("/seller/create-product")}
                 className="hidden sm:inline-flex items-center gap-2 px-4 py-2 bg-[#C9A96E] hover:bg-[#C9A96E]/80 text-[#FBF9F6] font-bold text-sm rounded-xl transition-all duration-200 shadow-[0_0_15px_rgba(234,179,8,0.2)] hover:shadow-[0_0_25px_rgba(234,179,8,0.4)] cursor-pointer"
-              >                                                                 
+              >
                 <Plus className="w-4 h-4" strokeWidth={2.5} />
                 Add Product
               </button>
@@ -301,41 +309,45 @@ const Dashboard = () => {
                   onDelete={handleDeleteClick}
                   onResetFilters={handleResetFilters}
                 />
-              ) : (
-                /* Grid view on desktop */
-                isLoading ? (
-                  <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-5 bg-white">
-                    {Array.from({ length: 8 }).map((_, i) => (
-                      <div key={i} className="bg-zinc-50 border border-zinc-100 rounded-xl p-4 space-y-4 animate-pulse">
-                        <div className="flex items-center gap-4">
-                          <div className="w-16 h-16 rounded-lg bg-zinc-200 flex-shrink-0" />
-                          <div className="flex-1 space-y-2">
-                            <div className="h-4 w-3/4 bg-zinc-200 rounded" />
-                            <div className="h-3 w-1/2 bg-zinc-200/70 rounded" />
-                          </div>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <div className="h-6 w-20 bg-zinc-200 rounded-full" />
-                          <div className="h-4 w-16 bg-zinc-200 rounded" />
+              ) : /* Grid view on desktop */
+              isLoading ? (
+                <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-5 bg-white">
+                  {Array.from({ length: 8 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="bg-zinc-50 border border-zinc-100 rounded-xl p-4 space-y-4 animate-pulse"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="w-16 h-16 rounded-lg bg-zinc-200 flex-shrink-0" />
+                        <div className="flex-1 space-y-2">
+                          <div className="h-4 w-3/4 bg-zinc-200 rounded" />
+                          <div className="h-3 w-1/2 bg-zinc-200/70 rounded" />
                         </div>
                       </div>
-                    ))}
-                  </div>
-                ) : paginatedProducts.length === 0 ? (
-                  <EmptyState hasFilters={!!hasActiveFilters} onReset={handleResetFilters} />
-                ) : (
-                  <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-5 bg-white">
-                    {paginatedProducts.map((product) => (
-                      <ProductCardMobile
-                        key={`grid-${product._id}`}
-                        product={product}
-                        onView={() => handleView(product)}
-                        onEdit={() => handleEdit(product)}
-                        onDelete={() => handleDeleteClick(product)}
-                      />
-                    ))}
-                  </div>
-                )
+                      <div className="flex items-center justify-between">
+                        <div className="h-6 w-20 bg-zinc-200 rounded-full" />
+                        <div className="h-4 w-16 bg-zinc-200 rounded" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : paginatedProducts.length === 0 ? (
+                <EmptyState
+                  hasFilters={!!hasActiveFilters}
+                  onReset={handleResetFilters}
+                />
+              ) : (
+                <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-5 bg-white">
+                  {paginatedProducts.map((product) => (
+                    <ProductCardMobile
+                      key={`grid-${product._id}`}
+                      product={product}
+                      onView={() => handleView(product)}
+                      onEdit={() => handleEdit(product)}
+                      onDelete={() => handleDeleteClick(product)}
+                    />
+                  ))}
+                </div>
               )}
             </div>
 
@@ -364,8 +376,6 @@ const Dashboard = () => {
                 </div>
               )}
             </div>
-
-
 
             {/* Pagination */}
             {!isLoading && filteredProducts.length > ITEMS_PER_PAGE && (

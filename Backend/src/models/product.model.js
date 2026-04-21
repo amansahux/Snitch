@@ -15,14 +15,40 @@ const productSchema = new mongoose.Schema(
       ref: "users",
       required: true,
     },
+    size: {
+      type: String,
+      enum: ["XS", "S", "M", "L", "XL", "XXL"],
+      required: true,
+    },
+
+    color: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    fit: {
+      type: String,
+      enum: ["Slim", "Regular", "Relaxed", "Oversized"],
+      default: "Regular",
+    },
+
+    material: {
+      type: String,
+      default: "Cotton",
+    },
+
     price: {
-      amount: {
+      mrp: {
+        type: Number,
+        required: true,
+      },
+      selling: {
         type: Number,
         required: true,
       },
       currency: {
         type: String,
-        enum: ["USD", "EUR", "GBP", "JPY", "INR"],
         default: "INR",
       },
     },

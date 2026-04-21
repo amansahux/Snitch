@@ -200,7 +200,7 @@ const SellerProductDetail = () => {
                     {product.title}
                   </h1>
                   <p className="text-3xl font-serif text-[#C9A96E]">
-                    ₹{product.price?.amount?.toLocaleString()}
+                    ₹{(product.price?.selling || product.price?.amount || 0).toLocaleString()}
                   </p>
                 </div>
 
@@ -302,7 +302,7 @@ const SellerProductDetail = () => {
                             <ImageIcon size={20} className="text-[#C9A96E]" />
                           </div>
                           <span className="text-[14px] font-serif text-[#C9A96E]">
-                            ₹{v.price?.amount?.toLocaleString()}
+                            ₹{(v.price?.selling || v.price?.amount || 0).toLocaleString()}
                           </span>
                         </div>
                         <div className="space-y-4">
