@@ -28,15 +28,7 @@ const UpdateProductModal = ({ isOpen, onClose, product, onUpdate }) => {
     defaultValues: {
       title: product?.title || "",
       description: product?.description || "",
-      mrp: product?.price?.mrp || 0,
-      selling: product?.price?.selling || 0,
-      currency: product?.price?.currency || "INR",
       category: product?.category || "",
-      stock: product?.stock || 0,
-      size: product?.size || "M",
-      color: product?.color || "",
-      fit: product?.fit || "Regular",
-      material: product?.material || "",
     },
   });
 
@@ -49,15 +41,7 @@ const UpdateProductModal = ({ isOpen, onClose, product, onUpdate }) => {
         reset({
           title: product.title,
           description: product.description,
-          mrp: product.price?.mrp || 0,
-          selling: product.price?.selling || 0,
-          currency: product.price?.currency || "INR",
           category: product.category,
-          stock: product.stock,
-          size: product.size || "M",
-          color: product.color || "",
-          fit: product.fit || "Regular",
-          material: product.material || "",
         });
 
         // Initialize images from product ONLY ONCE
@@ -93,15 +77,7 @@ const UpdateProductModal = ({ isOpen, onClose, product, onUpdate }) => {
     const formData = new FormData();
     formData.append("title", data.title);
     formData.append("description", data.description);
-    formData.append("mrp", data.mrp);
-    formData.append("selling", data.selling);
-    formData.append("currency", data.currency);
     formData.append("category", data.category);
-    formData.append("stock", data.stock);
-    formData.append("size", data.size);
-    formData.append("color", data.color);
-    formData.append("fit", data.fit);
-    formData.append("material", data.material);
 
     const existingUrls = images
       .filter((img) => img.isExisting)
@@ -144,7 +120,7 @@ const UpdateProductModal = ({ isOpen, onClose, product, onUpdate }) => {
           onSubmit={handleSubmit(onSubmit)}
           className="p-10 space-y-8 max-h-[70vh] overflow-y-auto no-scrollbar"
         >
-          <div className="bg-white p-8 rounded-3xl border border-[#e8e2da]/40 space-y-6">
+          {/* <div className="bg-white p-8 rounded-3xl border border-[#e8e2da]/40 space-y-6">
             <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#1b1c1a]">
               Product Gallery (Max 7)
             </h3>
@@ -153,7 +129,7 @@ const UpdateProductModal = ({ isOpen, onClose, product, onUpdate }) => {
               onChange={setImages}
               maxImages={7}
             />
-          </div>
+          </div> */}
 
           <InputField
             id="title"
@@ -169,7 +145,7 @@ const UpdateProductModal = ({ isOpen, onClose, product, onUpdate }) => {
             {...register("description")}
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <InputField
               id="mrp"
               label="MRP (₹)"
@@ -184,9 +160,9 @@ const UpdateProductModal = ({ isOpen, onClose, product, onUpdate }) => {
               error={errors.selling?.message}
               {...register("selling")}
             />
-          </div>
+          </div> */}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <InputField
               id="stock"
               label="Inventory Level"
@@ -201,9 +177,9 @@ const UpdateProductModal = ({ isOpen, onClose, product, onUpdate }) => {
               error={errors.color?.message}
               {...register("color")}
             />
-          </div>
+          </div> */}
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <SelectField
               id="size"
               label="Size"
@@ -239,7 +215,7 @@ const UpdateProductModal = ({ isOpen, onClose, product, onUpdate }) => {
               error={errors.material?.message}
               {...register("material")}
             />
-          </div>
+          </div> */}
 
           <SelectField
             id="category"

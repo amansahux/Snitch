@@ -55,21 +55,25 @@ const Shop = () => {
     }
 
     // Price filter
-    result = result.filter((p) => p.price.amount <= priceRange);
+    const getPrice = (p) => {
+      // prefer selling, then amount (legacy), then mrp
+      return p?.price?.selling ?? p?.price?.amount ?? p?.price?.mrp ?? 0;
+    };
+    result = result.filter((p) => getPrice(p) <= priceRange);
 
     // Sort logic
     switch (sortBy) {
       case "Low to High":
         result.sort((a, b) => {
-          const priceA = a.price?.selling || a.price?.amount || 0;
-          const priceB = b.price?.selling || b.price?.amount || 0;
+          const priceA = getPrice(a);
+          const priceB = getPrice(b);
           return priceA - priceB;
         });
         break;
       case "High to Low":
         result.sort((a, b) => {
-          const priceA = a.price?.selling || a.price?.amount || 0;
-          const priceB = b.price?.selling || b.price?.amount || 0;
+          const priceA = getPrice(a);
+          const priceB = getPrice(b);
           return priceB - priceA;
         });
         break;

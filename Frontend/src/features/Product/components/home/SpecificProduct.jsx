@@ -23,15 +23,13 @@ const SpecificProduct = () => {
     useProduct();
   const { user } = useAuth();
 
-  
-
   const [product, setProduct] = useState(null);
   const [similarProducts, setSimilarProducts] = useState([]);
   const [variants, setVariants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState(0);
   const [activeVariant, setActiveVariant] = useState(null); // null means Primary Product is selected
-
+  console.log(variants);
   const benefits = [
     {
       icon: <Truck size={18} />,
@@ -65,7 +63,13 @@ const SpecificProduct = () => {
         setProduct(prodRes.data);
       }
       if (variantRes?.success) {
-        setVariants(variantRes.variants || []);
+        const vList = variantRes.variants || [];
+        setVariants(vList);
+        // Select the variant marked `isDefault` if present, otherwise the first variant
+        const defaultVariant =
+          vList.find((v) => v.isDefault) || vList[0] || null;
+        setActiveVariant(defaultVariant);
+        setActiveImage(0);
       }
     } catch (error) {
       console.error("Fetch error:", error);
@@ -87,6 +91,7 @@ const SpecificProduct = () => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchData();
     fetchSimilarProducts();
@@ -296,21 +301,6 @@ const SpecificProduct = () => {
               </div>
 
               <div className="flex gap-4 overflow-x-auto py-4 no-scrollbar -mx-2 px-2">
-                {/* Primary Product Thumbnail */}
-                <button
-                  onClick={() => {
-                    setActiveVariant(null);
-                    setActiveImage(0);
-                  }}
-                  className={`flex-shrink-0 w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all duration-500 ${activeVariant === null ? "border-[#1b1c1a] scale-110 shadow-2xl z-10" : "border-[#e8e2da] opacity-70 hover:opacity-100"}`}
-                >
-                  <img
-                    src={product.images?.[0]?.url || "/placeholder-image.jpg"}
-                    alt="Original"
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-
                 {/* Variants Thumbnails */}
                 {variants.map((v, i) => (
                   <button
@@ -389,13 +379,11 @@ const SpecificProduct = () => {
             </div>
 
             {/* Action Matrix */}
-            <div className="space-y-4">
+            <div className="space-y-10 lg:space-y-4">
               <button
                 disabled={displayStock <= 0}
                 onClick={() =>
-                  user
-                    ? console.log("Added")
-                    : navigate("/login")
+                  user ? console.log("Added") : navigate("/login")
                 }
                 className={`w-full cursor-pointer h-20 text-[11px] font-black uppercase tracking-[0.4em] transition-all rounded-2xl flex items-center justify-center gap-4 shadow-luxury active:scale-[0.98] group ${displayStock > 0 ? "bg-[#1b1c1a] text-white hover:bg-[#C9A96E]" : "bg-[#e8e2da] text-[#7a6e63] cursor-not-allowed"}`}
               >

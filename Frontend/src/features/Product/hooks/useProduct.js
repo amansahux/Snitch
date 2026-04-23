@@ -60,6 +60,20 @@ const useProduct = () => {
   const handleGetProductById = useCallback(async (id) => {
     try {
       const response = await getProductById(id);
+      // Backend may return { product, variants } shape. For frontend compatibility,
+      // unwrap and attach default variant fields (price, stock, images) onto product.
+      if (response && response.data && response.data.product) {
+        const prod = response.data.product;
+        const variants = response.data.variants || [];
+        const defaultVariant = variants.find((v) => v.isDefault) || variants[0];
+        if (defaultVariant) {
+          prod.price = prod.price || defaultVariant.price;
+          prod.stock = prod.stock ?? defaultVariant.stock;
+          prod.images = prod.images && prod.images.length > 0 ? prod.images : defaultVariant.images;
+        }
+        // Return a response-like object keeping other keys intact but with data = prod
+        return { ...response, data: prod };
+      }
       return response;
     } catch (error) {
       console.log(error);

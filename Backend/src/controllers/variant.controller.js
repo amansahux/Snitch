@@ -16,6 +16,10 @@ export const createVariantController = asyncHandler(async (req, res, next) => {
 
   const { size, color, fit, material, price, stock } = req.body;
 
+  // Generate a stable SKU for the variant to avoid null/duplicate unique index errors.
+  // SKU format: <productId>-<size>-<color>
+  const sku = `${productId}-${size || 'NA'}-${(color || 'NA').replace(/\s+/g, '_')}`;
+
   // Check if variant already exists for this product with same size and color
   const existingVariant = await VariantModel.findOne({
     product: productId,
@@ -48,6 +52,7 @@ export const createVariantController = asyncHandler(async (req, res, next) => {
 
   const variant = await VariantModel.create({
     product: productId,
+    sku,
     size,
     color,
     fit,
@@ -55,12 +60,9 @@ export const createVariantController = asyncHandler(async (req, res, next) => {
     stock: Number(stock),
     price,
     images: variantImages,
+    isDefault: false,
   });
 
-  // Also update the variants array in the Product model
-  await productModel.findByIdAndUpdate(productId, {
-    $push: { variants: variant._id }
-  });
 
   return res.status(201).json({
     success: true,

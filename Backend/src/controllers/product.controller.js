@@ -1,6 +1,7 @@
 import { asyncHandler } from "../middlewares/asyncHandler.middleware.js";
 import uploadFile from "../services/storage.service.js";
 import productModel from "../models/product.model.js";
+import VariantModel from "../models/varient.model.js";
 import mongoose from "mongoose";
 
 export const createProduct = asyncHandler(async (req, res, next) => {
@@ -30,7 +31,7 @@ export const createProduct = asyncHandler(async (req, res, next) => {
       return uploadFile({
         buffer: file.buffer,
         fileName: file.originalname,
-        folder: "/Snich/products",
+        folder: "/Snich/products/variants",
       });
     }),
   );
@@ -38,31 +39,55 @@ export const createProduct = asyncHandler(async (req, res, next) => {
   const images = uploadedFiles.map((file) => ({
     url: file.url,
   }));
+  // Use a transaction: create Product (parent) then create default Variant (purchasable)
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    const product = new productModel({
+      title,
+      description,
+      seller,
+      category,
+      coverImage: images && images.length > 0 ? { url: images[0].url } : undefined,
+    });
+    await product.save({ session });
 
-  const product = await productModel.create({
-    title,
-    description,
-    price: {
-      mrp: Number(mrp),
-      selling: Number(selling),
+    const priceObj = {
+      mrp: Number(mrp) || 0,
+      selling: Number(selling) || 0,
       currency: currency || "INR",
-    },
-    size,
-    color,
-    fit,
-    material,
-    category,
-    stock: Number(stock),
-    seller,
-    images,
-  });
+    };
 
-  return res.status(201).json({
-    message: "Product created successfully",
-    success: true,
-    data: product,
-    error: null,
-  });
+    const variant = new VariantModel({
+      product: product._id,
+      sku: `${product._id.toString()}-${size || 'NA'}-${(color || 'NA').replace(/\s+/g, '_')}`,
+      size,
+      color,
+      fit,
+      material,
+      price: priceObj,
+      stock: Number(stock) || 0,
+      images,
+      isDefault: true,
+    });
+
+    await variant.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return res.status(201).json({
+      message: "Product created successfully",
+      success: true,
+      product,
+      variant,
+      error: null,
+    });
+  } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
+    return next(err);
+  }
 });
 
 export const deleteProduct = asyncHandler(async (req, res, next) => {
@@ -98,23 +123,52 @@ export const getSellerProducts = asyncHandler(async (req, res, next) => {
 
   const products = await productModel.find({ seller });
 
+  // Attach default variant data for backwards compatibility (price, stock, images)
+  const productIds = products.map((p) => p._id);
+  const variants = await VariantModel.find({ product: { $in: productIds }, isDefault: true });
+  const variantMap = new Map(variants.map((v) => [v.product.toString(), v]));
+
+  const enriched = products.map((p) => {
+    const vp = variantMap.get(p._id.toString());
+    const po = p.toObject();
+    if (vp) {
+      po.price = vp.price;
+      po.stock = vp.stock;
+      po.images = vp.images;
+    }
+    return po;
+  });
+
   return res.status(200).json({
     message: "Products fetched successfully",
     success: true,
-    data: products,
+    data: enriched,
     error: null,
   });
 });
 
 export const getAllProducts = asyncHandler(async (req, res, next) => {
-  const products = await productModel
-    .find()
-    .populate("seller", "fullname email");
+  const products = await productModel.find().populate("seller", "fullname email");
+
+  const productIds = products.map((p) => p._id);
+  const variants = await VariantModel.find({ product: { $in: productIds }, isDefault: true });
+  const variantMap = new Map(variants.map((v) => [v.product.toString(), v]));
+
+  const enriched = products.map((p) => {
+    const vp = variantMap.get(p._id.toString());
+    const po = p.toObject();
+    if (vp) {
+      po.price = vp.price;
+      po.stock = vp.stock;
+      po.images = vp.images;
+    }
+    return po;
+  });
 
   return res.status(200).json({
     message: "Products fetched successfully",
     success: true,
-    data: products,
+    data: enriched,
     error: null,
   });
 });
@@ -131,10 +185,13 @@ export const getProductById = asyncHandler(async (req, res, next) => {
     return next(error);
   }
 
+  // Fetch variants from Variant collection
+  const variants = await VariantModel.find({ product: id });
+
   return res.status(200).json({
     message: "Product fetched successfully",
     success: true,
-    data: product,
+    data: { product, variants },
     error: null,
   });
 });
@@ -143,19 +200,9 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
   const {
     title,
     description,
-    mrp,
-    selling,
-    currency,
     category,
-    stock,
     existingImages,
-    size,
-    color,
-    fit,
-    material,
   } = req.body;
-  console.log("BODY:", req.body);
-  console.log("FILES:", req.files);
   const seller = req.user.id;
 
   let newImages = [];
@@ -193,15 +240,8 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
 
   if (title) product.title = title;
   if (description) product.description = description;
-  if (mrp) product.price.mrp = Number(mrp);
-  if (selling) product.price.selling = Number(selling);
-  if (currency) product.price.currency = currency;
   if (category) product.category = category;
-  if (stock) product.stock = stock;
-  if (size) product.size = size;
-  if (color) product.color = color;
-  if (fit) product.fit = fit;
-  if (material) product.material = material;
+  // Only update product-level fields here. Variant-level fields should be managed via variant APIs.
 
   // Handle Images Merge
   let finalImages = [];
@@ -219,9 +259,10 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
     }
   }
 
-  // Update images if either existing ones were kept or new ones were uploaded
-  if (existingImages !== undefined || newImages.length > 0) {
-    product.images = [...finalImages, ...newImages];
+  // Update coverImage from existing or newly uploaded images
+  const mergedImages = [...finalImages, ...newImages];
+  if (mergedImages.length > 0) {
+    product.coverImage = { url: mergedImages[0].url };
   }
 
   await product.save();
@@ -234,71 +275,9 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
   });
 });
 
-export const addVariant = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-  const { stock, priceAmount, attributes } = req.body;
-  const seller = req.user.id;
-
-  const product = await productModel.findById(id);
-
-  if (!product) {
-    const error = new Error("Product not found");
-    error.statusCode = 404;
-    return next(error);
-  }
-
-  // product.seller is an ObjectId if not populated
-  if (product.seller.toString() !== seller) {
-    const error = new Error("Unauthorized");
-    error.statusCode = 401;
-    return next(error);
-  }
-
-  let variantImages = [];
-  if (req.files && req.files.length > 0) {
-    const uploadedFiles = await Promise.all(
-      req.files.map((file) => {
-        return uploadFile({
-          buffer: file.buffer,
-          fileName: file.originalname,
-          folder: "/Snich/products/variants",
-        });
-      }),
-    );
-    variantImages = uploadedFiles.map((file) => ({
-      url: file.url,
-    }));
-  }
-
-  // Parse attributes if it's coming as a string (likely from FormData)
-  let parsedAttributes = attributes;
-  if (typeof attributes === "string") {
-    try {
-      parsedAttributes = JSON.parse(attributes);
-    } catch (e) {
-      console.error("Error parsing attributes:", e);
-    }
-  }
-
-  const variant = {
-    stock: Number(stock),
-    price: {
-      amount: Number(priceAmount),
-    },
-    attributes: parsedAttributes,
-    images: variantImages,
-  };
-
-  product.variants.push(variant);
-  await product.save();
-
-  return res.status(200).json({
-    message: "Variant added successfully",
-    success: true,
-    data: product,
-    error: null,
-  });
-});
+// Legacy product-level variant push removed. Variant creation is handled
+// by the Variant APIs (`/api/variants`) which persist variants in the
+// `variants` collection. This keeps `Product` as a display-only entity.
 
 export const similarProduct = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
@@ -310,59 +289,41 @@ export const similarProduct = asyncHandler(async (req, res, next) => {
     return next(error);
   }
 
-  const similarProducts = await productModel.aggregate([
-    {
-      $match: {
-        _id: { $ne: new mongoose.Types.ObjectId(id) },
-        category: product.category,
-      },
-    },
-    {
-      $addFields: {
-        score: {
-          $add: [
-            {
-              $cond: [{ $eq: ["$color", product.color] }, 3, 0],
-            },
-            {
-              $cond: [{ $eq: ["$fit", product.fit] }, 2, 0],
-            },
-            {
-              $cond: [{ $eq: ["$material", product.material] }, 2, 0],
-            },
-          ],
-        },
-      },
-    },
-    {
-      $sort: {
-        score: -1,
-        createdAt: -1,
-      },
-    },
-    {
-      $limit: 4,
-    },
-    {
-      $project: {
-        title: 1,
-        description: 1,
-        category: 1,
-        color: 1,
-        fit: 1,
-        material: 1,
-        price: 1,
-        images: 1,
-        stock: 1,
-        score: 1,
-      },
-    },
-  ]);
+  // Get default variant for the requested product to use as comparison baseline
+  const baseVariant = await VariantModel.findOne({ product: id, isDefault: true });
+
+  // Fetch other products in same category
+  const others = await productModel.find({
+    _id: { $ne: id },
+    category: product.category,
+  });
+
+  // For each candidate product, fetch its default variant and compute a simple similarity score
+  const scored = await Promise.all(
+    others.map(async (p) => {
+      const v = await VariantModel.findOne({ product: p._id, isDefault: true });
+      let score = 0;
+      if (baseVariant && v) {
+        if (v.color && baseVariant.color && v.color === baseVariant.color) score += 3;
+        if (v.fit && baseVariant.fit && v.fit === baseVariant.fit) score += 2;
+        if (v.material && baseVariant.material && v.material === baseVariant.material) score += 2;
+      }
+      return { product: p, variant: v, score };
+    }),
+  );
+
+  scored.sort((a, b) => b.score - a.score);
+
+  const top = scored.slice(0, 4).map((s) => ({
+    product: s.product,
+    variant: s.variant,
+    score: s.score,
+  }));
 
   return res.status(200).json({
     message: "Similar products fetched successfully",
     success: true,
-    data: similarProducts,
+    data: top,
     error: null,
   });
 });

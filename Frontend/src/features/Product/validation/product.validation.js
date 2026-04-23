@@ -44,14 +44,10 @@ export const productValidationSchema = z.object({
 export const updateProductSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters").optional(),
   description: z.string().min(10, "Description must be at least 10 characters").optional(),
-  mrp: z.preprocess((val) => Number(val), z.number().min(1, "MRP must be greater than 0")).optional(),
-  selling: z.preprocess((val) => Number(val), z.number().min(1, "Selling price must be greater than 0")).optional(),
   category: z.string().min(1, "Please select a category").optional(),
-  stock: z.preprocess((val) => Number(val), z.number().min(0, "Stock cannot be negative")).optional(),
-  size: z.enum(["XS", "S", "M", "L", "XL", "XXL"]).optional(),
-  color: z.string().optional(),
-  fit: z.enum(["Slim", "Regular", "Relaxed", "Oversized"]).optional(),
-  material: z.string().optional(),
+  existingImages: z.string().optional(),
+  // Note: Variant-specific fields (price, stock, size, color, fit, material)
+  // are intentionally excluded here and should be managed via Variant APIs.
 });
 export const addVariantSchema = z.object({
   size: z.enum(["XS", "S", "M", "L", "XL", "XXL"], {

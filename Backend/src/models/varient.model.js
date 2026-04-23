@@ -8,6 +8,13 @@ const variantSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
+    sku: {
+      type: String,
+      required: true,
+      trim: true,
+      index: true,
+      unique: true,
+    },
     size: {
       type: String,
       enum: ["XS", "S", "M", "L", "XL", "XXL"],
@@ -59,6 +66,10 @@ const variantSchema = new mongoose.Schema(
         },
       },
     ],
+    isDefault: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true },
 );
