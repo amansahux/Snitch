@@ -9,16 +9,14 @@ const Shop = () => {
   const { products, handleGetAllProducts } = useProduct();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
-  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("Newest");
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [priceRange, setPriceRange] = useState(10000); // Max price
+  const [priceRange, setPriceRange] = useState(10000);
   const [isLoading, setIsLoading] = useState(true);
   const cartCount = useSelector((state) =>
     state.cart.items.reduce((total, item) => total + Number(item?.quantity || 0), 0),
   );
-  // console.log(products.length);
 
   const navigate = useNavigate();
 
@@ -253,31 +251,6 @@ const Shop = () => {
                 ))}
               </ul>
             </div>
-
-            {/* <div>
-              <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-charcoal mb-6 flex items-center justify-between">
-                Price Range
-                <span className="w-8 h-[1px] bg-gold/30"></span>
-              </h3>
-              <div className="space-y-4 px-2">
-                <input
-                  type="range"
-                  min="0"
-                  max="100000"
-                  step="500"
-                  value={priceRange}
-                  onChange={(e) => setPriceRange(Number(e.target.value))}
-                  className="w-full accent-gold h-1 bg-gold/10 rounded-lg appearance-none cursor-pointer"
-                />
-                <div className="flex justify-between text-[11px] font-bold text-charcoal/50">
-                  <span>₹0</span>
-                  <span className="text-gold">
-                    ₹{priceRange.toLocaleString()}
-                  </span>
-                </div>
-              </div>
-            </div> */}
-
             <div>
               <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-charcoal mb-6 flex items-center justify-between">
                 Availability
@@ -433,3 +406,4 @@ const Shop = () => {
 };
 
 export default Shop;
+

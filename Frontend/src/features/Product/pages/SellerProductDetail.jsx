@@ -9,7 +9,6 @@ import {
   Layers,
   Menu,
   Edit,
-  Trash2,
   Image as ImageIcon,
 } from "lucide-react";
 import useProduct from "../hooks/useProduct";
@@ -34,7 +33,6 @@ const SellerProductDetail = () => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isVariantModalOpen, setIsVariantModalOpen] = useState(false);
 
-  // Scroll to top on mount or id change
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
@@ -42,7 +40,6 @@ const SellerProductDetail = () => {
   useEffect(() => {
     if (location.state?.openEdit && product) {
       setIsUpdateModalOpen(true);
-      // Clear state to prevent modal opening on refresh
       navigate(location.pathname, { replace: true, state: {} });
     }
   }, [location.state, product, navigate, location.pathname]);
@@ -61,7 +58,6 @@ const SellerProductDetail = () => {
     if (response?.success) {
       setVariants(response.variants);
     }
-    // console.log(response)
   }, [id, handleGetVariant]);
 
   useEffect(() => {
@@ -83,7 +79,6 @@ const SellerProductDetail = () => {
       fetchProduct();
       fetchVariants();
     }
-    // console.log(response);
   };
 
   if (loading) {
@@ -116,8 +111,6 @@ const SellerProductDetail = () => {
       </div>
     );
   }
-console.log(variants)
-// console.log(product._id)
   return (
     <div className="min-h-screen bg-[#fbf9f6] flex font-sans overflow-x-hidden selection:bg-[#C9A96E] selection:text-white">
       {/* Sidebar Component */}
@@ -355,14 +348,6 @@ console.log(variants)
                               {v.stock} in Stock
                             </p>
                           </div>
-                          {/* <div className="flex gap-2">
-                            <button className="p-2 bg-[#fbf9f6] text-[#7a6e63] rounded-lg hover:bg-[#1b1c1a] hover:text-white transition-all duration-300">
-                              <Edit size={14} />
-                            </button>
-                            <button className="p-2 bg-[#fbf9f6] text-[#7a6e63] rounded-lg hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-all duration-300">
-                              <Trash2 size={14} />
-                            </button>
-                          </div> */}
                         </div>
                       </div>
                     ))}

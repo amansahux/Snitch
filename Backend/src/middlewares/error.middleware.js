@@ -1,9 +1,11 @@
-
 import config from "../config/config.js";
 
 export const errorMiddleware = (err, req, res, next) => {
-  console.log(err);
-  console.error(err.message);
+  if (config.NODE_ENV === "development") {
+    console.error(err);
+  } else {
+    console.error(err?.message || "Internal Server Error");
+  }
 
   const statusCode = err.statusCode || 500;
   const stack = config.NODE_ENV === "development" ? err.stack : null;

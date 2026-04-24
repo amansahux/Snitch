@@ -198,8 +198,7 @@ const Dashboard = () => {
     try {
       await handleDeleteProduct(confirmDelete._id);
       await handleGetSellerProducts(); // refresh list
-    } catch (err) {
-      console.error(err);
+    } catch {
     } finally {
       setIsDeleting(false);
       setConfirmDelete(null);

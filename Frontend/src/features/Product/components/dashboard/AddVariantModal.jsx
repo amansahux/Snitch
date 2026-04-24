@@ -75,15 +75,6 @@ const AddVariantModal = ({ isOpen, onClose, onAdd }) => {
     images.forEach((img) => {
       formData.append("images", img.file);
     });
-
-    // 🔥 Proper way to log FormData
-    // console.log("FormData Content:");
-    // for (let [key, value] of formData.entries()) {
-    //   console.log(`${key}:`, value);
-    // }
-
-    // Uncomment this when you're ready to send it to the backend
-    // console.log(formData)
     await onAdd(formData);
     handleClose();
   };
@@ -234,3 +225,4 @@ const AddVariantModal = ({ isOpen, onClose, onAdd }) => {
 };
 
 export default AddVariantModal;
+

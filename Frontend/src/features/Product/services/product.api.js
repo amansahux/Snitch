@@ -4,65 +4,39 @@ const API = axios.create({
   baseURL: "/api/products",
 });
 
-export const createProducts = async (data) => {
+const safeRequest = async (request) => {
   try {
-    const response = await API.post("/create", data);
+    const response = await request();
     return response.data;
-  } catch (error) {
-    console.log(error);
+  } catch {
+    return undefined;
   }
+};
+
+export const createProducts = async (data) => {
+  return safeRequest(() => API.post("/create", data));
 };
 
 export const deleteProduct = async (id) => {
-  try {
-    const response = await API.delete(`/delete/${id}`);
-    return response.data;
-  } catch (error) {
-    console.log(error);
-  }
+  return safeRequest(() => API.delete(`/delete/${id}`));
 };
 
 export const getSellerProducts = async () => {
-  try {
-    const response = await API.get("/seller");
-    return response.data;
-  } catch (error) {
-    console.log(error);
-  }
+  return safeRequest(() => API.get("/seller"));
 };
 
 export const getAllProducts = async () => {
-  try {
-    const response = await API.get("/");
-    return response.data;
-  } catch (error) {
-    console.log(error);
-  }
+  return safeRequest(() => API.get("/"));
 };
 
 export const getProductById = async (id) => {
-  try {
-    const response = await API.get(`/${id}`);
-    return response.data;
-  } catch (error) {
-    console.log(error);
-  }
+  return safeRequest(() => API.get(`/${id}`));
 };
 
 export const updateProduct = async (id, data) => {
-  try {
-    const response = await API.post(`/update/${id}`, data);
-    return response.data;
-  } catch (error) {
-    console.log(error);
-  }
+  return safeRequest(() => API.post(`/update/${id}`, data));
 };
 
 export const getSimilarProducts = async (id) => {
-  try {
-    const response = await API.get(`/similar/${id}`);
-    return response.data;
-  } catch (error) {
-    console.log(error);
-  }
+  return safeRequest(() => API.get(`/similar/${id}`));
 };

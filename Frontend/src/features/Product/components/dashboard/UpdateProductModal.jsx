@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { X, Image as ImageIcon } from "lucide-react";
+import { X } from "lucide-react";
 import {
   InputField,
   TextAreaField,
@@ -10,7 +10,6 @@ import {
   SubmitButton,
 } from "../CreateProduct/FormElements";
 import { updateProductSchema } from "../../validation/product.validation";
-import { ImageUploadZone } from "../CreateProduct/ImageUploadZone";
 
 const UpdateProductModal = ({ isOpen, onClose, product, onUpdate }) => {
   const [images, setImages] = React.useState([]);
@@ -44,7 +43,6 @@ const UpdateProductModal = ({ isOpen, onClose, product, onUpdate }) => {
           category: product.category,
         });
 
-        // Initialize images from product ONLY ONCE
         const existing = (product.images || []).map((img) => ({
           id: img._id || Math.random().toString(36).substring(7),
           preview: img.url,
@@ -89,7 +87,6 @@ const UpdateProductModal = ({ isOpen, onClose, product, onUpdate }) => {
         formData.append("images", img.file);
       });
 
-    // Send existing URLs as a JSON string
     formData.append("existingImages", JSON.stringify(existingUrls));
 
     await onUpdate(formData);
@@ -120,16 +117,6 @@ const UpdateProductModal = ({ isOpen, onClose, product, onUpdate }) => {
           onSubmit={handleSubmit(onSubmit)}
           className="p-10 space-y-8 max-h-[70vh] overflow-y-auto no-scrollbar"
         >
-          {/* <div className="bg-white p-8 rounded-3xl border border-[#e8e2da]/40 space-y-6">
-            <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#1b1c1a]">
-              Product Gallery (Max 7)
-            </h3>
-            <ImageUploadZone
-              images={images}
-              onChange={setImages}
-              maxImages={7}
-            />
-          </div> */}
 
           <InputField
             id="title"
@@ -144,78 +131,6 @@ const UpdateProductModal = ({ isOpen, onClose, product, onUpdate }) => {
             error={errors.description?.message}
             {...register("description")}
           />
-
-          {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <InputField
-              id="mrp"
-              label="MRP (₹)"
-              type="number"
-              error={errors.mrp?.message}
-              {...register("mrp")}
-            />
-            <InputField
-              id="selling"
-              label="Selling Price (₹)"
-              type="number"
-              error={errors.selling?.message}
-              {...register("selling")}
-            />
-          </div> */}
-
-          {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <InputField
-              id="stock"
-              label="Inventory Level"
-              type="number"
-              error={errors.stock?.message}
-              {...register("stock")}
-            />
-            <InputField
-              id="color"
-              label="Color / Wash"
-              placeholder="e.g. Midnight Black"
-              error={errors.color?.message}
-              {...register("color")}
-            />
-          </div> */}
-
-          {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <SelectField
-              id="size"
-              label="Size"
-              options={[
-                { label: "XS", value: "XS" },
-                { label: "S", value: "S" },
-                { label: "M", value: "M" },
-                { label: "L", value: "L" },
-                { label: "XL", value: "XL" },
-                { label: "XXL", value: "XXL" },
-              ]}
-              value={watch("size")}
-              onChange={(val) => setValue("size", val)}
-              error={errors.size?.message}
-            />
-            <SelectField
-              id="fit"
-              label="Fit"
-              options={[
-                { label: "Slim", value: "Slim" },
-                { label: "Regular", value: "Regular" },
-                { label: "Relaxed", value: "Relaxed" },
-                { label: "Oversized", value: "Oversized" },
-              ]}
-              value={watch("fit")}
-              onChange={(val) => setValue("fit", val)}
-              error={errors.fit?.message}
-            />
-            <InputField
-              id="material"
-              label="Material"
-              placeholder="e.g. Premium Cotton"
-              error={errors.material?.message}
-              {...register("material")}
-            />
-          </div> */}
 
           <SelectField
             id="category"
@@ -245,3 +160,4 @@ const UpdateProductModal = ({ isOpen, onClose, product, onUpdate }) => {
 };
 
 export default UpdateProductModal;
+

@@ -1,23 +1,25 @@
 import React, { useEffect } from "react";
 import { RouterProvider } from "react-router-dom";
 import { routes } from "./app.routes";
-import  useAuth  from "../features/Auth/hooks/useAuth.js";
+import useAuth from "../features/Auth/hooks/useAuth.js";
 import useCart from "../features/cart/hooks/useCart.js";
 
 import { Toaster } from "react-hot-toast";
 
 const App = () => {
-  const { handleGetProfile , user} = useAuth();
+  const { handleGetProfile, user } = useAuth();
   const { handleGetCart } = useCart();
+
   useEffect(() => {
     handleGetProfile();
   }, []);
+
   useEffect(() => {
     if (!user) return;
 
     handleGetCart().catch(() => {});
   }, [user]);
-  // console.log(user)
+
   return (
     <>
       <Toaster 
@@ -56,7 +58,7 @@ const App = () => {
           },
         }}
       />
-      <RouterProvider router={routes}></RouterProvider>
+      <RouterProvider router={routes} />
     </>
   );
 };

@@ -30,6 +30,6 @@ AuthRouter.get(
   }),
   googleCallback,
 );
-AuthRouter.get("/profile", authenticateUser, getProfile)
+AuthRouter.get("/profile", authenticateUser, getProfile);
 
 export default AuthRouter;

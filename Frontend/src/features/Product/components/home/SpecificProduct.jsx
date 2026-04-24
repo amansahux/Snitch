@@ -7,7 +7,6 @@ import {
   ShoppingBag,
   Heart,
   Share2,
-  ChevronLeft,
   Star,
   Truck,
   RotateCcw,
@@ -33,8 +32,7 @@ const SpecificProduct = () => {
   const [loading, setLoading] = useState(true);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
-  const [activeVariant, setActiveVariant] = useState(null); // null means Primary Product is selected
-  // console.log(variants);
+  const [activeVariant, setActiveVariant] = useState(null);
   const benefits = [
     {
       icon: <Truck size={18} />,
@@ -70,14 +68,12 @@ const SpecificProduct = () => {
       if (variantRes?.success) {
         const vList = variantRes.variants || [];
         setVariants(vList);
-        // Select the variant marked `isDefault` if present, otherwise the first variant
         const defaultVariant =
           vList.find((v) => v.isDefault) || vList[0] || null;
         setActiveVariant(defaultVariant);
         setActiveImage(0);
       }
-    } catch (error) {
-      console.error("Fetch error:", error);
+    } catch {
     } finally {
       setLoading(false);
     }
@@ -86,12 +82,10 @@ const SpecificProduct = () => {
     setLoading(true);
     try {
       const res = await handleGetSimilarProducts(id);
-      // console.log(res)
       if (res?.success) {
         setSimilarProducts(res.data);
       }
-    } catch (error) {
-      console.error("Fetch error:", error);
+    } catch {
     } finally {
       setLoading(false);
     }
@@ -130,7 +124,6 @@ const SpecificProduct = () => {
     fetchData();
     fetchSimilarProducts();
   }, [id, handleGetProductById, handleGetVariant, handleGetSimilarProducts]);
-  // console.log(similarProducts);
 
   if (loading) {
     return <ProductDetailsSkeleton />;
@@ -152,10 +145,8 @@ const SpecificProduct = () => {
     );
   }
 
-  // Selected Item Logic: Prioritize active variant, then fallback to product/hardcoded values
   const selectedItem = activeVariant || product;
 
-  // Fallback Values (as requested)
   const displayTitle = product.title;
   const displayDescription = product.description;
 
@@ -169,7 +160,6 @@ const SpecificProduct = () => {
   const displayFit = selectedItem.fit || "Slim";
   const displayMaterial = selectedItem.material || "Polyester";
 
-  // Gallery Logic: Use selected variant images if available, otherwise base product images
   const displayImages =
     (activeVariant?.images?.length > 0
       ? activeVariant.images
@@ -453,31 +443,6 @@ const SpecificProduct = () => {
             </div>
           </div>
 
-          {/* Atelier Attribution */}
-          {/* <div className="p-10 bg-white rounded-3xl border border-[#e8e2da]/50 space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-[#f3eee8] rounded-full flex items-center justify-center text-[#C9A96E] font-serif text-xl border border-[#e8e2da]">
-                  {product.seller?.fullname?.[0] || "S"}
-                </div>
-                <div>
-                  <p className="text-[9px] font-black uppercase tracking-widest text-[#7a6e63]/50">
-                    Curated By
-                  </p>
-                  <p className="text-sm font-black uppercase tracking-widest text-[#1b1c1a]">
-                    {product.seller?.fullname || "Principal Artisan"}
-                  </p>
-                </div>
-              </div>
-              <button className="text-[9px] font-black uppercase tracking-widest text-[#C9A96E] self-start sm:self-center">
-                View Atelier
-              </button>
-            </div>
-            <p className="text-[11px] text-[#7a6e63] leading-loose italic text-center border-t border-[#e8e2da] pt-6">
-              "This piece embodies our dedication to architectural silhouettes
-              and sustainable luxury. Available in strictly limited allotments."
-            </p>
-          </div> */}
         </div>
       </main>
       {similarProducts.length > 0 && (

@@ -69,9 +69,8 @@ const CreateProduct = () => {
       data.images.forEach((img) => URL.revokeObjectURL(img.preview));
       toast.success("Product published successfully!", { id: loadingToast });
       reset();
-      navigate("/seller/dashboard")
-    } catch (error) {
-      console.error("Submission error:", error);
+      navigate("/seller/dashboard");
+    } catch {
       toast.error("Failed to publish product.", { id: loadingToast });
     } finally {
       setIsSubmitting(false);

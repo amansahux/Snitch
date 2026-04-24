@@ -20,8 +20,8 @@ const useProduct = () => {
     try {
       const response = await createProducts(data);
       return response;
-    } catch (error) {
-      console.log(error);
+    } catch {
+      return undefined;
     }
   }, []);
 
@@ -29,8 +29,8 @@ const useProduct = () => {
     try {
       const response = await deleteProduct(id);
       return response;
-    } catch (error) {
-      console.log(error);
+    } catch {
+      return undefined;
     }
   }, []);
   const handleGetSellerProducts = useCallback(async () => {
@@ -40,8 +40,8 @@ const useProduct = () => {
         dispatch(setSellerProducts(response.data));
       }
       return response;
-    } catch (error) {
-      console.log(error);
+    } catch {
+      return undefined;
     }
   }, [dispatch]);
 
@@ -52,8 +52,8 @@ const useProduct = () => {
         dispatch(setProducts(response.data));
       }
       return response;
-    } catch (error) {
-      console.log(error);
+    } catch {
+      return undefined;
     }
   }, [dispatch]);
 
@@ -75,8 +75,8 @@ const useProduct = () => {
         return { ...response, data: prod };
       }
       return response;
-    } catch (error) {
-      console.log(error);
+    } catch {
+      return undefined;
     }
   }, []);
 
@@ -84,8 +84,8 @@ const useProduct = () => {
     try {
       const response = await updateProduct(id, data);
       return response;
-    } catch (error) {
-      console.log(error);
+    } catch {
+      return undefined;
     }
   }, []);
 
@@ -93,8 +93,8 @@ const useProduct = () => {
     try {
       const response = await createVariant(id, data);
       return response;
-    } catch (error) {
-      console.log(error);
+    } catch {
+      return undefined;
     }
   }, []);
 
@@ -102,20 +102,19 @@ const useProduct = () => {
     async (id) => {
       try {
         const response = await getVariants(id);
-        // console.log(response);
         return response;
-      } catch (error) {
-        console.log(error);
+      } catch {
+        return undefined;
       }
     },
-    [dispatch],
+    [],
   );
   const handleGetSimilarProducts = useCallback(async (id) => {
     try {
       const response = await getSimilarProducts(id);
       return response;
-    } catch (error) {
-      console.log(error);
+    } catch {
+      return undefined;
     }
   }, []);
 
@@ -130,7 +129,7 @@ const useProduct = () => {
     handleUpdateProduct,
     handleAddVariant,
     handleGetVariant,
-    handleGetSimilarProducts
+    handleGetSimilarProducts,
   };
 };
 

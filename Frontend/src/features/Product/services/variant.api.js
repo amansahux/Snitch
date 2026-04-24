@@ -1,23 +1,22 @@
 import axios from "axios";
 
 const API = axios.create({
-    baseURL:"/api/variants"
-})
+  baseURL: "/api/variants",
+});
+
+const safeRequest = async (request) => {
+  try {
+    const response = await request();
+    return response.data;
+  } catch {
+    return undefined;
+  }
+};
 
 export const createVariant = async (productId, data) => {
-    try {
-        const response = await API.post(`/create/${productId}`, data);
-        return response.data;
-    } catch (error) {
-        console.log(error);
-    }
-}
+  return safeRequest(() => API.post(`/create/${productId}`, data));
+};
 
 export const getVariants = async (productId) => {
-    try {
-        const response = await API.get(`/get-variants/${productId}`);
-        return response.data;
-    } catch (error) {
-        console.log(error);
-    }
-}
+  return safeRequest(() => API.get(`/get-variants/${productId}`));
+};

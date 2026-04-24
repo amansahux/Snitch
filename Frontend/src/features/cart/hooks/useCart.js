@@ -25,7 +25,6 @@ const useCart = () => {
       dispatch(setCart(res.data));
       return res;
     } catch (error) {
-      console.log(error);
       const errorMessage =
         error?.response?.data?.message || "Failed to fetch cart";
       dispatch(setCartError(errorMessage));
@@ -42,7 +41,6 @@ const useCart = () => {
       dispatch(addToCart(res.data));
       return res;
     } catch (error) {
-      console.log(error);
       const errorMessage =
         error?.response?.data?.message || "Failed to add item to cart";
       dispatch(setCartError(errorMessage));
@@ -59,7 +57,6 @@ const useCart = () => {
       dispatch(updateCart(res.data));
       return res;
     } catch (error) {
-      console.log(error);
       const errorMessage =
         error?.response?.data?.message || "Failed to update cart item";
       dispatch(setCartError(errorMessage));
@@ -76,7 +73,6 @@ const useCart = () => {
       dispatch(removeFromCart(res.data));
       return res;
     } catch (error) {
-      console.log(error);
       const errorMessage =
         error?.response?.data?.message || "Failed to remove cart item";
       dispatch(setCartError(errorMessage));
@@ -93,7 +89,6 @@ const useCart = () => {
       dispatch(setCart(res.data));
       return res;
     } catch (error) {
-      console.log(error);
       const errorMessage = error?.response?.data?.message || "Failed to clear cart";
       dispatch(setCartError(errorMessage));
       throw error;
