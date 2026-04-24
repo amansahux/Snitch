@@ -24,17 +24,28 @@ const cartItemSchema = new mongoose.Schema(
 
 const cartSchema = new mongoose.Schema(
   {
-    userId: {
+    user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "users",
       required: true,
       unique: true,
       index: true,
     },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
+      required: true,
+      index: true,
+    },
     items: [cartItemSchema],
   },
   { timestamps: true },
 );
+
+cartSchema.pre("validate", function syncUserFields() {
+  if (this.user && !this.userId) this.userId = this.user;
+  if (this.userId && !this.user) this.user = this.userId;
+});
 
 const cartModel = mongoose.model("carts", cartSchema);
 

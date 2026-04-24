@@ -7,20 +7,44 @@ const cartPopulateOptions = [
   { path: "items.variantId", select: "sku size color fit material price stock images" },
 ];
 
+const resolveUserId = (req) => {
+  const userId = req?.user?.id || req?.user?._id || req?.user?.userId;
+  if (!userId) {
+    const error = new Error("Unauthorized");
+    error.statusCode = 401;
+    throw error;
+  }
+  return userId.toString();
+};
+
+const cartUserQuery = (userId) => ({
+  $or: [{ user: userId }, { userId }],
+});
+
 const ensureCartForUser = async (userId) => {
-  return await cartModel.findOneAndUpdate(
-    { userId },
-    { $setOnInsert: { userId, items: [] } },
-    {
-      new: true,
-      upsert: true,
-      setDefaultsOnInsert: true,
-    },
-  );
+  try {
+    return await cartModel.findOneAndUpdate(
+      cartUserQuery(userId),
+      { $setOnInsert: { user: userId, userId, items: [] } },
+      {
+        new: true,
+        upsert: true,
+        setDefaultsOnInsert: true,
+        runValidators: true,
+      },
+    );
+  } catch (error) {
+    // Handles concurrent upserts: if another request inserted first, fetch existing cart.
+    if (error?.code === 11000) {
+      const existingCart = await cartModel.findOne(cartUserQuery(userId));
+      if (existingCart) return existingCart;
+    }
+    throw error;
+  }
 };
 
 export const getMyCart = asyncHandler(async (req, res) => {
-  const userId = req.user.id;
+  const userId = resolveUserId(req);
 
   const cart = await ensureCartForUser(userId);
   await cart.populate(cartPopulateOptions);
@@ -34,7 +58,7 @@ export const getMyCart = asyncHandler(async (req, res) => {
 });
 
 export const addItemToCart = asyncHandler(async (req, res, next) => {
-  const userId = req.user.id;
+  const userId = resolveUserId(req);
   const { productId, variantId, quantity = 1 } = req.body;
 
   const variant = await VariantModel.findById(variantId).select("product stock");
@@ -44,7 +68,7 @@ export const addItemToCart = asyncHandler(async (req, res, next) => {
     return next(error);
   }
 
-  if (variant.product.toString() !== productId) {
+  if (variant.product.toString() !== String(productId)) {
     const error = new Error("Variant does not belong to the provided product");
     error.statusCode = 400;
     return next(error);
@@ -84,11 +108,11 @@ export const addItemToCart = asyncHandler(async (req, res, next) => {
 });
 
 export const updateCartItem = asyncHandler(async (req, res, next) => {
-  const userId = req.user.id;
+  const userId = resolveUserId(req);
   const { itemId } = req.params;
   const { quantity } = req.body;
 
-  const cart = await cartModel.findOne({ userId });
+  const cart = await cartModel.findOne(cartUserQuery(userId));
   if (!cart) {
     const error = new Error("Cart not found");
     error.statusCode = 404;
@@ -128,10 +152,10 @@ export const updateCartItem = asyncHandler(async (req, res, next) => {
 });
 
 export const removeCartItem = asyncHandler(async (req, res, next) => {
-  const userId = req.user.id;
+  const userId = resolveUserId(req);
   const { itemId } = req.params;
 
-  const cart = await cartModel.findOne({ userId });
+  const cart = await cartModel.findOne(cartUserQuery(userId));
   if (!cart) {
     const error = new Error("Cart not found");
     error.statusCode = 404;
@@ -158,7 +182,7 @@ export const removeCartItem = asyncHandler(async (req, res, next) => {
 });
 
 export const clearCart = asyncHandler(async (req, res) => {
-  const userId = req.user.id;
+  const userId = resolveUserId(req);
   const cart = await ensureCartForUser(userId);
 
   cart.items = [];
