@@ -52,7 +52,7 @@ const useCart = () => {
 
   const handleUpdateCart = async (itemId, quantity) => {
     try {
-      dispatch(setCartLoading(true));
+      // dispatch(setCartLoading(true));
       const res = await updateCartItem({ itemId, quantity });
       dispatch(updateCart(res.data));
       return res;

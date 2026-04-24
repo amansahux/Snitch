@@ -11,7 +11,7 @@ import SpecificProduct from "../features/Product/components/home/SpecificProduct
 import Shop from "../features/Product/components/home/Shop.jsx";
 import Inventory from "../features/Product/pages/Inventory.jsx";
 import SellerProductDetail from "../features/Product/pages/SellerProductDetail.jsx";
-import Cart from "../features/cart/pages/Cart.jsx";
+import Cart from "../features/cart/pages/CartPage.jsx";
 
 export const routes = createBrowserRouter([
   {
