@@ -120,7 +120,7 @@ const Shop = () => {
 
             <button
               onClick={() => navigate("/cart")}
-              className="relative inline-flex items-center gap-2 rounded-full border border-gold/20 bg-white px-5 py-2.5 pr-8 text-[10px] font-black uppercase tracking-[0.2em] text-charcoal hover:border-gold hover:text-gold transition-all"
+              className="relative inline-flex items-center cursor-pointer gap-2 rounded-full border border-gold/20 bg-white px-5 py-2.5 pr-8 text-[10px] font-black uppercase tracking-[0.2em] text-charcoal hover:border-gold hover:text-gold transition-all"
             >
               <ShoppingBag size={14} />
               Cart

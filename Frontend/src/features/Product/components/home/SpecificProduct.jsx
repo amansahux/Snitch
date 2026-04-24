@@ -22,9 +22,7 @@ import toast from "react-hot-toast";
 const SpecificProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const cartCount = useSelector((state) =>
-    state.cart.items.reduce((total, item) => total + Number(item?.quantity || 0), 0),
-  );
+  const cartCount = useSelector((state) => state.cart.items.length);
   const { handleGetProductById, handleGetVariant, handleGetSimilarProducts } =
     useProduct();
   const { user } = useAuth();
@@ -211,16 +209,6 @@ const SpecificProduct = () => {
             <span className="absolute -top-2 -right-4 min-w-5 h-5 px-1 rounded-full bg-[#1b1c1a] text-white text-[9px] font-black tracking-normal normal-case flex items-center justify-center">
               {cartCount}
             </span>
-          </button>
-          <button
-            onClick={() => navigate(-1)}
-            className="text-[10px] font-black hover:text-[#C9A96E] uppercase tracking-widest text-[#7a6e63] cursor-pointer flex items-center gap-2 group"
-          >
-            <ChevronLeft
-              size={14}
-              className="group-hover:-translate-x-1 transition-transform"
-            />
-            Back
           </button>
         </div>
       </nav>
