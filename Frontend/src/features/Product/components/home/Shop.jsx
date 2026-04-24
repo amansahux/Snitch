@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Search, ChevronDown, X, Filter, ShoppingBag } from "lucide-react";
+import { useSelector } from "react-redux";
 import useProduct from "../../hooks/useProduct";
 import Product from "./Product";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +15,9 @@ const Shop = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [priceRange, setPriceRange] = useState(10000); // Max price
   const [isLoading, setIsLoading] = useState(true);
+  const cartCount = useSelector((state) =>
+    state.cart.items.reduce((total, item) => total + Number(item?.quantity || 0), 0),
+  );
   // console.log(products.length);
 
   const navigate = useNavigate();
@@ -102,16 +106,29 @@ const Shop = () => {
       <div className="min-h-screen bg-cream text-charcoal font-sans selection:bg-gold/20">
         {/* Integrated Hero Section */}
         <section className="pt-20 pb-12 px-6 lg:px-12 text-center border-b border-gold/10">
-          <nav className="flex items-center justify-center lg:justify-start lg:pl-5 gap-2 text-[9px] tracking-[0.3em] uppercase text-gray-400 mb-8 animate-in fade-in duration-700">
-            <span
-              className="cursor-pointer hover:text-gold transition-colors"
-              onClick={() => navigate("/")}
+          <div className="mb-8 flex flex-col items-center justify-between gap-4 sm:flex-row sm:items-center">
+            <nav className="flex items-center justify-center lg:justify-start lg:pl-5 gap-2 text-[9px] tracking-[0.3em] uppercase text-gray-400 animate-in fade-in duration-700">
+              <span
+                className="cursor-pointer hover:text-gold transition-colors"
+                onClick={() => navigate("/")}
+              >
+                Home
+              </span>
+              <span className="opacity-30">/</span>
+              <span className="text-gold font-bold">Shop Collection</span>
+            </nav>
+
+            <button
+              onClick={() => navigate("/cart")}
+              className="relative inline-flex items-center gap-2 rounded-full border border-gold/20 bg-white px-5 py-2.5 pr-8 text-[10px] font-black uppercase tracking-[0.2em] text-charcoal hover:border-gold hover:text-gold transition-all"
             >
-              Home
-            </span>
-            <span className="opacity-30">/</span>
-            <span className="text-gold font-bold">Shop Collection</span>
-          </nav>
+              <ShoppingBag size={14} />
+              Cart
+              <span className="absolute -top-2 -right-2 min-w-5 h-5 px-1 rounded-full bg-[#1b1c1a] text-white text-[9px] font-black tracking-normal normal-case flex items-center justify-center">
+                {cartCount}
+              </span>
+            </button>
+          </div>
 
           <span className="text-[10px] font-black uppercase tracking-[0.5em] text-gold/60 mb-4 block animate-in fade-in slide-in-from-top-4 duration-700 delay-100">
             Timeless Originals
@@ -326,9 +343,6 @@ const Shop = () => {
             {/* Load More (Static for UI) */}
             {!isLoading && filteredProducts.length > 0 && (
               <div className="mt-20 text-center border-t border-gold/10 pt-12">
-                <button className="px-12 py-5 border border-charcoal/10 rounded-full text-[11px] font-black uppercase tracking-[0.25em] hover:bg-charcoal hover:text-white transition-all duration-500">
-                  Discover More
-                </button>
                 <p className="mt-6 text-[10px] text-charcoal/40 uppercase tracking-widest">
                   Showing {filteredProducts.length} of {products.length}{" "}
                   Products

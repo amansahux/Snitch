@@ -11,6 +11,7 @@ import SpecificProduct from "../features/Product/components/home/SpecificProduct
 import Shop from "../features/Product/components/home/Shop.jsx";
 import Inventory from "../features/Product/pages/Inventory.jsx";
 import SellerProductDetail from "../features/Product/pages/SellerProductDetail.jsx";
+import Cart from "../features/cart/pages/Cart.jsx";
 
 export const routes = createBrowserRouter([
   {
@@ -31,6 +32,14 @@ export const routes = createBrowserRouter([
       {
         path: "/shop/product/:id",
         element: <SpecificProduct />,
+      },
+      {
+        path: "/cart",
+        element: (
+          <ProtectedRoute>
+            <Cart />
+          </ProtectedRoute>
+        ),
       },
     ],
   },

@@ -28,6 +28,21 @@ body {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  .animate-cart-fade {
+    animation: cartFadeIn 450ms ease both;
+  }
+}
+
+@keyframes cartFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Specific to Auth pages to prevent background scrolling on desktop */

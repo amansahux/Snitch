@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import useProduct from "../../hooks/useProduct";
 import useAuth from "../../../Auth/hooks/useAuth";
 import {
@@ -15,10 +16,15 @@ import {
 } from "lucide-react";
 import ProductDetailsSkeleton from "./ProductDetailsSkeleton";
 import Product from "./Product";
+import useCart from "../../../cart/hooks/useCart";
+import toast from "react-hot-toast";
 
 const SpecificProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const cartCount = useSelector((state) =>
+    state.cart.items.reduce((total, item) => total + Number(item?.quantity || 0), 0),
+  );
   const { handleGetProductById, handleGetVariant, handleGetSimilarProducts } =
     useProduct();
   const { user } = useAuth();
@@ -27,9 +33,10 @@ const SpecificProduct = () => {
   const [similarProducts, setSimilarProducts] = useState([]);
   const [variants, setVariants] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
   const [activeVariant, setActiveVariant] = useState(null); // null means Primary Product is selected
-  console.log(variants);
+  // console.log(variants);
   const benefits = [
     {
       icon: <Truck size={18} />,
@@ -89,6 +96,35 @@ const SpecificProduct = () => {
       console.error("Fetch error:", error);
     } finally {
       setLoading(false);
+    }
+  };
+  const { handleAddToCart } = useCart();
+
+  const handleCart = async () => {
+    if (!product?._id || !activeVariant?._id) {
+      toast.error("This variant is currently unavailable");
+      return;
+    }
+
+    try {
+      setIsAddingToCart(true);
+      const res = await handleAddToCart({
+        productId: product._id,
+        variantId: activeVariant._id,
+        quantity: 1,
+      });
+
+      if (res?.success) {
+        toast.success("Item added to cart");
+      } else {
+        toast.error(res?.message || "Could not add item to cart");
+      }
+    } catch (error) {
+      const message =
+        error?.response?.data?.message || "Could not add item to cart";
+      toast.error(message);
+    } finally {
+      setIsAddingToCart(false);
     }
   };
 
@@ -165,16 +201,28 @@ const SpecificProduct = () => {
             {displayTitle}
           </span>
         </div>
-        <button
-          onClick={() => navigate(-1)}
-          className="text-[10px] font-black hover:text-[#C9A96E] uppercase tracking-widest text-[#7a6e63] cursor-pointer flex items-center gap-2 group"
-        >
-          <ChevronLeft
-            size={14}
-            className="group-hover:-translate-x-1 transition-transform"
-          />
-          Back
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate("/cart")}
+            className="relative text-[10px] font-black hover:text-[#C9A96E] uppercase tracking-widest text-[#7a6e63] cursor-pointer flex items-center gap-2 pr-1"
+          >
+            <ShoppingBag size={14} />
+            Cart
+            <span className="absolute -top-2 -right-4 min-w-5 h-5 px-1 rounded-full bg-[#1b1c1a] text-white text-[9px] font-black tracking-normal normal-case flex items-center justify-center">
+              {cartCount}
+            </span>
+          </button>
+          <button
+            onClick={() => navigate(-1)}
+            className="text-[10px] font-black hover:text-[#C9A96E] uppercase tracking-widest text-[#7a6e63] cursor-pointer flex items-center gap-2 group"
+          >
+            <ChevronLeft
+              size={14}
+              className="group-hover:-translate-x-1 transition-transform"
+            />
+            Back
+          </button>
+        </div>
       </nav>
 
       <main className="max-w-[1440px] mx-auto px-6 lg:px-12 pb-32 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24">
@@ -381,13 +429,11 @@ const SpecificProduct = () => {
             {/* Action Matrix */}
             <div className="space-y-10 lg:space-y-4">
               <button
-                disabled={displayStock <= 0}
-                onClick={() =>
-                  user ? console.log("Added") : navigate("/login")
-                }
-                className={`w-full cursor-pointer h-20 text-[11px] font-black uppercase tracking-[0.4em] transition-all rounded-2xl flex items-center justify-center gap-4 shadow-luxury active:scale-[0.98] group ${displayStock > 0 ? "bg-[#1b1c1a] text-white hover:bg-[#C9A96E]" : "bg-[#e8e2da] text-[#7a6e63] cursor-not-allowed"}`}
+                disabled={displayStock <= 0 || isAddingToCart}
+                onClick={() => (user ? handleCart() : navigate("/login"))}
+                className={`w-full h-20 text-[11px] font-black uppercase tracking-[0.4em] transition-all rounded-2xl flex items-center justify-center gap-4 shadow-luxury active:scale-[0.98] group ${displayStock > 0 && !isAddingToCart ? "cursor-pointer bg-[#1b1c1a] text-white hover:bg-[#C9A96E]" : "bg-[#e8e2da] text-[#7a6e63] cursor-not-allowed"}`}
               >
-                {displayStock > 0 ? (
+                {displayStock > 0 && !isAddingToCart ? (
                   <>
                     Add to Cart{" "}
                     <ArrowRight
@@ -395,6 +441,8 @@ const SpecificProduct = () => {
                       className="group-hover:translate-x-1 transition-transform"
                     />
                   </>
+                ) : isAddingToCart ? (
+                  "Adding..."
                 ) : (
                   "Sold Out"
                 )}

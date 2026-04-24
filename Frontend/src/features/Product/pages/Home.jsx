@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import useProduct from "../hooks/useProduct";
 import useAuth from "../../Auth/hooks/useAuth";
 import Product from "../components/home/Product";
@@ -8,12 +9,16 @@ import {
   ArrowRight,
   Globe,
   MessageCircle,
+  ShoppingBag,
   Sparkles as SparklesIcon,
 } from "lucide-react";
 
 const Home = () => {
   const { products, handleGetAllProducts } = useProduct();
   const { user } = useAuth();
+  const cartCount = useSelector((state) =>
+    state.cart.items.reduce((total, item) => total + Number(item?.quantity || 0), 0),
+  );
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
@@ -76,6 +81,16 @@ const Home = () => {
                 </Link>
               </div>
             )}
+            <button
+              onClick={() => navigate("/cart")}
+              className="relative flex cursor-pointer items-center gap-2 pr-1 transition-all hover:text-[#C9A96E]"
+            >
+              <ShoppingBag size={14} />
+              Cart
+              <span className="absolute -top-2 -right-4 min-w-5 h-5 px-1 rounded-full bg-[#1b1c1a] text-white text-[9px] font-black tracking-normal normal-case flex items-center justify-center">
+                {cartCount}
+              </span>
+            </button>
           </div>
         </div>
       </header>
@@ -254,7 +269,7 @@ const Home = () => {
                 {[Globe, MessageCircle].map((Icon, idx) => (
                   <button
                     key={idx}
-                    className="w-14 h-14 rounded-full border border-white/10 flex items-center justify-center hover:bg-[#C9A96E] hover:border-[#C9A96E] transition-all duration-700 group"
+                    className="group flex h-14 w-14 cursor-pointer items-center justify-center rounded-full border border-white/10 transition-all duration-700 hover:border-[#C9A96E] hover:bg-[#C9A96E]"
                   >
                     <Icon className="w-5 h-5 text-white/40 group-hover:text-white" />
                   </button>
@@ -347,7 +362,7 @@ const EmptyArchive = ({ onRefresh }) => (
     </p>
     <button
       onClick={onRefresh}
-      className="mt-14 px-14 py-6 bg-[#1b1c1a] text-white text-[11px] font-black uppercase tracking-[0.4em] rounded-[2rem] hover:bg-[#C9A96E] transition-all duration-700"
+      className="mt-14 cursor-pointer rounded-[2rem] bg-[#1b1c1a] px-14 py-6 text-[11px] font-black uppercase tracking-[0.4em] text-white transition-all duration-700 hover:bg-[#C9A96E]"
     >
       Refresh House Archive
     </button>

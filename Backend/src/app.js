@@ -8,6 +8,7 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20"
 import config from "./config/config.js";
 import productRouter from "./routes/product.routes.js";
 import VariantRouter from "./routes/varient.routes.js";
+import cartRouter from "./routes/cart.routes.js";
 const app = express();
 
 // Middlewares
@@ -40,6 +41,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", AuthRouter);
 app.use("/api/products", productRouter);
 app.use("/api/variants", VariantRouter);
+app.use("/api/cart", cartRouter);
 
 // Generic 404 Route
 app.use((req, res, next) => {
