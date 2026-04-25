@@ -4,7 +4,8 @@ import {
   updateCartItem,
   removeCartItem,
   clearCart,
-} from "../cart.api.js";
+  createCartPaymentOrder,
+} from "../services/cart.api.js";
 import { useDispatch } from "react-redux";
 import {
   addToCart,
@@ -97,12 +98,25 @@ const useCart = () => {
     }
   };
 
+  const handleCreateCartPaymentOrder = async (amount) => {
+    try {
+      const res = await createCartPaymentOrder(amount);
+      return res;
+    } catch (error) {
+      const errorMessage =
+        error?.response?.data?.message || "Failed to create cart payment order";
+      dispatch(setCartError(errorMessage));
+      throw error;
+    }
+  };
+
   return {
     handleGetCart,
     handleAddToCart,
     handleUpdateCart,
     handleRemoveCartItem,
     handleClearCart,
+    handleCreateCartPaymentOrder,
   };
 };
 

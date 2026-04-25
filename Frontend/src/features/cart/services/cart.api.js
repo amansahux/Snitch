@@ -29,3 +29,8 @@ export const clearCart = async () => {
   const response = await API.delete("/");
   return response.data;
 };
+
+export const createCartPaymentOrder = async (amount) => {
+  const response = await API.post("/payment/create/order", { amount });
+  return response.data;
+};

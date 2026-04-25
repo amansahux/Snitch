@@ -2,10 +2,14 @@ import mongoose from "mongoose";
 import { asyncHandler } from "../middlewares/asyncHandler.middleware.js";
 import cartModel from "../models/cart.model.js";
 import VariantModel from "../models/varient.model.js";
+import { createOrder } from "../services/payment.service.js";
 
 const cartPopulateOptions = [
   { path: "items.productId", select: "title category coverImage" },
-  { path: "items.variantId", select: "sku size color fit material price stock images" },
+  {
+    path: "items.variantId",
+    select: "sku size color fit material price stock images",
+  },
 ];
 
 const resolveUserId = (req) => {
@@ -132,7 +136,10 @@ export const getMyCart = asyncHandler(async (req, res) => {
     },
   ]);
 
-  const finalCart = cartData.length > 0 ? cartData[0] : { items: [], totalSelling: 0, totalMrp: 0, totalDiscount: 0 };
+  const finalCart =
+    cartData.length > 0
+      ? cartData[0]
+      : { items: [], totalSelling: 0, totalMrp: 0, totalDiscount: 0 };
 
   return res.status(200).json({
     success: true,
@@ -142,13 +149,12 @@ export const getMyCart = asyncHandler(async (req, res) => {
   });
 });
 
-
-
 export const addItemToCart = asyncHandler(async (req, res, next) => {
   const userId = resolveUserId(req);
   const { productId, variantId, quantity = 1 } = req.body;
 
-  const variant = await VariantModel.findById(variantId).select("product stock");
+  const variant =
+    await VariantModel.findById(variantId).select("product stock");
   if (!variant) {
     const error = new Error("Variant not found");
     error.statusCode = 404;
@@ -279,6 +285,18 @@ export const clearCart = asyncHandler(async (req, res) => {
     success: true,
     message: "Cart cleared successfully",
     data: cart,
+    error: null,
+  });
+});
+
+export const createCartPaymentOrder = asyncHandler(async (req, res) => {
+  const { amount } = req.body;
+  console.log("amount", amount);
+  const order = await createOrder({ amount });
+  return res.status(200).json({
+    success: true,
+    message: "Order created successfully",
+    data: order,
     error: null,
   });
 });

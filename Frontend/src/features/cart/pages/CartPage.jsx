@@ -12,21 +12,17 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import useCart from "../hooks/useCart.js";
+import { useRazorpay, RazorpayOrderOptions } from "react-razorpay";
 
 const formatCurrency = (value) =>
   `₹${Math.round(Number(value || 0)).toLocaleString("en-IN")}`;
 
 const CartPage = () => {
   const navigate = useNavigate();
-  const {
-    items,
-    totalSelling,
-    totalMrp,
-    totalDiscount,
-    isLoading,
-    error,
-  } = useSelector((state) => state.cart);
-  const { handleGetCart, handleUpdateCart, handleRemoveCartItem } = useCart();
+  const { items, totalSelling, totalMrp, totalDiscount, isLoading, error } =
+    useSelector((state) => state.cart);
+  const { handleGetCart, handleUpdateCart, handleRemoveCartItem, handleCreateCartPaymentOrder } = useCart();
+  const {user} = useSelector((state)=>state.auth)
 
   const [updatingItemId, setUpdatingItemId] = useState(null);
   const [removingItemId, setRemovingItemId] = useState(null);
@@ -86,13 +82,41 @@ const CartPage = () => {
       setRemovingItemId(null);
     }
   };
-
-  const proceedToCheckout = () => {
+const { error: razorpayError, isLoading: razorpayLoading, Razorpay } = useRazorpay();
+  const proceedToCheckout = async () => {
     if (!items.length) {
       toast.error("Your cart is currently empty");
       return;
     }
-    navigate("/checkout");
+    const order = await handleCreateCartPaymentOrder(totalSelling);
+    console.log(order)
+        const options = {
+      key: "rzp_test_ShNSkpxt3emQVJ",
+      amount: order.data.amount, // Amount in paise
+      currency: "INR",
+      name: "Snitch",
+      description: "Payment for your order",
+      order_id: order.data.id, 
+      handler: (response) => {
+        console.log(response);
+        alert("Payment Successful!");
+      },
+      prefill: {
+        name: user.fullName,
+        email: user.email,
+        contact: user.phone,
+      },
+      theme: {
+        color: "#c9a96e",
+      },
+    };
+
+    const razorpay = new Razorpay(options);
+    razorpay.on('payment.failed', (response) => {
+      console.log(response);
+      toast.error("Payment Failed");
+    });
+    razorpay.open();
   };
 
   if (isLoading) {
@@ -321,7 +345,7 @@ const CartPage = () => {
                 <div className="flex items-center justify-between">
                   <span>Subtotal</span>
                   <span className="font-medium text-[#1b1c1a]">
-                 {formatCurrency(totalMrp)}
+                    {formatCurrency(totalMrp)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
