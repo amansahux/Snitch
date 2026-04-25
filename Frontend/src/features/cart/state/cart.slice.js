@@ -6,6 +6,9 @@ const cartSlice = createSlice({
     cartId: null,
     userId: null,
     items: [],
+    totalSelling: 0,
+    totalMrp: 0,
+    totalDiscount: 0,
     isLoading: false,
     error: null,
   },
@@ -15,22 +18,33 @@ const cartSlice = createSlice({
       state.cartId = cart._id || null;
       state.userId = cart.userId || null;
       state.items = Array.isArray(cart.items) ? cart.items : [];
+      state.totalSelling = cart.totalSelling || 0;
+      state.totalMrp = cart.totalMrp || 0;
+      state.totalDiscount = cart.totalDiscount || 0;
       state.error = null;
     },
     addToCart: (state, action) => {
-      if (action.payload?.items) {
-        state.cartId = action.payload._id || state.cartId;
-        state.userId = action.payload.userId || state.userId;
-        state.items = action.payload.items;
+      const cart = action.payload || {};
+      if (cart.items) {
+        state.cartId = cart._id || state.cartId;
+        state.userId = cart.userId || state.userId;
+        state.items = cart.items;
+        state.totalSelling = cart.totalSelling || 0;
+        state.totalMrp = cart.totalMrp || 0;
+        state.totalDiscount = cart.totalDiscount || 0;
         return;
       }
       state.items.push(action.payload);
     },
     updateCart: (state, action) => {
-      if (action.payload?.items) {
-        state.cartId = action.payload._id || state.cartId;
-        state.userId = action.payload.userId || state.userId;
-        state.items = action.payload.items;
+      const cart = action.payload || {};
+      if (cart.items) {
+        state.cartId = cart._id || state.cartId;
+        state.userId = cart.userId || state.userId;
+        state.items = cart.items;
+        state.totalSelling = cart.totalSelling || 0;
+        state.totalMrp = cart.totalMrp || 0;
+        state.totalDiscount = cart.totalDiscount || 0;
         return;
       }
       state.items = state.items.map((item) =>
@@ -38,10 +52,14 @@ const cartSlice = createSlice({
       );
     },
     removeFromCart: (state, action) => {
-      if (action.payload?.items) {
-        state.cartId = action.payload._id || state.cartId;
-        state.userId = action.payload.userId || state.userId;
-        state.items = action.payload.items;
+      const cart = action.payload || {};
+      if (cart.items) {
+        state.cartId = cart._id || state.cartId;
+        state.userId = cart.userId || state.userId;
+        state.items = cart.items;
+        state.totalSelling = cart.totalSelling || 0;
+        state.totalMrp = cart.totalMrp || 0;
+        state.totalDiscount = cart.totalDiscount || 0;
         return;
       }
       state.items = state.items.filter(

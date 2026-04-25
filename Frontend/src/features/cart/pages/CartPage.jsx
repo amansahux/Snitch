@@ -1,18 +1,33 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Heart, LockKeyhole, Minus, Plus, ShoppingBag, Trash2, Truck } from "lucide-react";
+import {
+  Heart,
+  LockKeyhole,
+  Minus,
+  Plus,
+  ShoppingBag,
+  Trash2,
+  Truck,
+} from "lucide-react";
 import toast from "react-hot-toast";
 import useCart from "../hooks/useCart.js";
 
-const formatCurrency = (value) => `₹${Math.round(Number(value || 0)).toLocaleString("en-IN")}`;
+const formatCurrency = (value) =>
+  `₹${Math.round(Number(value || 0)).toLocaleString("en-IN")}`;
 
 const CartPage = () => {
   const navigate = useNavigate();
-  const { items, isLoading, error } = useSelector((state) => state.cart);
+  const {
+    items,
+    totalSelling,
+    totalMrp,
+    totalDiscount,
+    isLoading,
+    error,
+  } = useSelector((state) => state.cart);
   const { handleGetCart, handleUpdateCart, handleRemoveCartItem } = useCart();
 
-  const [wishlistIds, setWishlistIds] = useState([]);
   const [updatingItemId, setUpdatingItemId] = useState(null);
   const [removingItemId, setRemovingItemId] = useState(null);
 
@@ -22,42 +37,15 @@ const CartPage = () => {
         await handleGetCart();
       } catch (fetchError) {
         const message =
-          fetchError?.response?.data?.message || "Unable to load cart right now";
+          fetchError?.response?.data?.message ||
+          "Unable to load cart right now";
         toast.error(message);
       }
     };
     fetchCart();
   }, []);
 
-  const subtotal = useMemo(() => {
-    return items.reduce((sum, item) => {
-      const variant =
-        item?.variantId && typeof item.variantId === "object"
-          ? item.variantId
-          : {};
-      const unitPrice = Number(variant?.price?.selling ?? 0);
-      return sum + unitPrice * Number(item?.quantity || 0);
-    }, 0);
-  }, [items]);
-
-  const exclusiveDiscount = useMemo(() => {
-    return items.reduce((sum, item) => {
-      const variant =
-        item?.variantId && typeof item.variantId === "object"
-          ? item.variantId
-          : {};
-      const selling = Number(variant?.price?.selling ?? 0);
-      const mrp = Number(variant?.price?.mrp ?? selling);
-      const itemDiscount = Math.max(mrp - selling, 0);
-      return sum + itemDiscount * Number(item?.quantity || 0);
-    }, 0);
-  }, [items]);
-
-  const shipping = 0;
-  const taxableAmount = Math.max(subtotal - exclusiveDiscount, 0);
-  const tax = Math.round(taxableAmount * 0.065);
-  const total = Math.max(taxableAmount + shipping + tax, 0);
-  const itemCount = items.length;
+  const itemCount = items?.length || 0;
 
   const updateQuantity = async (item, nextQuantity) => {
     const variant =
@@ -97,14 +85,6 @@ const CartPage = () => {
     } finally {
       setRemovingItemId(null);
     }
-  };
-
-  const toggleWishlist = (itemId) => {
-    setWishlistIds((prev) =>
-      prev.includes(itemId)
-        ? prev.filter((id) => id !== itemId)
-        : [...prev, itemId],
-    );
   };
 
   const proceedToCheckout = () => {
@@ -157,9 +137,12 @@ const CartPage = () => {
                 <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-[#f3eee8] text-[#7a6e63]">
                   <ShoppingBag size={26} />
                 </div>
-                <h2 className="font-serif text-3xl text-[#1b1c1a]">Your cart is empty</h2>
+                <h2 className="font-serif text-3xl text-[#1b1c1a]">
+                  Your cart is empty
+                </h2>
                 <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-[#7a6e63]">
-                  Add timeless pieces to your wardrobe and they will appear here.
+                  Add timeless pieces to your wardrobe and they will appear
+                  here.
                 </p>
                 <button
                   onClick={() => navigate("/shop")}
@@ -182,17 +165,19 @@ const CartPage = () => {
                 const selling = Number(variant?.price?.selling ?? 0);
                 const mrp = Number(variant?.price?.mrp ?? selling);
                 const stockValue = Number(variant?.stock);
-                const stock = Number.isFinite(stockValue) ? stockValue : Infinity;
+                const stock = Number.isFinite(stockValue)
+                  ? stockValue
+                  : Infinity;
                 const inStock = stock > 0;
                 const title = product?.title || "Untitled Product";
                 const description =
-                  product?.description || "Precision-crafted silhouette in premium textile.";
+                  product?.description ||
+                  "Precision-crafted silhouette in premium textile.";
                 const category = product?.category || "Ready-to-Wear";
                 const imageUrl =
                   variant?.images?.[0]?.url ||
                   product?.coverImage?.url ||
                   "/placeholder-image.jpg";
-                const isWishlisted = wishlistIds.includes(item._id);
 
                 return (
                   <article
@@ -203,7 +188,9 @@ const CartPage = () => {
                     <div className="flex flex-col gap-4 sm:flex-row sm:gap-5">
                       <div className="h-40 w-full overflow-hidden rounded-[1.5rem] bg-[#f3eee8] sm:h-36 sm:w-28 sm:shrink-0">
                         <img
-                        onClick={()=>navigate(`/shop/product/${product._id}`)}
+                          onClick={() =>
+                            navigate(`/shop/product/${product._id}`)
+                          }
                           src={imageUrl}
                           alt={title}
                           className="h-full w-full cursor-pointer object-cover transition-transform duration-500 hover:scale-105"
@@ -251,7 +238,10 @@ const CartPage = () => {
                             <div className="inline-flex items-center rounded-full border border-[#e6dfd5] bg-[#f7f4ef] px-1 py-1">
                               <button
                                 onClick={() =>
-                                  updateQuantity(item, Number(item.quantity || 1) - 1)
+                                  updateQuantity(
+                                    item,
+                                    Number(item.quantity || 1) - 1,
+                                  )
                                 }
                                 disabled={
                                   Number(item.quantity || 1) <= 1 ||
@@ -266,11 +256,15 @@ const CartPage = () => {
                               </span>
                               <button
                                 onClick={() =>
-                                  updateQuantity(item, Number(item.quantity || 1) + 1)
+                                  updateQuantity(
+                                    item,
+                                    Number(item.quantity || 1) + 1,
+                                  )
                                 }
                                 disabled={
                                   updatingItemId === item._id ||
-                                  (Number.isFinite(stock) && Number(item.quantity || 1) >= stock)
+                                  (Number.isFinite(stock) &&
+                                    Number(item.quantity || 1) >= stock)
                                 }
                                 className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-[#1b1c1a] transition-all duration-200 hover:bg-[#ebe4da] disabled:cursor-not-allowed disabled:opacity-40 active:scale-95"
                               >
@@ -302,15 +296,10 @@ const CartPage = () => {
                               <Trash2 size={16} />
                             </button>
                             <button
-                              onClick={() => toggleWishlist(item._id)}
-                              className={`flex h-10 w-10 cursor-pointer items-center justify-center rounded-full transition-all duration-200 active:scale-95 ${
-                                isWishlisted
-                                  ? "bg-[#f6ecec] text-[#b94646]"
-                                  : "text-[#8a8178] hover:bg-[#f3eee8] hover:text-[#1b1c1a]"
-                              }`}
+                              className={`flex h-10 w-10 cursor-pointer items-center justify-center rounded-full transition-all duration-200 active:scale-95 `}
                               aria-label="Add to wishlist"
                             >
-                              <Heart size={16} fill={isWishlisted ? "currentColor" : "none"} />
+                              <Heart size={16} />
                             </button>
                           </div>
                         </div>
@@ -331,30 +320,32 @@ const CartPage = () => {
               <div className="mt-6 space-y-3 text-sm text-[#7a6e63]">
                 <div className="flex items-center justify-between">
                   <span>Subtotal</span>
-                  <span className="font-medium text-[#1b1c1a]">{formatCurrency(subtotal)}</span>
+                  <span className="font-medium text-[#1b1c1a]">
+                 {formatCurrency(totalMrp)}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Exclusive Discount</span>
                   <span className="font-medium text-[#1b1c1a]">
-                    -{formatCurrency(exclusiveDiscount)}
+                    -{formatCurrency(totalDiscount)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>White-Glove Shipping</span>
-                  <span className="font-medium text-[#1b1c1a]">Complimentary</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span>Estimated Tax</span>
-                  <span className="font-medium text-[#1b1c1a]">{formatCurrency(tax)}</span>
+                  <span className="font-medium text-[#1b1c1a]">
+                    Complimentary
+                  </span>
                 </div>
               </div>
 
               <div className="my-6 border-t border-[#ddd4c9]" />
 
               <div className="flex items-center justify-between">
-                <span className="text-[1.7rem] font-serif text-[#1b1c1a]">Total</span>
+                <span className="text-[1.7rem] font-serif text-[#1b1c1a]">
+                  Total
+                </span>
                 <span className="text-[2.2rem] font-semibold leading-none text-[#1b1c1a]">
-                  {formatCurrency(total)}
+                  {formatCurrency(totalSelling)}
                 </span>
               </div>
 
@@ -398,8 +389,12 @@ const CartPage = () => {
         <div className="fixed inset-x-0 bottom-0 z-30 border-t border-[#e2dacd] bg-[#f7f4ef]/95 px-4 py-3 backdrop-blur lg:hidden">
           <div className="mx-auto flex max-w-[1280px] items-center gap-3">
             <div className="min-w-0">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-[#7a6e63]">Total</p>
-              <p className="truncate font-serif text-2xl text-[#1b1c1a]">{formatCurrency(total)}</p>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-[#7a6e63]">
+                Total
+              </p>
+              <p className="truncate font-serif text-2xl text-[#1b1c1a]">
+                {formatCurrency(totalSelling)}
+              </p>
             </div>
             <button
               onClick={proceedToCheckout}

@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { asyncHandler } from "../middlewares/asyncHandler.middleware.js";
 import cartModel from "../models/cart.model.js";
 import VariantModel from "../models/varient.model.js";
@@ -46,16 +47,102 @@ const ensureCartForUser = async (userId) => {
 export const getMyCart = asyncHandler(async (req, res) => {
   const userId = resolveUserId(req);
 
-  const cart = await ensureCartForUser(userId);
-  await cart.populate(cartPopulateOptions);
+  // Ensure cart exists
+  await ensureCartForUser(userId);
+
+  const cartData = await cartModel.aggregate([
+    {
+      $match: {
+        $or: [
+          { user: new mongoose.Types.ObjectId(userId) },
+          { userId: new mongoose.Types.ObjectId(userId) },
+        ],
+      },
+    },
+    {
+      $unwind: {
+        path: "$items",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: "variants",
+        localField: "items.variantId",
+        foreignField: "_id",
+        as: "items.variantId",
+      },
+    },
+    {
+      $unwind: {
+        path: "$items.variantId",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: "products",
+        localField: "items.productId",
+        foreignField: "_id",
+        as: "items.productId",
+      },
+    },
+    {
+      $unwind: {
+        path: "$items.productId",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        "items.itemPrice": {
+          $multiply: [
+            { $ifNull: ["$items.quantity", 0] },
+            { $ifNull: ["$items.variantId.price.selling", 0] },
+          ],
+        },
+        "items.itemMrp": {
+          $multiply: [
+            { $ifNull: ["$items.quantity", 0] },
+            { $ifNull: ["$items.variantId.price.mrp", 0] },
+          ],
+        },
+      },
+    },
+    {
+      $group: {
+        _id: "$_id",
+        items: {
+          $push: {
+            $cond: {
+              if: { $gt: ["$items.quantity", 0] },
+              then: "$items",
+              else: "$$REMOVE",
+            },
+          },
+        },
+        totalSelling: { $sum: "$items.itemPrice" },
+        totalMrp: { $sum: "$items.itemMrp" },
+      },
+    },
+    {
+      $addFields: {
+        totalDiscount: { $subtract: ["$totalMrp", "$totalSelling"] },
+      },
+    },
+  ]);
+
+  const finalCart = cartData.length > 0 ? cartData[0] : { items: [], totalSelling: 0, totalMrp: 0, totalDiscount: 0 };
 
   return res.status(200).json({
     success: true,
     message: "Cart fetched successfully",
-    data: cart,
+    data: finalCart,
     error: null,
   });
 });
+
+
 
 export const addItemToCart = asyncHandler(async (req, res, next) => {
   const userId = resolveUserId(req);
