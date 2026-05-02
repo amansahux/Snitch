@@ -15,7 +15,7 @@ import {
   deleteAddress,
   getAddresses,
   updateAddress,
-} from "../services/address.service.js";
+} from "../services/address.api.js";
 
 const useAddress = () => {
   const dispatch = useDispatch();
