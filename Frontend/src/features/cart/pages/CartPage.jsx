@@ -93,41 +93,41 @@ const CartPage = () => {
     }
   };
 
-  const proceedToCheckout = async () => {
-    if (!items.length) {
-      toast.error("Your cart is currently empty");
-      return;
-    }
-    const order = await handleCreateCartPaymentOrder();
-    console.log(order);
-    const options = {
-      key: "rzp_test_ShNSkpxt3emQVJ",
-      amount: order.data.amount, // Amount in paise
-      currency: "INR",
-      name: "Snitch",
-      description: "Payment for your order",
-      order_id: order.data.id,
-      handler: (response) => {
-        console.log(response);
-        alert("Payment Successful!");
-      },
-      prefill: {
-        name: user.fullName,
-        email: user.email,
-        contact: user.phone,
-      },
-      theme: {
-        color: "#c9a96e",
-      },
-    };
+  // const proceedToCheckout = async () => {
+  //   if (!items.length) {
+  //     toast.error("Your cart is currently empty");
+  //     return;
+  //   }
+  //   const order = await handleCreateCartPaymentOrder();
+  //   console.log(order);
+  //   const options = {
+  //     key: "rzp_test_ShNSkpxt3emQVJ",
+  //     amount: order.data.amount, // Amount in paise
+  //     currency: "INR",
+  //     name: "Snitch",
+  //     description: "Payment for your order",
+  //     order_id: order.data.id,
+  //     handler: (response) => {
+  //       console.log(response);
+  //       alert("Payment Successful!");
+  //     },
+  //     prefill: {
+  //       name: user.fullName,
+  //       email: user.email,
+  //       contact: user.phone,
+  //     },
+  //     theme: {
+  //       color: "#c9a96e",
+  //     },
+  //   };
 
-    const razorpay = new Razorpay(options);
-    razorpay.on("payment.failed", (response) => {
-      console.log(response);
-      toast.error("Payment Failed");
-    });
-    razorpay.open();
-  };
+  //   const razorpay = new Razorpay(options);
+  //   razorpay.on("payment.failed", (response) => {
+  //     console.log(response);
+  //     toast.error("Payment Failed");
+  //   });
+  //   razorpay.open();
+  // };
 
   if (isLoading) {
     return (
@@ -385,7 +385,6 @@ const CartPage = () => {
 
               <div className="mt-6 space-y-3">
                 <button
-                  onClick={proceedToCheckout}
                   className="w-full cursor-pointer rounded-full bg-[#1b1c1a] px-6 py-4 text-[11px] font-semibold uppercase tracking-[0.24em] text-white transition-all duration-300 hover:bg-[#C9A96E] active:scale-[0.99]"
                 >
                   Proceed to Checkout
@@ -431,7 +430,6 @@ const CartPage = () => {
               </p>
             </div>
             <button
-              onClick={proceedToCheckout}
               className="ml-auto cursor-pointer rounded-full bg-[#1b1c1a] px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-white transition-all duration-300 active:scale-[0.98]"
             >
               Checkout
