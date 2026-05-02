@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import useCart from "../hooks/useCart.js";
+import AddressManager from "../components/AddressManager";
 import { useRazorpay, RazorpayOrderOptions } from "react-razorpay";
 
 const formatCurrency = (value) =>
@@ -37,19 +38,7 @@ const CartPage = () => {
   const [updatingItemId, setUpdatingItemId] = useState(null);
   const [removingItemId, setRemovingItemId] = useState(null);
 
-  useEffect(() => {
-    const fetchCart = async () => {
-      try {
-        await handleGetCart();
-      } catch (fetchError) {
-        const message =
-          fetchError?.response?.data?.message ||
-          "Unable to load cart right now";
-        toast.error(message);
-      }
-    };
-    fetchCart();
-  }, []);
+  const [selectedAddress, setSelectedAddress] = useState(null);
 
   const itemCount = items?.length || 0;
 
@@ -92,42 +81,65 @@ const CartPage = () => {
       setRemovingItemId(null);
     }
   };
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        await handleGetCart();
+      } catch (fetchError) {
+        const message =
+          fetchError?.response?.data?.message ||
+          "Unable to load cart right now";
+        toast.error(message);
+      }
+    };
+    fetchCart();
+  }, []);
 
-  // const proceedToCheckout = async () => {
-  //   if (!items.length) {
-  //     toast.error("Your cart is currently empty");
-  //     return;
-  //   }
-  //   const order = await handleCreateCartPaymentOrder();
-  //   console.log(order);
-  //   const options = {
-  //     key: "rzp_test_ShNSkpxt3emQVJ",
-  //     amount: order.data.amount, // Amount in paise
-  //     currency: "INR",
-  //     name: "Snitch",
-  //     description: "Payment for your order",
-  //     order_id: order.data.id,
-  //     handler: (response) => {
-  //       console.log(response);
-  //       alert("Payment Successful!");
-  //     },
-  //     prefill: {
-  //       name: user.fullName,
-  //       email: user.email,
-  //       contact: user.phone,
-  //     },
-  //     theme: {
-  //       color: "#c9a96e",
-  //     },
-  //   };
+  const proceedToCheckout = async () => {
+    if (!items.length) {
+      toast.error("Your cart is currently empty");
+      return;
+    }
+    if (!selectedAddress) {
+      toast.error("Please select a delivery address");
+      return;
+    }
 
-  //   const razorpay = new Razorpay(options);
-  //   razorpay.on("payment.failed", (response) => {
-  //     console.log(response);
-  //     toast.error("Payment Failed");
-  //   });
-  //   razorpay.open();
-  // };
+    try {
+      const order = await handleCreateCartPaymentOrder();
+      console.log(order);
+      const options = {
+        key: "rzp_test_ShNSkpxt3emQVJ",
+        amount: order.data.amount, // Amount in paise
+        currency: "INR",
+        name: "Snitch",
+        description: "Payment for your order",
+        order_id: order.data.id,
+        handler: (response) => {
+          console.log(response);
+          toast.success("Payment Successful!");
+        },
+        prefill: {
+          name: user?.fullName || "",
+          email: user?.email || "",
+          contact: user?.phone || "",
+        },
+        theme: {
+          color: "#c9a96e",
+        },
+      };
+
+      const razorpay = new Razorpay(options);
+      razorpay.on("payment.failed", (response) => {
+        console.log(response);
+        toast.error("Payment Failed");
+      });
+      razorpay.open();
+    } catch (error) {
+      console.log(error);
+      toast.error("Unable to initiate checkout");
+    }
+  };
 
   if (isLoading) {
     return (
@@ -196,8 +208,8 @@ const CartPage = () => {
                     ? item.variantId
                     : {};
 
-                const selling = Number(variant?.price?.selling ?? 0);
-                const mrp = Number(variant?.price?.mrp ?? selling);
+                const selling = Number(item?.itemPrice || (variant?.price?.selling ?? 0) * (item?.quantity ?? 1));
+                const mrp = Number(item?.itemMrp || (variant?.price?.mrp ?? (variant?.price?.selling ?? 0)) * (item?.quantity ?? 1));
                 const stockValue = Number(variant?.stock);
                 const stock = Number.isFinite(stockValue)
                   ? stockValue
@@ -345,8 +357,8 @@ const CartPage = () => {
             )}
           </section>
 
-          <aside className="lg:col-span-4">
-            <div className="animate-cart-fade rounded-[2rem] border border-[#e6dfd5] bg-[#f3eee8] p-6 sm:p-7 lg:sticky lg:top-8">
+          <aside className="lg:col-span-4 space-y-6 lg:sticky lg:top-8">
+            <div className="animate-cart-fade rounded-[2rem] border border-[#e6dfd5] bg-[#f3eee8] p-6 sm:p-7">
               <h2 className="font-serif text-[2.2rem] leading-none text-[#1b1c1a]">
                 Order Summary
               </h2>
@@ -384,9 +396,7 @@ const CartPage = () => {
               </div>
 
               <div className="mt-6 space-y-3">
-                <button
-                  className="w-full cursor-pointer rounded-full bg-[#1b1c1a] px-6 py-4 text-[11px] font-semibold uppercase tracking-[0.24em] text-white transition-all duration-300 hover:bg-[#C9A96E] active:scale-[0.99]"
-                >
+                <button className="w-full cursor-pointer rounded-full bg-[#1b1c1a] px-6 py-4 text-[11px] font-semibold uppercase tracking-[0.24em] text-white transition-all duration-300 hover:bg-[#C9A96E] active:scale-[0.99]">
                   Proceed to Checkout
                 </button>
                 <button
@@ -414,6 +424,12 @@ const CartPage = () => {
                 </div>
               </div>
             </div>
+
+            {/* Address Management Section */}
+            <AddressManager
+              selectedAddress={selectedAddress}
+              onSelectAddress={setSelectedAddress}
+            />
           </aside>
         </div>
       </main>
@@ -430,6 +446,7 @@ const CartPage = () => {
               </p>
             </div>
             <button
+              onClick={proceedToCheckout}
               className="ml-auto cursor-pointer rounded-full bg-[#1b1c1a] px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-white transition-all duration-300 active:scale-[0.98]"
             >
               Checkout

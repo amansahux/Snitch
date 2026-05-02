@@ -16,14 +16,17 @@ import {
   setCartLoading,
 } from "../state/cart.slice";
 
+// All API calls return response.data = { success, message, data: {...}, error }
+// We unwrap .data to get the actual cart payload before dispatching.
+
 const useCart = () => {
   const dispatch = useDispatch();
 
   const handleGetCart = async () => {
     try {
       dispatch(setCartLoading(true));
-      const res = await getMyCart();
-      dispatch(setCart(res.data));
+      const res = await getMyCart(); // res = { success, message, data: cart }
+      dispatch(setCart(res.data));   // cart = { _id, items, totalSelling, ... }
       return res;
     } catch (error) {
       const errorMessage =
@@ -53,18 +56,16 @@ const useCart = () => {
 
   const handleUpdateCart = async (itemId, quantity) => {
     try {
-      // dispatch(setCartLoading(true));
       const res = await updateCartItem({ itemId, quantity });
-      dispatch(updateCart(res.data));
+      dispatch(updateCart(res.data)); // res.data = aggregated cart with totals
       return res;
     } catch (error) {
       const errorMessage =
         error?.response?.data?.message || "Failed to update cart item";
       dispatch(setCartError(errorMessage));
       throw error;
-    } finally {
-      dispatch(setCartLoading(false));
     }
+    // No setCartLoading here — optimistic UI keeps cart interactive
   };
 
   const handleRemoveCartItem = async (itemId) => {
@@ -90,7 +91,8 @@ const useCart = () => {
       dispatch(setCart(res.data));
       return res;
     } catch (error) {
-      const errorMessage = error?.response?.data?.message || "Failed to clear cart";
+      const errorMessage =
+        error?.response?.data?.message || "Failed to clear cart";
       dispatch(setCartError(errorMessage));
       throw error;
     } finally {

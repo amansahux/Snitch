@@ -110,12 +110,14 @@ export const addItemToCart = asyncHandler(async (req, res, next) => {
   }
 
   await cart.save();
-  await cart.populate(cartPopulateOptions);
+
+  let cartData = await getCartDetails(userId);
+  const updatedCart = cartData.length > 0 ? cartData[0] : { items: [], totalSelling: 0, totalMrp: 0, totalDiscount: 0 };
 
   return res.status(200).json({
     success: true,
     message: "Item added to cart successfully",
-    data: cart,
+    data: updatedCart,
     error: null,
   });
 });
@@ -154,12 +156,14 @@ export const updateCartItem = asyncHandler(async (req, res, next) => {
 
   item.quantity = quantity;
   await cart.save();
-  await cart.populate(cartPopulateOptions);
+
+  let cartData = await getCartDetails(userId);
+  const updatedCart = cartData.length > 0 ? cartData[0] : { items: [], totalSelling: 0, totalMrp: 0, totalDiscount: 0 };
 
   return res.status(200).json({
     success: true,
     message: "Cart item updated successfully",
-    data: cart,
+    data: updatedCart,
     error: null,
   });
 });
@@ -184,12 +188,14 @@ export const removeCartItem = asyncHandler(async (req, res, next) => {
 
   item.deleteOne();
   await cart.save();
-  await cart.populate(cartPopulateOptions);
+
+  let cartData = await getCartDetails(userId);
+  const updatedCart = cartData.length > 0 ? cartData[0] : { items: [], totalSelling: 0, totalMrp: 0, totalDiscount: 0 };
 
   return res.status(200).json({
     success: true,
     message: "Cart item removed successfully",
-    data: cart,
+    data: updatedCart,
     error: null,
   });
 });
@@ -204,7 +210,7 @@ export const clearCart = asyncHandler(async (req, res) => {
   return res.status(200).json({
     success: true,
     message: "Cart cleared successfully",
-    data: cart,
+    data: { items: [], totalSelling: 0, totalMrp: 0, totalDiscount: 0 },
     error: null,
   });
 });
