@@ -30,7 +30,7 @@ export const clearCart = async () => {
   return response.data;
 };
 
-export const createCartPaymentOrder = async (amount) => {
-  const response = await API.post("/payment/create/order", { amount });
+export const createCartPaymentOrder = async () => {
+  const response = await API.post("/payment/create/order");
   return response.data;
 };

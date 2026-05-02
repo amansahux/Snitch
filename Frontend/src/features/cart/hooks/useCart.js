@@ -98,9 +98,9 @@ const useCart = () => {
     }
   };
 
-  const handleCreateCartPaymentOrder = async (amount) => {
+  const handleCreateCartPaymentOrder = async () => {
     try {
-      const res = await createCartPaymentOrder(amount);
+      const res = await createCartPaymentOrder();
       return res;
     } catch (error) {
       const errorMessage =

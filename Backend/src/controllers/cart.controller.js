@@ -3,6 +3,7 @@ import { asyncHandler } from "../middlewares/asyncHandler.middleware.js";
 import cartModel from "../models/cart.model.js";
 import VariantModel from "../models/varient.model.js";
 import { createOrder } from "../services/payment.service.js";
+import { getCartDetails } from "../dao/cart.dao.js";
 
 const cartPopulateOptions = [
   { path: "items.productId", select: "title category coverImage" },
@@ -32,7 +33,7 @@ const ensureCartForUser = async (userId) => {
       cartUserQuery(userId),
       { $setOnInsert: { user: userId, userId, items: [] } },
       {
-        new: true,
+        returnDocument: "after",
         upsert: true,
         setDefaultsOnInsert: true,
         runValidators: true,
@@ -47,96 +48,15 @@ const ensureCartForUser = async (userId) => {
     throw error;
   }
 };
-
 export const getMyCart = asyncHandler(async (req, res) => {
   const userId = resolveUserId(req);
 
   // Ensure cart exists
   await ensureCartForUser(userId);
 
-  const cartData = await cartModel.aggregate([
-    {
-      $match: {
-        $or: [
-          { user: new mongoose.Types.ObjectId(userId) },
-          { userId: new mongoose.Types.ObjectId(userId) },
-        ],
-      },
-    },
-    {
-      $unwind: {
-        path: "$items",
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    {
-      $lookup: {
-        from: "variants",
-        localField: "items.variantId",
-        foreignField: "_id",
-        as: "items.variantId",
-      },
-    },
-    {
-      $unwind: {
-        path: "$items.variantId",
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    {
-      $lookup: {
-        from: "products",
-        localField: "items.productId",
-        foreignField: "_id",
-        as: "items.productId",
-      },
-    },
-    {
-      $unwind: {
-        path: "$items.productId",
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    {
-      $addFields: {
-        "items.itemPrice": {
-          $multiply: [
-            { $ifNull: ["$items.quantity", 0] },
-            { $ifNull: ["$items.variantId.price.selling", 0] },
-          ],
-        },
-        "items.itemMrp": {
-          $multiply: [
-            { $ifNull: ["$items.quantity", 0] },
-            { $ifNull: ["$items.variantId.price.mrp", 0] },
-          ],
-        },
-      },
-    },
-    {
-      $group: {
-        _id: "$_id",
-        items: {
-          $push: {
-            $cond: {
-              if: { $gt: ["$items.quantity", 0] },
-              then: "$items",
-              else: "$$REMOVE",
-            },
-          },
-        },
-        totalSelling: { $sum: "$items.itemPrice" },
-        totalMrp: { $sum: "$items.itemMrp" },
-      },
-    },
-    {
-      $addFields: {
-        totalDiscount: { $subtract: ["$totalMrp", "$totalSelling"] },
-      },
-    },
-  ]);
+  let cartData = await getCartDetails(userId);
 
-  const finalCart =
+  const cart =
     cartData.length > 0
       ? cartData[0]
       : { items: [], totalSelling: 0, totalMrp: 0, totalDiscount: 0 };
@@ -144,7 +64,7 @@ export const getMyCart = asyncHandler(async (req, res) => {
   return res.status(200).json({
     success: true,
     message: "Cart fetched successfully",
-    data: finalCart,
+    data: cart,
     error: null,
   });
 });
@@ -290,9 +210,17 @@ export const clearCart = asyncHandler(async (req, res) => {
 });
 
 export const createCartPaymentOrder = asyncHandler(async (req, res) => {
-  const { amount } = req.body;
-  console.log("amount", amount);
-  const order = await createOrder({ amount });
+  const userId = resolveUserId(req);
+  const cartData = await getCartDetails(userId);
+  const cart =
+    cartData.length > 0
+      ? cartData[0]
+      : { items: [], totalSelling: 0, totalMrp: 0, totalDiscount: 0 };
+
+  const order = await createOrder({
+    amount: cart.totalSelling,
+    currency: cart?.currency || "INR",
+  });
   return res.status(200).json({
     success: true,
     message: "Order created successfully",
