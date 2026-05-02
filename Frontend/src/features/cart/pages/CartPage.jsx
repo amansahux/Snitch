@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import useCart from "../hooks/useCart.js";
-import AddressManager from "../components/AddressManager";
+import AddressManager from "../../address/pages/AddressManager.jsx";
 import { useRazorpay, RazorpayOrderOptions } from "react-razorpay";
 
 const formatCurrency = (value) =>
@@ -208,8 +208,15 @@ const CartPage = () => {
                     ? item.variantId
                     : {};
 
-                const selling = Number(item?.itemPrice || (variant?.price?.selling ?? 0) * (item?.quantity ?? 1));
-                const mrp = Number(item?.itemMrp || (variant?.price?.mrp ?? (variant?.price?.selling ?? 0)) * (item?.quantity ?? 1));
+                const selling = Number(
+                  item?.itemPrice ||
+                    (variant?.price?.selling ?? 0) * (item?.quantity ?? 1),
+                );
+                const mrp = Number(
+                  item?.itemMrp ||
+                    (variant?.price?.mrp ?? variant?.price?.selling ?? 0) *
+                      (item?.quantity ?? 1),
+                );
                 const stockValue = Number(variant?.stock);
                 const stock = Number.isFinite(stockValue)
                   ? stockValue
@@ -396,7 +403,10 @@ const CartPage = () => {
               </div>
 
               <div className="mt-6 space-y-3">
-                <button className="w-full cursor-pointer rounded-full bg-[#1b1c1a] px-6 py-4 text-[11px] font-semibold uppercase tracking-[0.24em] text-white transition-all duration-300 hover:bg-[#C9A96E] active:scale-[0.99]">
+                <button
+                  onClick={proceedToCheckout}
+                  className="w-full cursor-pointer rounded-full bg-[#1b1c1a] px-6 py-4 text-[11px] font-semibold uppercase tracking-[0.24em] text-white transition-all duration-300 hover:bg-[#C9A96E] active:scale-[0.99]"
+                >
                   Proceed to Checkout
                 </button>
                 <button
