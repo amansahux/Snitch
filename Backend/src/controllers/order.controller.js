@@ -114,6 +114,8 @@ export const verifyOrderPayment = asyncHandler(async (req, res, next) => {
   if (!isPaymentValid) {
     order.paymentStatus = "failed";
     order.orderStatus = "cancelled";
+    order.cancelledAt = new Date();
+    order.isCancelled = true;
     await order.save();
     return res.status(400).json({
       success: false,
