@@ -17,31 +17,17 @@ const resolveUserId = (req) => {
 
 export const createOrderController = asyncHandler(async (req, res, next) => {
   const userId = resolveUserId(req);
-  const { paymentStatus, shippingAddress: addressId } = req.body;
 
   const cartData = await getCartDetails(userId);
   const cart = cartData[0];
+  const shippingAddress = await addressModel.findOne({ user: userId, isDefault: true });
+  console.log(cart)
 
   if (!cart || !cart.items || cart.items.length === 0) {
     const error = new Error("Cart is empty");
     error.statusCode = 400;
     return next(error);
   }
-
-  // Use provided shippingAddress or fallback to default
-  let shippingAddress;
-  if (addressId) {
-    shippingAddress = await addressModel.findOne({
-      _id: addressId,
-      user: userId,
-    });
-  } else {
-    shippingAddress = await addressModel.findOne({
-      user: userId,
-      isDefault: true,
-    });
-  }
-
   if (!shippingAddress) {
     const error = new Error("Shipping address not found");
     error.statusCode = 404;

@@ -3,9 +3,10 @@ export const validate = (schema) => (req, res, next) => {
 
   if (!result.success) {
     return res.status(400).json({
-      message: result.error.errors[0].message, // 🔥 important
       success: false,
-      errors: result.error.errors, // optional (debug ke liye)
+      message: result.error.errors[0].message,
+      data: null,
+      error: result.error.errors,
     });
   }
 

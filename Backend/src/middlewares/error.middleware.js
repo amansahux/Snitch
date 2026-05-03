@@ -11,9 +11,10 @@ export const errorMiddleware = (err, req, res, next) => {
   const stack = config.NODE_ENV === "development" ? err.stack : null;
 
   res.status(statusCode).json({
-    message: err.message || "Internal Server Error",
     success: false,
-    error: err.errors,
+    message: err.message || "Internal Server Error",
+    data: null,
+    error: err.errors || err.message,
     stack: stack,
   });
 };
