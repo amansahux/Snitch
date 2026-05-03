@@ -24,7 +24,7 @@ const CartPage = () => {
   const { items, totalSelling, totalMrp, totalDiscount, isLoading, error } =
     useSelector((state) => state.cart);
   const { handleGetCart, handleUpdateCart, handleRemoveCartItem } = useCart();
-  const { handleCreateOrder } = useOrder();
+  const { handleCreateOrder, handleVerifyOrderPayment } = useOrder();
   const {
     error: razorpayError,
     isLoading: razorpayLoading,
@@ -103,7 +103,7 @@ const CartPage = () => {
 
     try {
       const { razorpayOrder } = await handleCreateOrder();
-      console.log(razorpayOrder);
+      // console.log(razorpayOrder);
       const options = {
         key: "rzp_test_ShNSkpxt3emQVJ",
         amount: razorpayOrder.amount,
@@ -111,9 +111,13 @@ const CartPage = () => {
         name: "Snitch",
         description: "Payment for your order",
         order_id: razorpayOrder.id,
-        handler: (response) => {
+        handler: async (response) => {
           console.log(response);
-          toast.success("Payment Successful!");
+          const res = await handleVerifyOrderPayment(response);
+          console.log(res);
+          if (res?.success) {
+            toast.success("Payment Successful!");
+          }
         },
         prefill: {
           name: user?.fullName || "",

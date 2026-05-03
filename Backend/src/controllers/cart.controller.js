@@ -215,22 +215,22 @@ export const clearCart = asyncHandler(async (req, res) => {
   });
 });
 
-export const createCartPaymentOrder = asyncHandler(async (req, res) => {
-  const userId = resolveUserId(req);
-  const cartData = await getCartDetails(userId);
-  const cart =
-    cartData.length > 0
-      ? cartData[0]
-      : { items: [], totalSelling: 0, totalMrp: 0, totalDiscount: 0 };
+// export const createCartPaymentOrder = asyncHandler(async (req, res) => {
+//   const userId = resolveUserId(req);
+//   const cartData = await getCartDetails(userId);
+//   const cart =
+//     cartData.length > 0
+//       ? cartData[0]
+//       : { items: [], totalSelling: 0, totalMrp: 0, totalDiscount: 0 };
 
-  const order = await createOrder({
-    amount: cart.totalSelling,
-    currency: cart?.currency || "INR",
-  });
-  return res.status(200).json({
-    success: true,
-    message: "Order created successfully",
-    data: order,
-    error: null,
-  });
-});
+//   const order = await createOrder({
+//     amount: cart.totalSelling,
+//     currency: cart?.currency || "INR",
+//   });
+//   return res.status(200).json({
+//     success: true,
+//     message: "Order created successfully",
+//     data: order,
+//     error: null,
+//   });
+// });

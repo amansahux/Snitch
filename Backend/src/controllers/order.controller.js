@@ -4,6 +4,8 @@ import cartModel from "../models/cart.model.js";
 import addressModel from "../models/address.model.js";
 import { getCartDetails } from "../dao/cart.dao.js";
 import { createOrder } from "../services/payment.service.js";
+import { validatePaymentVerification } from "razorpay/dist/utils/razorpay-utils.js";
+import config from "../config/config.js";
 
 const resolveUserId = (req) => {
   const userId = req?.user?.id || req?.user?._id || req?.user?.userId;
@@ -20,7 +22,7 @@ export const createOrderController = asyncHandler(async (req, res, next) => {
   const requestBody = req.body || {};
   const {
     paymentStatus = "pending",
-    orderStatus = "placed",
+    orderStatus = "pending",
     isDelivered = false,
     deliveredAt,
     isCancelled = false,
@@ -85,6 +87,48 @@ export const createOrderController = asyncHandler(async (req, res, next) => {
       order: productOrder,
       razorpayOrder,
     },
+    error: null,
+  });
+});
+export const verifyOrderPayment = asyncHandler(async (req, res, next) => {
+  const userId = resolveUserId(req);
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+    req.body;
+  const order = await orderModel.findOne({
+    "razorpay.orderId": razorpay_order_id,
+    paymentStatus: "pending", 
+  });
+  if (!order) {
+    const error = new Error("Order not found");
+    error.statusCode = 404;
+    return next(error);
+  }
+  const isPaymentValid = validatePaymentVerification(
+    {
+      order_id: razorpay_order_id,
+      payment_id: razorpay_payment_id,
+    },
+    razorpay_signature,
+    config.RAZORPAY_KEY_SECRET,
+  );
+  if (!isPaymentValid) {
+    order.paymentStatus = "failed";
+    order.orderStatus = "cancelled";
+    await order.save();
+    return res.status(400).json({
+      success: false,
+      message: "Invalid payment",
+      data: null,
+      error: null,
+    });
+  }
+  order.paymentStatus = "paid";
+  order.orderStatus = "placed";
+  await order.save();
+  return res.status(200).json({
+    success: true,
+    message: "Payment verified successfully",
+    data: order,
     error: null,
   });
 });

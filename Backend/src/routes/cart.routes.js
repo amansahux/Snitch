@@ -2,7 +2,6 @@ import { Router } from "express";
 import {
   addItemToCart,
   clearCart,
-  createCartPaymentOrder,
   getMyCart,
   removeCartItem,
   updateCartItem,
@@ -27,10 +26,10 @@ cartRouter.patch(
 );
 cartRouter.delete("/items/:itemId", removeCartItem);
 cartRouter.delete("/", clearCart);
-cartRouter.post(
-  "/payment/create/order",
-  authenticateUser,
-  createCartPaymentOrder,
-);
+// cartRouter.post(
+//   "/payment/create/order",
+//   authenticateUser,
+//   createCartPaymentOrder,
+// );
 
 export default cartRouter;

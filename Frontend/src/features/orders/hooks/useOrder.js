@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import { createOrder } from "../services/order.api";
+import { createOrder, verifyOrderPayment } from "../services/order.api.js";
 import {
   setOrders,
   setOrderLoading,
@@ -21,8 +21,20 @@ const useOrder = () => {
       dispatch(setOrderLoading(false));
     }
   };
+  const handleVerifyOrderPayment = async (body) => {
+    dispatch(setOrderLoading(true));
+    try {
+      const res = await verifyOrderPayment(body);
+      return res;
+    } catch (error) {
+      dispatch(setOrderError(error));
+    } finally {
+      dispatch(setOrderLoading(false));
+    }
+  };
   return {
     handleCreateOrder,
+    handleVerifyOrderPayment,
   };
 };
 

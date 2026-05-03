@@ -59,6 +59,7 @@ const orderObjectSchema = z.object({
 
   orderStatus: z
     .enum([
+      "pending",
       "placed",
       "confirmed",
       "shipped",
@@ -68,7 +69,7 @@ const orderObjectSchema = z.object({
       "returned",
     ])
     .optional()
-    .default("placed"),
+    .default("pending"),
 
   isDelivered: z.boolean().optional().default(false),
 

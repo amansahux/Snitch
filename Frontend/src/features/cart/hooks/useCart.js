@@ -4,7 +4,6 @@ import {
   updateCartItem,
   removeCartItem,
   clearCart,
-  createCartPaymentOrder,
 } from "../services/cart.api.js";
 import { useDispatch } from "react-redux";
 import {
@@ -100,17 +99,17 @@ const useCart = () => {
     }
   };
 
-  const handleCreateCartPaymentOrder = async () => {
-    try {
-      const res = await createCartPaymentOrder();
-      return res;
-    } catch (error) {
-      const errorMessage =
-        error?.response?.data?.message || "Failed to create cart payment order";
-      dispatch(setCartError(errorMessage));
-      throw error;
-    }
-  };
+  // const handleCreateCartPaymentOrder = async () => {
+  //   try {
+  //     const res = await createCartPaymentOrder();
+  //     return res;
+  //   } catch (error) {
+  //     const errorMessage =
+  //       error?.response?.data?.message || "Failed to create cart payment order";
+  //     dispatch(setCartError(errorMessage));
+  //     throw error;
+  //   }
+  // };
 
   return {
     handleGetCart,
@@ -118,7 +117,7 @@ const useCart = () => {
     handleUpdateCart,
     handleRemoveCartItem,
     handleClearCart,
-    handleCreateCartPaymentOrder,
+    // handleCreateCartPaymentOrder,
   };
 };
 

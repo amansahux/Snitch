@@ -7,6 +7,7 @@ import {
   getUserOrders,
   getOrderById,
   updateOrderStatus,
+  verifyOrderPayment,
 } from "../controllers/order.controller.js";
 
 const orderRouter = Router();
@@ -17,8 +18,9 @@ orderRouter.post(
   validate(orderSchema),
   createOrderController,
 );
+orderRouter.post("/order/verify-order", authenticateUser, verifyOrderPayment);
 orderRouter.get("/my-orders", authenticateUser, getUserOrders);
 orderRouter.get("/:id", authenticateUser, getOrderById);
-orderRouter.put("/:id/status", authenticateUser, updateOrderStatus); 
+orderRouter.put("/:id/status", authenticateUser, updateOrderStatus);
 
 export default orderRouter;
