@@ -17,11 +17,22 @@ const resolveUserId = (req) => {
 
 export const createOrderController = asyncHandler(async (req, res, next) => {
   const userId = resolveUserId(req);
+  const requestBody = req.body || {};
+  const {
+    paymentStatus = "pending",
+    orderStatus = "placed",
+    isDelivered = false,
+    deliveredAt,
+    isCancelled = false,
+    cancelledAt,
+    shippingAddress: shippingAddressId,
+  } = requestBody;
 
   const cartData = await getCartDetails(userId);
   const cart = cartData[0];
-  const shippingAddress = await addressModel.findOne({ user: userId, isDefault: true });
-  console.log(cart)
+  const shippingAddress = shippingAddressId
+    ? await addressModel.findOne({ _id: shippingAddressId, user: userId })
+    : await addressModel.findOne({ user: userId, isDefault: true });
 
   if (!cart || !cart.items || cart.items.length === 0) {
     const error = new Error("Cart is empty");
@@ -53,7 +64,12 @@ export const createOrderController = asyncHandler(async (req, res, next) => {
     })),
     totalAmount: cart.totalSelling,
     shippingAddress: shippingAddress._id,
-    paymentStatus: paymentStatus || "pending",
+    paymentStatus,
+    orderStatus,
+    isDelivered,
+    deliveredAt,
+    isCancelled,
+    cancelledAt,
     razorpay: {
       orderId: razorpayOrder.id,
     },

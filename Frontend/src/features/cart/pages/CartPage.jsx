@@ -23,12 +23,7 @@ const CartPage = () => {
   const navigate = useNavigate();
   const { items, totalSelling, totalMrp, totalDiscount, isLoading, error } =
     useSelector((state) => state.cart);
-  const {
-    handleGetCart,
-    handleUpdateCart,
-    handleRemoveCartItem,
-    handleCreateCartPaymentOrder,
-  } = useCart();
+  const { handleGetCart, handleUpdateCart, handleRemoveCartItem } = useCart();
   const { handleCreateOrder } = useOrder();
   const {
     error: razorpayError,
@@ -83,17 +78,16 @@ const CartPage = () => {
       setRemovingItemId(null);
     }
   };
+  const fetchCart = async () => {
+    try {
+      await handleGetCart();
+    } catch (fetchError) {
+      const message =
+        fetchError?.response?.data?.message || "Unable to load cart right now";
+      toast.error(message);
+    }
+  };
   useEffect(() => {
-    const fetchCart = async () => {
-      try {
-        await handleGetCart();
-      } catch (fetchError) {
-        const message =
-          fetchError?.response?.data?.message ||
-          "Unable to load cart right now";
-        toast.error(message);
-      }
-    };
     fetchCart();
   }, []);
 
@@ -108,15 +102,15 @@ const CartPage = () => {
     }
 
     try {
-      const order = await handleCreateOrder();
-      console.log(order);
+      const { razorpayOrder } = await handleCreateOrder();
+      console.log(razorpayOrder);
       const options = {
         key: "rzp_test_ShNSkpxt3emQVJ",
-        amount: order.data.amount, // Amount in paise
+        amount: razorpayOrder.amount,
         currency: "INR",
         name: "Snitch",
         description: "Payment for your order",
-        order_id: order.data.id,
+        order_id: razorpayOrder.id,
         handler: (response) => {
           console.log(response);
           toast.success("Payment Successful!");

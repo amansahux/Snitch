@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const orderSchema = z.object({
+const orderObjectSchema = z.object({
   user: z
     .string()
     .regex(/^[0-9a-fA-F]{24}$/, "Invalid user id")
@@ -78,3 +78,5 @@ export const orderSchema = z.object({
 
   cancelledAt: z.coerce.date().optional(),
 });
+
+export const orderSchema = orderObjectSchema.optional().default({});

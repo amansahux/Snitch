@@ -14,6 +14,7 @@ const useOrder = () => {
     try {
       const res = await createOrder();
       dispatch(setOrders(res.data));
+      return res.data;
     } catch (error) {
       dispatch(setOrderError(error));
     } finally {
