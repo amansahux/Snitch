@@ -6,6 +6,7 @@ import { getCartDetails } from "../dao/cart.dao.js";
 import { createOrder } from "../services/payment.service.js";
 import { validatePaymentVerification } from "razorpay/dist/utils/razorpay-utils.js";
 import config from "../config/config.js";
+import VariantModel from "../models/varient.model.js";
 
 const resolveUserId = (req) => {
   const userId = req?.user?.id || req?.user?._id || req?.user?.userId;
@@ -165,6 +166,18 @@ export const verifyOrderPayment = asyncHandler(async (req, res, next) => {
   order.razorpay.paymentId = razorpay_payment_id;
   order.razorpay.signature = razorpay_signature;
   await order.save();
+
+  // Reduce stock for each item in the order
+  const bulkOps = order.items.map((item) => ({
+    updateOne: {
+      filter: { _id: item.variant },
+      update: { $inc: { stock: -item.quantity } },
+    },
+  }));
+
+  if (bulkOps.length > 0) {
+    await VariantModel.bulkWrite(bulkOps);
+  }
 
   await cartModel.updateOne({ user: userId }, { $set: { items: [] } });
 
