@@ -1,6 +1,9 @@
 import orderModel from "../models/order.model.js";
 import { asyncHandler } from "../middlewares/asyncHandler.middleware.js";
 import cartModel from "../models/cart.model.js";
+import addressModel from "../models/address.model.js";
+import { getCartDetails } from "../dao/cart.dao.js";
+import { createOrder } from "../services/payment.service.js";
 
 const resolveUserId = (req) => {
   const userId = req?.user?.id || req?.user?._id || req?.user?.userId;
@@ -12,49 +15,74 @@ const resolveUserId = (req) => {
   return userId.toString();
 };
 
-export const createOrder = asyncHandler(async (req, res, next) => {
+export const createOrderController = asyncHandler(async (req, res, next) => {
   const userId = resolveUserId(req);
-  const cart = await cartModel.findOne({ $or: [{ user: userId }, { userId }] });
-  const address = await addressModel.findOne({
-    user: userId,
-    isDefault: true,
-  });
+  const { paymentStatus, shippingAddress: addressId } = req.body;
 
-  if (!cart) {
-    const error = new Error("Cart not found");
-    error.statusCode = 404;
-    return next(error);
-  }
+  const cartData = await getCartDetails(userId);
+  const cart = cartData[0];
 
-  const { items, totalAmount, shippingAddress, paymentStatus, razorpay } =
-    req.body;
-
-  if (!items || items.length === 0) {
-    const error = new Error("No order items provided");
+  if (!cart || !cart.items || cart.items.length === 0) {
+    const error = new Error("Cart is empty");
     error.statusCode = 400;
     return next(error);
   }
 
-  const order = await orderModel.create({
-    user: userId,
-    items,
-    totalAmount,
-    shippingAddress,
-    paymentStatus,
-    razorpay,
+  // Use provided shippingAddress or fallback to default
+  let shippingAddress;
+  if (addressId) {
+    shippingAddress = await addressModel.findOne({
+      _id: addressId,
+      user: userId,
+    });
+  } else {
+    shippingAddress = await addressModel.findOne({
+      user: userId,
+      isDefault: true,
+    });
+  }
+
+  if (!shippingAddress) {
+    const error = new Error("Shipping address not found");
+    error.statusCode = 404;
+    return next(error);
+  }
+
+  const razorpayOrder = await createOrder({
+    amount: cart.totalSelling,
+    currency: cart.currency || "INR",
   });
 
-  // Clear the user's cart after successfully creating an order
+  const productOrder = await orderModel.create({
+    user: userId,
+    items: cart.items.map((item) => ({
+      product: item.productId._id,
+      variant: item.variantId._id,
+      quantity: item.quantity,
+      price: item.variantId.price.mrp,
+      discountedPrice: item.variantId.price.selling,
+      size: item.variantId.size,
+      color: item.variantId.color,
+      images: item.variantId.images,
+    })),
+    totalAmount: cart.totalSelling,
+    shippingAddress: shippingAddress._id,
+    paymentStatus: paymentStatus || "pending",
+    razorpay: {
+      orderId: razorpayOrder.id,
+    },
+  });
 
-  if (cart) {
-    cart.items = [];
-    await cart.save();
-  }
+  // Clear the user's cart
+  await cartModel.updateOne({ user: userId }, { $set: { items: [] } });
 
   return res.status(201).json({
     success: true,
     message: "Order created successfully",
-    data: order,
+    data: {
+      order: productOrder,
+      razorpayOrder,
+    },
     error: null,
   });
 });

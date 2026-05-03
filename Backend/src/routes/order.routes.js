@@ -3,7 +3,7 @@ import { authenticateUser } from "../middlewares/auth.middleware.js";
 import { validate } from "../middlewares/zod.middleware.js";
 import { orderSchema } from "../validators/order.validator.js";
 import {
-  createOrder,
+  createOrderController,
   getUserOrders,
   getOrderById,
   updateOrderStatus,
@@ -15,7 +15,7 @@ orderRouter.post(
   "/create",
   authenticateUser,
   validate(orderSchema),
-  createOrder,
+  createOrderController,
 );
 orderRouter.get("/my-orders", authenticateUser, getUserOrders);
 orderRouter.get("/:id", authenticateUser, getOrderById);
