@@ -43,8 +43,14 @@ export const createAddress = asyncHandler(async (req, res, next) => {
       isDefault,
     } = req.body;
 
-    // If this address is being set as default, unset all others first
-    if (isDefault) {
+    // Check how many addresses the user has
+    const addressCount = await addressModel.countDocuments({ user: userId });
+    
+    // If it's the first address, or they explicitly passed isDefault: true, set to true.
+    const shouldBeDefault = addressCount === 0 || isDefault;
+
+    // If this address is being set as default (and others exist), unset all others first
+    if (shouldBeDefault && addressCount > 0) {
       await addressModel.updateMany({ user: userId }, { isDefault: false });
     }
 
@@ -59,7 +65,7 @@ export const createAddress = asyncHandler(async (req, res, next) => {
       state,
       landmark,
       alternateMobile,
-      isDefault: isDefault || false,
+      isDefault: shouldBeDefault,
     });
 
     return res.status(201).json({

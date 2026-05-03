@@ -20,11 +20,10 @@ const initialAddressForm = {
   isDefault: false,
 };
 
-
-
-
-
-const AddressManager = ({ selectedAddress: selectedAddressProp, onSelectAddress }) => {
+const AddressManager = ({
+  selectedAddress: selectedAddressProp,
+  onSelectAddress,
+}) => {
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
@@ -141,7 +140,7 @@ const AddressManager = ({ selectedAddress: selectedAddressProp, onSelectAddress 
             <p className="text-sm text-[#7a6e63]">Loading addresses...</p>
           </div>
         ) : addresses.length > 0 ? (
-          <div className="space-y-4">
+          <div className="space-y-4 max-h-[250px] overflow-y-scroll">
             {addresses.map((address) => (
               <div
                 key={address._id}
@@ -150,7 +149,19 @@ const AddressManager = ({ selectedAddress: selectedAddressProp, onSelectAddress 
                     ? "border-[#C9A96E] bg-[#fbf9f6]"
                     : "border-[#e6dfd5]/60 bg-transparent"
                 }`}
-                onClick={() => handleSelectAddress(address)}
+                onClick={async () => {
+                  handleSelectAddress(address);
+                  if (!address.isDefault) {
+                    try {
+                      await handleUpdateAddress(address._id, {
+                        isDefault: true,
+                      });
+                      await handleGetAddresses();
+                    } catch (error) {
+                      console.error("Failed to set address as default", error);
+                    }
+                  }
+                }}
               >
                 <div className="mb-3 flex items-start justify-between">
                   <div className="flex items-center gap-2">
@@ -228,7 +239,10 @@ const AddressManager = ({ selectedAddress: selectedAddressProp, onSelectAddress 
               </button>
             </div>
 
-            <form onSubmit={handleSubmit(handleAddressSubmit)} className="space-y-6">
+            <form
+              onSubmit={handleSubmit(handleAddressSubmit)}
+              className="space-y-6"
+            >
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div className="space-y-2">
                   <label className="text-xs font-semibold uppercase tracking-[0.1em] text-[#7a6e63]">
@@ -241,7 +255,9 @@ const AddressManager = ({ selectedAddress: selectedAddressProp, onSelectAddress 
                     placeholder="Enter your full name"
                   />
                   {errors.fullName && (
-                    <p className="text-xs text-[#ba1a1a]">{errors.fullName.message}</p>
+                    <p className="text-xs text-[#ba1a1a]">
+                      {errors.fullName.message}
+                    </p>
                   )}
                 </div>
                 <div className="space-y-2">
@@ -256,7 +272,9 @@ const AddressManager = ({ selectedAddress: selectedAddressProp, onSelectAddress 
                     placeholder="10-digit mobile number"
                   />
                   {errors.mobile && (
-                    <p className="text-xs text-[#ba1a1a]">{errors.mobile.message}</p>
+                    <p className="text-xs text-[#ba1a1a]">
+                      {errors.mobile.message}
+                    </p>
                   )}
                 </div>
                 <div className="space-y-2">
@@ -271,7 +289,9 @@ const AddressManager = ({ selectedAddress: selectedAddressProp, onSelectAddress 
                     placeholder="6-digit pincode"
                   />
                   {errors.pincode && (
-                    <p className="text-xs text-[#ba1a1a]">{errors.pincode.message}</p>
+                    <p className="text-xs text-[#ba1a1a]">
+                      {errors.pincode.message}
+                    </p>
                   )}
                 </div>
                 <div className="space-y-2">
@@ -285,7 +305,9 @@ const AddressManager = ({ selectedAddress: selectedAddressProp, onSelectAddress 
                     placeholder="Locality or town"
                   />
                   {errors.town && (
-                    <p className="text-xs text-[#ba1a1a]">{errors.town.message}</p>
+                    <p className="text-xs text-[#ba1a1a]">
+                      {errors.town.message}
+                    </p>
                   )}
                 </div>
                 <div className="space-y-2 md:col-span-2">
@@ -299,7 +321,9 @@ const AddressManager = ({ selectedAddress: selectedAddressProp, onSelectAddress 
                     placeholder="Area, Street, Sector, Village"
                   />
                   {errors.address && (
-                    <p className="text-xs text-[#ba1a1a]">{errors.address.message}</p>
+                    <p className="text-xs text-[#ba1a1a]">
+                      {errors.address.message}
+                    </p>
                   )}
                 </div>
                 <div className="space-y-2">
@@ -313,7 +337,9 @@ const AddressManager = ({ selectedAddress: selectedAddressProp, onSelectAddress 
                     placeholder="City or District"
                   />
                   {errors.city && (
-                    <p className="text-xs text-[#ba1a1a]">{errors.city.message}</p>
+                    <p className="text-xs text-[#ba1a1a]">
+                      {errors.city.message}
+                    </p>
                   )}
                 </div>
                 <div className="space-y-2">
@@ -327,7 +353,9 @@ const AddressManager = ({ selectedAddress: selectedAddressProp, onSelectAddress 
                     placeholder="State"
                   />
                   {errors.state && (
-                    <p className="text-xs text-[#ba1a1a]">{errors.state.message}</p>
+                    <p className="text-xs text-[#ba1a1a]">
+                      {errors.state.message}
+                    </p>
                   )}
                 </div>
                 <div className="space-y-2">
@@ -341,7 +369,9 @@ const AddressManager = ({ selectedAddress: selectedAddressProp, onSelectAddress 
                     placeholder="e.g. Near Apollo Hospital"
                   />
                   {errors.landmark && (
-                    <p className="text-xs text-[#ba1a1a]">{errors.landmark.message}</p>
+                    <p className="text-xs text-[#ba1a1a]">
+                      {errors.landmark.message}
+                    </p>
                   )}
                 </div>
                 <div className="space-y-2">
@@ -356,7 +386,9 @@ const AddressManager = ({ selectedAddress: selectedAddressProp, onSelectAddress 
                     placeholder="Alternate number"
                   />
                   {errors.alternateMobile && (
-                    <p className="text-xs text-[#ba1a1a]">{errors.alternateMobile.message}</p>
+                    <p className="text-xs text-[#ba1a1a]">
+                      {errors.alternateMobile.message}
+                    </p>
                   )}
                 </div>
               </div>
