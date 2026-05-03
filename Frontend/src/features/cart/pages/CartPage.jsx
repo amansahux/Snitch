@@ -14,6 +14,7 @@ import toast from "react-hot-toast";
 import useCart from "../hooks/useCart.js";
 import AddressManager from "../../address/pages/AddressManager.jsx";
 import { useRazorpay, RazorpayOrderOptions } from "react-razorpay";
+import useOrder from "../../orders/hooks/useOrder.js";
 
 const formatCurrency = (value) =>
   `₹${Math.round(Number(value || 0)).toLocaleString("en-IN")}`;
@@ -28,6 +29,7 @@ const CartPage = () => {
     handleRemoveCartItem,
     handleCreateCartPaymentOrder,
   } = useCart();
+  const { handleCreateOrder } = useOrder();
   const {
     error: razorpayError,
     isLoading: razorpayLoading,
@@ -106,7 +108,7 @@ const CartPage = () => {
     }
 
     try {
-      const order = await handleCreateCartPaymentOrder();
+      const order = await handleCreateOrder();
       console.log(order);
       const options = {
         key: "rzp_test_ShNSkpxt3emQVJ",

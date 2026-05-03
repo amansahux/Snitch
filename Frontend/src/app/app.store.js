@@ -1,8 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-import authReducer from "../features/Auth/state/auth.slice.js" 
-import productReducer from "../features/Product/state/product.slice.js" 
+import authReducer from "../features/Auth/state/auth.slice.js";
+import productReducer from "../features/Product/state/product.slice.js";
 import cartReducer from "../features/cart/state/cart.slice.js";
 import addressReducer from "../features/address/state/address.slice.js";
+import orderReducer from "../features/orders/state/order.slice.js";
 
 const store = configureStore({
   reducer: {
@@ -10,7 +11,8 @@ const store = configureStore({
     product: productReducer,
     cart: cartReducer,
     address: addressReducer,
+    order: orderReducer,
   },
 });
 
-export default store
+export default store;
