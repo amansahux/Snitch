@@ -77,9 +77,6 @@ export const createOrderController = asyncHandler(async (req, res, next) => {
     },
   });
 
-  // Clear the user's cart
-  await cartModel.updateOne({ user: userId }, { $set: { items: [] } });
-
   return res.status(201).json({
     success: true,
     message: "Order created successfully",
@@ -92,17 +89,54 @@ export const createOrderController = asyncHandler(async (req, res, next) => {
 });
 export const verifyOrderPayment = asyncHandler(async (req, res, next) => {
   const userId = resolveUserId(req);
-  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
-    req.body;
+  const {
+    razorpay_order_id,
+    razorpay_payment_id,
+    razorpay_signature,
+    paymentStatus: requestedPaymentStatus,
+  } = req.body || {};
+
+  if (!razorpay_order_id) {
+    const error = new Error("razorpay_order_id is required");
+    error.statusCode = 400;
+    return next(error);
+  }
+
   const order = await orderModel.findOne({
+    user: userId,
     "razorpay.orderId": razorpay_order_id,
-    paymentStatus: "pending", 
   });
+
   if (!order) {
     const error = new Error("Order not found");
     error.statusCode = 404;
     return next(error);
   }
+
+  if (order.paymentStatus === "paid") {
+    return res.status(200).json({
+      success: true,
+      message: "Payment already verified",
+      data: order,
+      error: null,
+    });
+  }
+
+  if (requestedPaymentStatus === "failed") {
+    order.paymentStatus = "failed";
+    order.orderStatus = "cancelled";
+    order.cancelledAt = new Date();
+    order.isCancelled = true;
+    await order.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Payment marked as failed",
+      data: order,
+      error: null,
+    });
+  }
+
   const isPaymentValid = validatePaymentVerification(
     {
       order_id: razorpay_order_id,
@@ -117,16 +151,23 @@ export const verifyOrderPayment = asyncHandler(async (req, res, next) => {
     order.cancelledAt = new Date();
     order.isCancelled = true;
     await order.save();
+
     return res.status(400).json({
       success: false,
       message: "Invalid payment",
-      data: null,
+      data: order,
       error: null,
     });
   }
+
   order.paymentStatus = "paid";
   order.orderStatus = "placed";
+  order.razorpay.paymentId = razorpay_payment_id;
+  order.razorpay.signature = razorpay_signature;
   await order.save();
+
+  await cartModel.updateOne({ user: userId }, { $set: { items: [] } });
+
   return res.status(200).json({
     success: true,
     message: "Payment verified successfully",

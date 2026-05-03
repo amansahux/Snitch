@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
@@ -13,7 +13,7 @@ import {
 import toast from "react-hot-toast";
 import useCart from "../hooks/useCart.js";
 import AddressManager from "../../address/pages/AddressManager.jsx";
-import { useRazorpay, RazorpayOrderOptions } from "react-razorpay";
+import { useRazorpay } from "react-razorpay";
 import useOrder from "../../orders/hooks/useOrder.js";
 
 const formatCurrency = (value) =>
@@ -25,11 +25,7 @@ const CartPage = () => {
     useSelector((state) => state.cart);
   const { handleGetCart, handleUpdateCart, handleRemoveCartItem } = useCart();
   const { handleCreateOrder, handleVerifyOrderPayment } = useOrder();
-  const {
-    error: razorpayError,
-    isLoading: razorpayLoading,
-    Razorpay,
-  } = useRazorpay();
+  const { Razorpay } = useRazorpay();
   const { user } = useSelector((state) => state.auth);
 
   const [updatingItemId, setUpdatingItemId] = useState(null);
@@ -103,7 +99,33 @@ const CartPage = () => {
 
     try {
       const { razorpayOrder } = await handleCreateOrder();
-      // console.log(razorpayOrder);
+      if (!razorpayOrder?.id) {
+        toast.error("Unable to create payment order");
+        return;
+      }
+
+      let hasSyncedPaymentState = false;
+      let isSyncingPaymentState = false;
+      const markPaymentFailed = async ({
+        razorpay_order_id,
+        razorpay_payment_id = "",
+      } = {}) => {
+        if (hasSyncedPaymentState || isSyncingPaymentState) return;
+        isSyncingPaymentState = true;
+
+        const res = await handleVerifyOrderPayment({
+          razorpay_order_id: razorpay_order_id || razorpayOrder.id,
+          razorpay_payment_id,
+          razorpay_signature: "",
+          paymentStatus: "failed",
+        });
+
+        if (res?.success) {
+          hasSyncedPaymentState = true;
+        }
+        isSyncingPaymentState = false;
+      };
+
       const options = {
         key: "rzp_test_ShNSkpxt3emQVJ",
         amount: razorpayOrder.amount,
@@ -112,12 +134,25 @@ const CartPage = () => {
         description: "Payment for your order",
         order_id: razorpayOrder.id,
         handler: async (response) => {
-          console.log(response);
           const res = await handleVerifyOrderPayment(response);
-          console.log(res);
           if (res?.success) {
+            hasSyncedPaymentState = true;
             toast.success("Payment Successful!");
+            await handleGetCart();
+            return;
           }
+
+          await markPaymentFailed({
+            razorpay_order_id: razorpayOrder.id,
+            razorpay_payment_id: response?.razorpay_payment_id,
+          });
+          toast.error("Payment verification failed");
+        },
+        modal: {
+          ondismiss: async () => {
+            await markPaymentFailed({ razorpay_order_id: razorpayOrder.id });
+            toast.error("Payment cancelled");
+          },
         },
         prefill: {
           name: user?.fullName || "",
@@ -130,8 +165,12 @@ const CartPage = () => {
       };
 
       const razorpay = new Razorpay(options);
-      razorpay.on("payment.failed", (response) => {
-        console.log(response);
+      razorpay.on("payment.failed", async (response) => {
+        const metadata = response?.error?.metadata || {};
+        await markPaymentFailed({
+          razorpay_order_id: metadata?.order_id || razorpayOrder.id,
+          razorpay_payment_id: metadata?.payment_id || "",
+        });
         toast.error("Payment Failed");
       });
       razorpay.open();
