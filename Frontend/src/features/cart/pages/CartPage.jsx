@@ -138,7 +138,7 @@ const CartPage = () => {
           if (res?.success) {
             hasSyncedPaymentState = true;
             toast.success("Payment Successful!");
-            await handleGetCart();
+            navigate(`/order-success/${res?.data?._id}`);
             return;
           }
 
