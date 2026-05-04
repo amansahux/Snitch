@@ -13,3 +13,8 @@ export const verifyOrderPayment = async (body) => {
   const response = await API.post("/order/verify-order", body);
   return response.data;
 };
+
+export const getOrderById = async (id) => {
+  const response = await API.get(`/${id}`);
+  return response.data;
+};

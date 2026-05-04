@@ -1,5 +1,6 @@
 import { useDispatch } from "react-redux";
-import { createOrder, verifyOrderPayment } from "../services/order.api.js";
+import { useCallback } from "react";
+import { createOrder, verifyOrderPayment, getOrderById } from "../services/order.api.js";
 import {
   setOrders,
   setOrderLoading,
@@ -9,7 +10,7 @@ import {
 const useOrder = () => {
   const dispatch = useDispatch();
 
-  const handleCreateOrder = async () => {
+  const handleCreateOrder = useCallback(async () => {
     dispatch(setOrderLoading(true));
     try {
       const res = await createOrder();
@@ -20,8 +21,9 @@ const useOrder = () => {
     } finally {
       dispatch(setOrderLoading(false));
     }
-  };
-  const handleVerifyOrderPayment = async (body) => {
+  }, [dispatch]);
+
+  const handleVerifyOrderPayment = useCallback(async (body) => {
     dispatch(setOrderLoading(true));
     try {
       const res = await verifyOrderPayment(body);
@@ -31,10 +33,24 @@ const useOrder = () => {
     } finally {
       dispatch(setOrderLoading(false));
     }
-  };
+  }, [dispatch]);
+
+  const handleGetOrderById = useCallback(async (id) => {
+    dispatch(setOrderLoading(true));
+    try {
+      const res = await getOrderById(id);
+      return res;
+    } catch (error) {
+      dispatch(setOrderError(error));
+    } finally {
+      dispatch(setOrderLoading(false));
+    }
+  }, [dispatch]);
+
   return {
     handleCreateOrder,
     handleVerifyOrderPayment,
+    handleGetOrderById,
   };
 };
 

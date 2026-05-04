@@ -1,10 +1,63 @@
-import React from "react";
-import { motion } from "framer-motion";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
+import useOrder from "../hooks/useOrder";
 
 const OrderSuccess = () => {
   const navigate = useNavigate();
   const { orderId } = useParams();
+  const location = useLocation();
+  const { handleGetOrderById } = useOrder();
+
+  const [isValidating, setIsValidating] = useState(true);
+  const [orderData, setOrderData] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const validateAccess = async () => {
+      // 1. Initial frontend security check
+      // We check state or session flag
+      const fromCheckout = location.state?.fromCheckout;
+      const sessionFlag = sessionStorage.getItem("orderSuccessAccess");
+
+      // If neither is present, it's a direct or unauthorized access
+      if (!fromCheckout && !sessionFlag) {
+        if (isMounted) navigate("/404", { replace: true });
+        return;
+      }
+
+      // 2. Strong backend validation
+      try {
+        const res = await handleGetOrderById(orderId);
+        
+        if (isMounted) {
+          // Check if order exists, belongs to user, and is paid
+          if (res?.success && res?.data?.paymentStatus === "paid") {
+            setOrderData(res.data);
+            setIsValidating(false);
+            
+            // Only clear the session flag AFTER successful validation
+            // and only if we were relying on it.
+            sessionStorage.removeItem("orderSuccessAccess");
+          } else {
+            navigate("/404", { replace: true });
+          }
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error("Order validation failed:", error);
+          navigate("/404", { replace: true });
+        }
+      }
+    };
+
+    validateAccess();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [orderId, navigate, handleGetOrderById]);
 
   const checkmarkVariants = {
     hidden: { pathLength: 0, opacity: 0 },
@@ -47,6 +100,20 @@ const OrderSuccess = () => {
     hidden: { opacity: 0, y: 10 },
     visible: { opacity: 1, y: 0 },
   };
+
+  if (isValidating) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-cream">
+        <motion.div
+          animate={{ opacity: [0.4, 1, 0.4] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+          className="text-[10px] font-black uppercase tracking-[0.5em] text-gold"
+        >
+          Verifying Order Details
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-cream overflow-hidden select-none">
@@ -127,7 +194,7 @@ const OrderSuccess = () => {
           <br />
           <span className="mt-2 block">
             Order ID:{" "}
-            <span className="text-charcoal font-medium tracking-wider">
+            <span className="text-charcoal font-medium tracking-wider uppercase">
               {orderId}
             </span>
           </span>

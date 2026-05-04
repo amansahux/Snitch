@@ -138,7 +138,11 @@ const CartPage = () => {
           if (res?.success) {
             hasSyncedPaymentState = true;
             toast.success("Payment Successful!");
-            navigate(`/order-success/${res?.data?._id}`);
+            sessionStorage.setItem("orderSuccessAccess", "true");
+            navigate(`/order-success/${res?.data?._id}`, {
+              state: { fromCheckout: true },
+              replace: true,
+            });
             return;
           }
 

@@ -11,6 +11,7 @@ import SpecificProduct from "../features/Product/components/home/SpecificProduct
 import Shop from "../features/Product/components/home/Shop.jsx";
 import Inventory from "../features/Product/pages/Inventory.jsx";
 import SellerProductDetail from "../features/Product/pages/SellerProductDetail.jsx";
+import NotFound from "../features/Product/pages/NotFound.jsx";
 import Cart from "../features/cart/pages/CartPage.jsx";
 import OrderSuccess from "../features/orders/pages/OrderSuccess.jsx";
 
@@ -105,5 +106,9 @@ export const routes = createBrowserRouter([
         ),
       },
     ],
+  },
+  {
+    path: "*",
+    element: <NotFound />,
   },
 ]);
