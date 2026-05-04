@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import useOrder from "../hooks/useOrder";
 
@@ -17,7 +17,6 @@ const OrderSuccess = () => {
 
     const validateAccess = async () => {
       // 1. Initial frontend security check
-      // We check state or session flag
       const fromCheckout = location.state?.fromCheckout;
       const sessionFlag = sessionStorage.getItem("orderSuccessAccess");
 
@@ -32,21 +31,20 @@ const OrderSuccess = () => {
         const res = await handleGetOrderById(orderId);
         
         if (isMounted) {
-          // Check if order exists, belongs to user, and is paid
           if (res?.success && res?.data?.paymentStatus === "paid") {
             setOrderData(res.data);
             setIsValidating(false);
             
             // Only clear the session flag AFTER successful validation
-            // and only if we were relying on it.
             sessionStorage.removeItem("orderSuccessAccess");
           } else {
+            console.error("Order validation failed: Status not paid or success false");
             navigate("/404", { replace: true });
           }
         }
       } catch (error) {
         if (isMounted) {
-          console.error("Order validation failed:", error);
+          console.error("Order validation error:", error);
           navigate("/404", { replace: true });
         }
       }
@@ -57,7 +55,7 @@ const OrderSuccess = () => {
     return () => {
       isMounted = false;
     };
-  }, [orderId, navigate, handleGetOrderById]);
+  }, [orderId, navigate, handleGetOrderById, location.state]);
 
   const checkmarkVariants = {
     hidden: { pathLength: 0, opacity: 0 },
@@ -84,43 +82,35 @@ const OrderSuccess = () => {
     },
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0 },
-  };
-
   if (isValidating) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-cream">
-        <motion.div
-          animate={{ opacity: [0.4, 1, 0.4] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-          className="text-[10px] font-black uppercase tracking-[0.5em] text-gold"
-        >
-          Verifying Order Details
-        </motion.div>
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#fbf9f6]">
+        <div className="flex flex-col items-center gap-4">
+          <motion.div
+            animate={{ opacity: [0.4, 1, 0.4] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+            className="text-[10px] font-black uppercase tracking-[0.5em] text-[#C9A96E]"
+          >
+            Verifying Your Order
+          </motion.div>
+          <div className="h-0.5 w-24 bg-[#ece7df] overflow-hidden">
+            <motion.div 
+              animate={{ x: ["-100%", "100%"] }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              className="h-full w-full bg-[#C9A96E]"
+            />
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-cream overflow-hidden select-none">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#fbf9f6] overflow-hidden select-none">
       <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="max-w-md w-full px-6 text-center"
       >
         {/* Animated Checkmark */}
@@ -131,7 +121,6 @@ const OrderSuccess = () => {
             transition={{ type: "spring", stiffness: 200, damping: 20 }}
             className="relative h-24 w-24"
           >
-            {/* Glow effect */}
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 0.2, scale: 1.5 }}
@@ -140,14 +129,13 @@ const OrderSuccess = () => {
                 repeat: Infinity,
                 repeatType: "reverse",
               }}
-              className="absolute inset-0 rounded-full bg-gold blur-xl"
+              className="absolute inset-0 rounded-full bg-[#C9A96E] blur-xl"
             />
 
             <svg
               className="w-full h-full overflow-visible"
               viewBox="0 0 100 100"
             >
-              {/* Outer Circle */}
               <motion.circle
                 cx="50"
                 cy="50"
@@ -156,8 +144,9 @@ const OrderSuccess = () => {
                 stroke="#C9A96E"
                 strokeWidth="2"
                 variants={circleVariants}
+                initial="hidden"
+                animate="visible"
               />
-              {/* Checkmark Path */}
               <motion.path
                 d="M30 50L45 65L70 35"
                 fill="none"
@@ -166,54 +155,53 @@ const OrderSuccess = () => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 variants={checkmarkVariants}
+                initial="hidden"
+                animate="visible"
               />
             </svg>
           </motion.div>
         </div>
 
-        <motion.h1
-          variants={itemVariants}
-          className="font-serif text-4xl sm:text-5xl text-charcoal mb-4 tracking-tight"
-        >
+        <h1 className="font-serif text-4xl sm:text-5xl text-[#1b1c1a] mb-4 tracking-tight">
           Order Confirmed
-        </motion.h1>
+        </h1>
 
-        <motion.p
-          variants={itemVariants}
-          className="font-serif italic text-lg text-charcoal-light mb-2"
-        >
+        <p className="font-serif italic text-lg text-[#7a6e63] mb-2">
           Your wardrobe is on its way.
-        </motion.p>
+        </p>
 
-        <motion.p
-          variants={itemVariants}
-          className="text-sm text-charcoal-light/80 mb-8 leading-relaxed max-w-[280px] mx-auto font-sans"
-        >
+        <p className="text-sm text-[#7a6e63]/80 mb-8 leading-relaxed max-w-[280px] mx-auto font-sans">
           Thank you for choosing refined style. A confirmation email has been
           sent to your inbox with full tracking details.
           <br />
-          <span className="mt-2 block">
-            Order ID:{" "}
-            <span className="text-charcoal font-medium tracking-wider uppercase">
+          <span className="mt-4 block border-t border-[#e8e2da] pt-4">
+            Order Reference:{" "}
+            <span className="text-[#1b1c1a] font-medium tracking-wider uppercase">
               {orderId}
             </span>
           </span>
-        </motion.p>
+        </p>
 
-        <motion.div variants={itemVariants} className="flex flex-col space-y-4">
+        <div className="flex flex-col space-y-4">
           <button
             onClick={() => navigate(`/orders/${orderId}`)}
-            className="w-full py-4 rounded-full cursor-pointer bg-charcoal text-white text-[11px] font-semibold uppercase tracking-[0.24em] transition-all duration-300 hover:bg-gold hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-black/5"
+            className="w-full py-4 rounded-full cursor-pointer bg-[#1b1c1a] text-white text-[11px] font-semibold uppercase tracking-[0.24em] transition-all duration-300 hover:bg-[#C9A96E] hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-black/5"
           >
             View Order
           </button>
           <button
             onClick={() => navigate("/shop")}
-            className="w-full py-4 cursor-pointer rounded-full border border-charcoal/10 text-charcoal text-[11px] font-semibold uppercase tracking-[0.24em] transition-all duration-300 hover:border-charcoal active:scale-[0.98]"
+            className="w-full py-4 cursor-pointer rounded-full border border-[#1b1c1a]/10 text-[#1b1c1a] text-[11px] font-semibold uppercase tracking-[0.24em] transition-all duration-300 hover:border-[#1b1c1a] active:scale-[0.98]"
           >
             Continue Shopping
           </button>
-        </motion.div>
+        </div>
+        
+        <div className="mt-12">
+           <span className="text-[10px] font-black uppercase tracking-[0.5em] text-[#1b1c1a]/20">
+              Snich Atelier
+           </span>
+        </div>
       </motion.div>
     </div>
   );
