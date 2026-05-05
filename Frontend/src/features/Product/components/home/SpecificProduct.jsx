@@ -151,20 +151,22 @@ const SpecificProduct = () => {
   const displayDescription = product.description;
 
   const displaySellingPrice =
-    selectedItem.price?.selling || selectedItem.price?.amount || 0;
-  const displayMrp = selectedItem.price?.mrp || displaySellingPrice || 0;
-  const displayStock = selectedItem.stock || 49;
+    selectedItem.price?.selling || selectedItem.price?.amount ;
+  const displayMrp = selectedItem.price?.mrp || displaySellingPrice ;
+  const displayStock = selectedItem.stock ;
 
-  const displaySize = selectedItem.size || "M";
-  const displayColor = selectedItem.color || "Black";
-  const displayFit = selectedItem.fit || "Slim";
-  const displayMaterial = selectedItem.material || "Polyester";
+  const displaySize = selectedItem.size ;
+  const displayColor = selectedItem.color ;
+  const displayFit = selectedItem.fit ;
+  const displayMaterial = selectedItem.material ;
 
   const displayImages =
     (activeVariant?.images?.length > 0
       ? activeVariant.images
-      : product.images) || [];
+      : product.images);
   const safeActiveImage = activeImage < displayImages.length ? activeImage : 0;
+
+  const isOwner = user?._id === product?.seller?._id;
 
   return (
     <div className="min-h-screen bg-[#fbf9f6] font-sans selection:bg-[#C9A96E] selection:text-white">
@@ -407,11 +409,11 @@ const SpecificProduct = () => {
             {/* Action Matrix */}
             <div className="space-y-10 lg:space-y-4">
               <button
-                disabled={displayStock <= 0 || isAddingToCart}
+                disabled={displayStock <= 0 || isAddingToCart || isOwner}
                 onClick={() => (user ? handleCart() : navigate("/login"))}
-                className={`w-full h-20 text-[11px] font-black uppercase tracking-[0.4em] transition-all rounded-2xl flex items-center justify-center gap-4 shadow-luxury active:scale-[0.98] group ${displayStock > 0 && !isAddingToCart ? "cursor-pointer bg-[#1b1c1a] text-white hover:bg-[#C9A96E]" : "bg-[#e8e2da] text-[#7a6e63] cursor-not-allowed"}`}
+                className={`w-full h-20 text-[11px] font-black uppercase tracking-[0.4em] transition-all rounded-2xl flex items-center justify-center gap-4 shadow-luxury active:scale-[0.98] group ${displayStock > 0 && !isAddingToCart && !isOwner ? "cursor-pointer bg-[#1b1c1a] text-white hover:bg-[#C9A96E]" : "bg-[#e8e2da] text-[#7a6e63] cursor-not-allowed"}`}
               >
-                {displayStock > 0 && !isAddingToCart ? (
+                {displayStock > 0 && !isAddingToCart && !isOwner ? (
                   <>
                     Add to Cart{" "}
                     <ArrowRight
@@ -421,6 +423,8 @@ const SpecificProduct = () => {
                   </>
                 ) : isAddingToCart ? (
                   "Adding..."
+                ) : isOwner ? (
+                  "Your Product"
                 ) : (
                   "Sold Out"
                 )}

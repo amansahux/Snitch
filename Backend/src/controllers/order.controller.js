@@ -42,6 +42,16 @@ export const createOrderController = asyncHandler(async (req, res, next) => {
     error.statusCode = 400;
     return next(error);
   }
+
+  const hasOwnProduct = cart.items.some(
+    (item) => item.productId.seller.toString() === userId,
+  );
+
+  if (hasOwnProduct) {
+    const error = new Error("You cannot purchase your own product");
+    error.statusCode = 403;
+    return next(error);
+  }
   if (!shippingAddress) {
     const error = new Error("Shipping address not found");
     error.statusCode = 404;

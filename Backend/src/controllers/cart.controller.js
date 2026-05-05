@@ -4,15 +4,6 @@ import cartModel from "../models/cart.model.js";
 import VariantModel from "../models/varient.model.js";
 import { createOrder } from "../services/payment.service.js";
 import { getCartDetails } from "../dao/cart.dao.js";
-
-const cartPopulateOptions = [
-  { path: "items.productId", select: "title category coverImage" },
-  {
-    path: "items.variantId",
-    select: "sku size color fit material price stock images",
-  },
-];
-
 const resolveUserId = (req) => {
   const userId = req?.user?.id || req?.user?._id || req?.user?.userId;
   if (!userId) {
@@ -73,17 +64,25 @@ export const addItemToCart = asyncHandler(async (req, res, next) => {
   const userId = resolveUserId(req);
   const { productId, variantId, quantity = 1 } = req.body;
 
-  const variant =
-    await VariantModel.findById(variantId).select("product stock");
+  const variant = await VariantModel.findById(variantId)
+    .populate("product", "seller")
+    .select("product stock");
+
   if (!variant) {
     const error = new Error("Variant not found");
     error.statusCode = 404;
     return next(error);
   }
 
-  if (variant.product.toString() !== String(productId)) {
+  if (variant.product._id.toString() !== String(productId)) {
     const error = new Error("Variant does not belong to the provided product");
     error.statusCode = 400;
+    return next(error);
+  }
+
+  if (variant.product.seller.toString() === userId) {
+    const error = new Error("You cannot add your own product to cart");
+    error.statusCode = 403;
     return next(error);
   }
 
