@@ -125,7 +125,7 @@ const OrdersSection = ({ orders, isLoading, navigate }) => {
                   <div className="flex lg:flex-col justify-between items-end lg:items-end py-1 lg:w-48 gap-4">
                     <div className="flex flex-col items-end gap-2">
                       <span className="text-3xl font-semibold text-[#1b1c1a]">
-                        ₹{(order.totalAmount || 0).toLocaleString("en-IN")}
+                        ₹{(order.totalAmount).toLocaleString("en-IN")}
                       </span>
                       <div
                         className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.15em] border ${getStatusStyle(
@@ -137,7 +137,7 @@ const OrdersSection = ({ orders, isLoading, navigate }) => {
                     </div>
 
                     <button
-                      onClick={() => navigate(`/profiles/orders/${order._id}`)}
+                      onClick={() => navigate(`/profile/orders/${order._id}`)}
                       className="group/btn flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-[#1b1c1a] border-b-2 border-[#1b1c1a]/10 pb-1.5 hover:border-[#C9A96E] hover:text-[#C9A96E] transition-all cursor-pointer whitespace-nowrap"
                     >
                       View Details

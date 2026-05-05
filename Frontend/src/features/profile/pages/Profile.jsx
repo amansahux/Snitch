@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Outlet, useParams } from "react-router-dom";
 import {
   ShoppingBag,
   User,
@@ -25,6 +25,7 @@ import { useSelector } from "react-redux";
 
 const Profile = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   const { user, handleLogout } = useAuth();
   const {orders, isLoading} = useSelector((state)=> state.order)
   const {handleGetOrders} = useOrder()
@@ -93,28 +94,34 @@ const Profile = () => {
         {/* Main Content Area */}
         <main className="flex-1 min-h-screen px-6 py-10 lg:px-16 lg:py-20 overflow-y-auto no-scrollbar">
           <div className="max-w-[900px]">
-            {activeTab === "orders" && (
-              <OrdersSection
-                orders={orders}
-                isLoading={isLoading}
-                navigate={navigate}
-              />
+            {id ? (
+              <Outlet />
+            ) : (
+              <>
+                {activeTab === "orders" && (
+                  <OrdersSection
+                    orders={orders}
+                    isLoading={isLoading}
+                    navigate={navigate}
+                  />
+                )}
+                {activeTab === "settings" && <AccountInfo user={user} />}
+                {activeTab === "addresses" && (
+                  <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                    <div className="flex flex-col gap-2">
+                      <h2 className="font-serif text-4xl text-[#1b1c1a]">
+                        Managed Addresses
+                      </h2>
+                      <p className="font-serif italic text-[#7a6e63]">
+                        Where your acquisitions meet their destination.
+                      </p>
+                    </div>
+                    <AddressManager />
+                  </div>
+                )}
+                {activeTab === "wishlist" && <WishlistSection />}
+              </>
             )}
-            {activeTab === "settings" && <AccountInfo user={user} />}
-            {activeTab === "addresses" && (
-              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                <div className="flex flex-col gap-2">
-                  <h2 className="font-serif text-4xl text-[#1b1c1a]">
-                    Managed Addresses
-                  </h2>
-                  <p className="font-serif italic text-[#7a6e63]">
-                    Where your acquisitions meet their destination.
-                  </p>
-                </div>
-                <AddressManager />
-              </div>
-            )}
-            {activeTab === "wishlist" && <WishlistSection />}
           </div>
         </main>
       </div>
