@@ -77,7 +77,8 @@ const OrdersSection = () => {
                       <img
                         src={displayImage}
                         alt={firstItem?.product?.title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        onClick={() => { navigate(`/profile/orders/${order._id}`) }}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 cursor-pointer"
                         onError={(e) => {
                            e.target.src = "https://placehold.co/400x600/fbf9f6/1b1c1a?text=S";
                         }}

@@ -7,6 +7,7 @@ import {
   Heart,
   LayoutDashboard,
   Menu,
+  ArrowLeft,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
@@ -74,6 +75,16 @@ const ProfileLayout = () => {
         {/* Main Content Area */}
         <main className="flex-1 min-h-screen px-6 py-10 lg:px-16 lg:py-20 overflow-y-auto no-scrollbar">
           <div className="max-w-[900px]">
+            {/* Back to Home Button */}
+            <button
+              onClick={() => navigate("/")}
+              className="group flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] hover:text-[#C9A96E] transition-all duration-500 cursor-pointer mb-12"
+            >
+              <div className="w-8 h-8 rounded-full border border-[#e6dfd5] flex items-center justify-center group-hover:border-[#C9A96E] transition-all">
+                <ArrowLeft size={14} />
+              </div>
+              Return to Store
+            </button>
             <Outlet />
           </div>
         </main>
