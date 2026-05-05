@@ -482,6 +482,8 @@ const CartPage = () => {
             <AddressManager
               selectedAddress={selectedAddress}
               onSelectAddress={setSelectedAddress}
+              isCartPage={true}
+              
             />
           </aside>
         </div>

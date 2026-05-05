@@ -62,6 +62,7 @@ const useOrder = () => {
     handleCreateOrder,
     handleVerifyOrderPayment,
     handleGetOrderById,
+    handleGetOrders
   };
 };
 

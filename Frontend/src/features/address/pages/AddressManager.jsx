@@ -23,6 +23,7 @@ const initialAddressForm = {
 const AddressManager = ({
   selectedAddress: selectedAddressProp,
   onSelectAddress,
+  isCartPage = false,
 }) => {
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState(null);
@@ -140,7 +141,9 @@ const AddressManager = ({
             <p className="text-sm text-[#7a6e63]">Loading addresses...</p>
           </div>
         ) : addresses.length > 0 ? (
-          <div className="space-y-4 max-h-[250px] overflow-y-scroll">
+          <div
+            className={`space-y-4  overflow-y-scroll ${isCartPage ? "max-h-[250px]" : "max-h-[450px]"}`}
+          >
             {addresses.map((address) => (
               <div
                 key={address._id}
