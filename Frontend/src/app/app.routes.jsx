@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import Login from "../features/Auth/pages/Login.jsx";
 import Register from "../features/Auth/pages/Register.jsx";
 import CreateProduct from "../features/Product/pages/CreateProduct.jsx";
@@ -14,7 +14,13 @@ import SellerProductDetail from "../features/Product/pages/SellerProductDetail.j
 import NotFound from "../features/Product/pages/NotFound.jsx";
 import Cart from "../features/cart/pages/CartPage.jsx";
 import OrderSuccess from "../features/orders/pages/OrderSuccess.jsx";
-import Profile from "../features/profile/pages/Profile.jsx";
+
+// Profile imports
+import ProfileLayout from "../features/profile/pages/ProfileLayout.jsx";
+import OrdersSection from "../features/profile/components/OrdersSection.jsx";
+import AccountInfo from "../features/profile/components/AccountInfo.jsx";
+import AddressSection from "../features/profile/components/AddressSection.jsx";
+import WishlistSection from "../features/profile/components/WishlistSection.jsx";
 import OrderDetail from "../features/profile/pages/OrderDetail.jsx";
 
 export const routes = createBrowserRouter([
@@ -57,19 +63,50 @@ export const routes = createBrowserRouter([
         path: "/profile",
         element: (
           <ProtectedRoute>
-            <Profile />
+            <ProfileLayout />
           </ProtectedRoute>
         ),
         children: [
           {
-            path: "orders/:id",
-            element: (
-              <ProtectedRoute>
-                <OrderDetail />
-              </ProtectedRoute>
-            ),
+            index: true,
+            element: <Navigate to="orders" replace />,
+          },
+          {
+            path: "orders",
+            element: <OrdersSection />,
+          },
+          // Moved OrderDetail out of here
+          {
+            path: "account",
+            children: [
+              {
+                index: true,
+                element: <Navigate to="profile" replace />,
+              },
+              {
+                path: "profile",
+                element: <AccountInfo />,
+              },
+              {
+                path: "address",
+                element: <AddressSection />,
+              },
+            ],
+          },
+          {
+            path: "wishlist",
+            element: <WishlistSection />,
           },
         ],
+      },
+      // STANDALONE Order Detail (No Sidebar)
+      {
+        path: "/profile/orders/:id",
+        element: (
+          <ProtectedRoute>
+            <OrderDetail />
+          </ProtectedRoute>
+        ),
       },
     ],
   },

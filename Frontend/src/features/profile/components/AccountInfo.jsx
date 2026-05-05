@@ -1,7 +1,10 @@
 import React from "react";
 import { Camera } from "lucide-react";
+import useAuth from "../../Auth/hooks/useAuth";
 
-const AccountInfo = ({ user }) => {
+const AccountInfo = () => {
+  const { user } = useAuth();
+  
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex flex-col gap-2">
@@ -16,7 +19,7 @@ const AccountInfo = ({ user }) => {
               <div className="w-24 h-24 rounded-full bg-[#f3eee8] flex items-center justify-center text-3xl font-serif text-[#1b1c1a]">
                 {user?.fullname?.[0]?.toUpperCase()}
               </div>
-              <button className="absolute bottom-0 right-0 p-2 rounded-full bg-[#1b1c1a] text-white hover:bg-[#C9A96E] transition-all shadow-lg">
+              <button className="absolute bottom-0 right-0 p-2 rounded-full bg-[#1b1c1a] text-white hover:bg-[#C9A96E] transition-all shadow-lg cursor-pointer">
                 <Camera size={14} />
               </button>
             </div>
@@ -41,7 +44,7 @@ const AccountInfo = ({ user }) => {
             </div>
           </div>
 
-          <button className="w-full py-4 rounded-full border border-[#1b1c1a] text-[10px] font-black uppercase tracking-[0.3em] text-[#1b1c1a] hover:bg-[#1b1c1a] hover:text-white transition-all duration-500">
+          <button className="w-full py-4 rounded-full border border-[#1b1c1a] text-[10px] font-black uppercase tracking-[0.3em] text-[#1b1c1a] hover:bg-[#1b1c1a] hover:text-white transition-all duration-500 cursor-pointer">
             Edit Information
           </button>
         </div>
@@ -50,14 +53,14 @@ const AccountInfo = ({ user }) => {
           <div className="bg-[#f3eee8]/50 rounded-[3rem] p-10 space-y-4">
             <h4 className="font-serif text-2xl text-[#1b1c1a]">Security</h4>
             <p className="text-sm text-[#7a6e63]">Protect your account by regularly updating your security protocols.</p>
-            <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-[#1b1c1a] border-b border-[#1b1c1a] pb-1 hover:text-[#C9A96E] hover:border-[#C9A96E] transition-all">
+            <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-[#1b1c1a] border-b border-[#1b1c1a] pb-1 hover:text-[#C9A96E] hover:border-[#C9A96E] transition-all cursor-pointer">
               Update Password
             </button>
           </div>
           <div className="bg-[#1b1c1a] text-white rounded-[3rem] p-10 space-y-4">
             <h4 className="font-serif text-2xl">Preferences</h4>
             <p className="text-sm text-white/60">Manage how we communicate new arrivals and exclusive archive access.</p>
-            <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-[#C9A96E] border-b border-[#C9A96E] pb-1 hover:text-white hover:border-white transition-all">
+            <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-[#C9A96E] border-b border-[#C9A96E] pb-1 hover:text-white hover:border-white transition-all cursor-pointer">
               Notification Settings
             </button>
           </div>

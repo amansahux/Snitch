@@ -1,7 +1,18 @@
-import React from "react";
-import { ShoppingBag, ArrowRight, Package } from "lucide-react";
+import React, { useEffect } from "react";
+import { ShoppingBag, ArrowRight } from "lucide-react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import useOrder from "../../orders/hooks/useOrder.js";
 
-const OrdersSection = ({ orders, isLoading, navigate }) => {
+const OrdersSection = () => {
+  const navigate = useNavigate();
+  const { orders, isLoading } = useSelector((state) => state.order);
+  const { handleGetOrders } = useOrder();
+
+  useEffect(() => {
+    handleGetOrders();
+  }, []);
+
   const getStatusStyle = (status) => {
     switch (status?.toLowerCase()) {
       case "paid":

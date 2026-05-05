@@ -1,5 +1,6 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { NavLink } from "react-router-dom";
 import { 
   X, 
   LogOut 
@@ -8,8 +9,6 @@ import {
 const Sidebar = ({ 
   user, 
   navItems, 
-  activeTab, 
-  handleNavClick, 
   isMobileMenuOpen, 
   setIsMobileMenuOpen, 
   setShowLogoutModal 
@@ -28,28 +27,35 @@ const Sidebar = ({
 
         <nav className="flex-1 space-y-2">
           {navItems.map((item) => (
-            <button
+            <NavLink
               key={item.id}
-              onClick={() => handleNavClick(item)}
-              className={`w-full group flex items-center gap-4 px-6 py-4 rounded-[1.5rem] transition-all duration-500 ${
-                activeTab === item.id 
-                  ? "bg-[#1b1c1a] text-white shadow-xl" 
-                  : "text-[#7a6e63] hover:bg-[#f3eee8] hover:text-[#1b1c1a]"
-              }`}
+              to={item.path}
+              end={item.path === "/profile"}
+              className={({ isActive }) =>
+                `w-full group flex items-center gap-4 px-6 py-4 rounded-[1.5rem] transition-all duration-500 ${
+                  isActive 
+                    ? "bg-[#1b1c1a] text-white shadow-xl" 
+                    : "text-[#7a6e63] hover:bg-[#f3eee8] hover:text-[#1b1c1a]"
+                }`
+              }
             >
-              <item.icon size={18} className={`${activeTab === item.id ? "text-[#C9A96E]" : "text-[#d0c5b5] group-hover:text-[#1b1c1a]"} transition-colors`} />
-              <span className="text-[10px] font-black uppercase tracking-[0.25em]">{item.label}</span>
-              {activeTab === item.id && (
-                <motion.div layoutId="activeNav" className="ml-auto w-1.5 h-1.5 rounded-full bg-[#C9A96E]" />
+              {({ isActive }) => (
+                <>
+                  <item.icon size={18} className={`${isActive ? "text-[#C9A96E]" : "text-[#d0c5b5] group-hover:text-[#1b1c1a]"} transition-colors`} />
+                  <span className="text-[10px] font-black uppercase tracking-[0.25em]">{item.label}</span>
+                  {isActive && (
+                    <motion.div layoutId="activeNav" className="ml-auto w-1.5 h-1.5 rounded-full bg-[#C9A96E]" />
+                  )}
+                </>
               )}
-            </button>
+            </NavLink>
           ))}
         </nav>
 
         <div className="mt-auto pt-8 border-t border-[#f3eee8]">
           <button 
             onClick={() => setShowLogoutModal(true)}
-            className="w-full flex items-center gap-4 px-6 py-4 rounded-[1.5rem] text-[#ba1a1a] hover:bg-red-50 transition-all duration-300 group"
+            className="w-full flex items-center gap-4 px-6 py-4 rounded-[1.5rem] text-[#ba1a1a] hover:bg-red-50 transition-all duration-300 group cursor-pointer"
           >
             <LogOut size={18} className="group-hover:rotate-12 transition-transform" />
             <span className="text-[10px] font-black uppercase tracking-[0.25em]">Logout</span>
@@ -77,7 +83,7 @@ const Sidebar = ({
             >
               <div className="flex justify-between items-center mb-12">
                 <h1 className="font-serif text-2xl font-black tracking-widest">SNICH<span className="text-[#C9A96E]">.</span></h1>
-                <button onClick={() => setIsMobileMenuOpen(false)} className="p-2">
+                <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 cursor-pointer">
                   <X size={20} />
                 </button>
               </div>
@@ -94,18 +100,25 @@ const Sidebar = ({
 
               <nav className="flex-1 space-y-2">
                 {navItems.map((item) => (
-                  <button
+                  <NavLink
                     key={item.id}
-                    onClick={() => handleNavClick(item)}
-                    className={`w-full flex items-center gap-4 px-6 py-5 rounded-[1.5rem] transition-all ${
-                      activeTab === item.id 
-                        ? "bg-[#1b1c1a] text-white" 
-                        : "text-[#7a6e63] hover:bg-[#f3eee8]"
-                    }`}
+                    to={item.path}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={({ isActive }) =>
+                      `w-full flex items-center gap-4 px-6 py-5 rounded-[1.5rem] transition-all ${
+                        isActive 
+                          ? "bg-[#1b1c1a] text-white" 
+                          : "text-[#7a6e63] hover:bg-[#f3eee8]"
+                      }`
+                    }
                   >
-                    <item.icon size={18} className={activeTab === item.id ? "text-[#C9A96E]" : "text-[#d0c5b5]"} />
-                    <span className="text-[10px] font-black uppercase tracking-[0.25em]">{item.label}</span>
-                  </button>
+                    {({ isActive }) => (
+                      <>
+                        <item.icon size={18} className={isActive ? "text-[#C9A96E]" : "text-[#d0c5b5]"} />
+                        <span className="text-[10px] font-black uppercase tracking-[0.25em]">{item.label}</span>
+                      </>
+                    )}
+                  </NavLink>
                 ))}
               </nav>
 
@@ -115,7 +128,7 @@ const Sidebar = ({
                     setIsMobileMenuOpen(false);
                     setShowLogoutModal(true);
                   }}
-                  className="w-full flex items-center gap-4 px-6 py-5 rounded-[1.5rem] bg-red-50 text-[#ba1a1a]"
+                  className="w-full flex items-center gap-4 px-6 py-5 rounded-[1.5rem] bg-red-50 text-[#ba1a1a] cursor-pointer"
                 >
                   <LogOut size={18} />
                   <span className="text-[10px] font-black uppercase tracking-[0.25em]">Logout</span>
