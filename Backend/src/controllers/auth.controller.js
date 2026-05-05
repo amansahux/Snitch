@@ -3,6 +3,7 @@ import userModel from "../models/user.model.js";
 import { sendTokenResponse } from "../utils/sendTokenResponse.js";
 import jwt from "jsonwebtoken";
 import config from "../config/config.js";
+import redis from "../config/cache.js";
 
 export const registerController = asyncHandler(async (req, res, next) => {
   const { email, contact } = req.body;
@@ -92,7 +93,7 @@ export const googleCallback = asyncHandler(async (req, res, next) => {
     }
 
     // Set token
-    const token = jwt.sign({ id: user._id }, config.JWT_SECRET, {
+    const token = jwt.sign({ id: user._id, role: user.role }, config.JWT_SECRET, {
       expiresIn: "7d",
     });
 
@@ -103,8 +104,11 @@ export const googleCallback = asyncHandler(async (req, res, next) => {
 
     // Successfully logged in
     const frontendUrl = "http://localhost:5173";
-    const redirectUrl = user.role === "seller" ? `${frontendUrl}/seller/dashboard` : `${frontendUrl}`;
-    
+    const redirectUrl =
+      user.role === "seller"
+        ? `${frontendUrl}/seller/dashboard`
+        : `${frontendUrl}`;
+
     res.redirect(redirectUrl);
   } catch (error) {
     console.error("Google Auth Error:", error);
@@ -133,6 +137,23 @@ export const getProfile = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     success: true,
     user: userResponse,
+    error: null,
+  });
+});
+
+export const logoutController = asyncHandler(async (req, res, next) => {
+  const token = req.cookies.token;
+  if (!token) {
+    const error = new Error("Already logged out");
+    error.statusCode = 400;
+    return next(error);
+  }
+  await redis.set(token, Date.now().toString(), "EX", 7 * 24 * 60 * 60); // Store token in redis for 7 days
+  res.clearCookie("token");
+  res.status(200).json({
+    success: true,
+    message: "User logged out successfully",
+    data: null,
     error: null,
   });
 });

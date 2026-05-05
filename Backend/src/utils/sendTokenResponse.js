@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import config from "../config/config.js";
 
 export const sendTokenResponse = (res, user, message) => {
-  const token = jwt.sign({ id: user._id }, config.JWT_SECRET, {
+  const token = jwt.sign({ id: user._id, role: user.role }, config.JWT_SECRET, {
     expiresIn: "7d",
   });
 

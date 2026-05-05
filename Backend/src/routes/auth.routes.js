@@ -5,6 +5,7 @@ import {
   getProfile,
   googleCallback,
   loginController,
+  logoutController,
   registerController,
 } from "../controllers/auth.controller.js";
 import passport from "passport";
@@ -31,5 +32,6 @@ AuthRouter.get(
   googleCallback,
 );
 AuthRouter.get("/profile", authenticateUser, getProfile);
+AuthRouter.get("/logout", authenticateUser, logoutController);
 
 export default AuthRouter;

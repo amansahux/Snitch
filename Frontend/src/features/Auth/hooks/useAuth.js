@@ -50,6 +50,20 @@ const useAuth = () => {
       dispatch(setLoading(false));
     }
   };
+  const handleLogout = async () => {
+    try{
+      dispatch(setLoading(true));
+      const response = await logout();
+      dispatch(setUser(response.data));
+      return { success: true, data: response.data };
+    } catch (error) {
+      const errorMsg = error.response?.data?.message || "Logout failed";
+      dispatch(setError(errorMsg));
+      return { success: false, error: errorMsg };
+    } finally {
+      dispatch(setLoading(false));
+    }
+  }
 
   return {
     handleLogin,
@@ -57,6 +71,7 @@ const useAuth = () => {
     handleGetProfile,
     user,
     loading,
+    handleLogout,
   };
 };
 

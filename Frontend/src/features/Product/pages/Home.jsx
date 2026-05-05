@@ -15,9 +15,12 @@ import {
 
 const Home = () => {
   const { products, handleGetAllProducts } = useProduct();
-  const { user } = useAuth();
+  const { user, handleLogout } = useAuth();
   const cartCount = useSelector((state) =>
-    state.cart.items.reduce((total, item) => total + Number(item?.quantity || 0), 0),
+    state.cart.items.reduce(
+      (total, item) => total + Number(item?.quantity || 0),
+      0,
+    ),
   );
   const navigate = useNavigate();
 
@@ -35,7 +38,7 @@ const Home = () => {
   }, [handleGetAllProducts]);
 
   return (
-    <div className="min-h-screen bg-[#fbf9f6] selection:bg-[#C9A96E] selection:text-white font-inter overflow-x-hidden no-scrollbar">
+    <div className="min-h-screen bg-[#fbf9f6] selection:bg-[#C9A96E] selection:text-white font-inter  no-scrollbar">
       {/* ================= PREMIUM NAVBAR ================= */}
       <header className="sticky top-0 z-50 backdrop-blur-2xl bg-[#fbf9f6]/80 border-b border-[#e8e2da]/50">
         <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-20 h-24 flex items-center justify-between">
@@ -48,7 +51,10 @@ const Home = () => {
           </Link>
 
           <div className="flex items-center gap-10 md:gap-14 text-[10px] uppercase tracking-[0.3em] font-black text-[#7a6e63]">
-            <Link to="/shop" className="hover:text-[#C9A96E] transition-all">
+            <Link
+              to="/shop"
+              className="hover:text-[#C9A96E] transition-all hidden md:block"
+            >
               Shop
             </Link>
             {user ? (
@@ -77,7 +83,7 @@ const Home = () => {
                   to="/register"
                   className="hidden md:block hover:text-[#C9A96E] transition-all"
                 >
-                Sign up
+                  Sign up
                 </Link>
               </div>
             )}
@@ -96,7 +102,7 @@ const Home = () => {
       </header>
 
       {/* ================= EDITORIAL HERO ================= */}
-      <section className="relative w-full pt-16 lg:pt-24 pb-32 overflow-hidden">
+      <section className="relative w-full pt-16 lg:pt-24 pb-32">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-20">
           <div className="grid lg:grid-cols-12 gap-20 items-center">
             {/* Lead Content */}
@@ -108,7 +114,7 @@ const Home = () => {
                 </span>
               </div>
 
-              <h1 className="text-7xl md:text-8xl xl:text-9xl font-serif text-[#1b1c1a] leading-none tracking-tight">
+              <h1 className=" text-6xl sm:text-7xl md:text-8xl xl:text-9xl font-serif text-[#1b1c1a] leading-none tracking-tight">
                 Architects of <br />
                 <span className="italic font-light text-[#7a6e63]">
                   Contemporary
@@ -125,15 +131,15 @@ const Home = () => {
               <div className="flex flex-wrap items-center gap-10 pt-6">
                 <button
                   onClick={() => navigate("/shop")}
-                  className="px-14 cursor-pointer py-6 bg-[#1b1c1a] text-white text-[11px] font-black uppercase tracking-[0.4em] rounded-[2rem] hover:bg-[#C9A96E] hover:shadow-luxury transition-all duration-700 transform hover:-translate-y-1 active:scale-95 flex items-center gap-4 group"
+                  className="px-12 lg:px-14 cursor-pointer py-5 lg:py-6 bg-[#1b1c1a] text-white text-[9px] lg:text-[11px] font-black uppercase tracking-[0.4em] rounded-[2rem] hover:bg-[#C9A96E] hover:shadow-luxury transition-all duration-700 transform hover:-translate-y-1 active:scale-95 flex items-center gap-4 group"
                 >
                   Explore Collection
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
                 </button>
 
-                <button className="text-[10px] cursor-not-allowed font-black uppercase tracking-[0.3em] text-[#1b1c1a] border-b border-[#e8e2da] pb-2 hover:border-[#C9A96E] hover:text-[#C9A96E] transition-all duration-500">
+                {/* <button className="text-[10px] cursor-not-allowed font-black uppercase tracking-[0.3em] text-[#1b1c1a] border-b border-[#e8e2da] pb-2 hover:border-[#C9A96E] hover:text-[#C9A96E] transition-all duration-500">
                   Read The Journal
-                </button>
+                </button> */}
               </div>
 
               {/* Trust Indicators */}
@@ -242,7 +248,7 @@ const Home = () => {
       </section>
 
       {/* ================= HOUSE FOOTER ================= */}
-      <footer className="bg-[#1b1c1a] text-white py-32 rounded-t-[6rem] relative z-10 -mt-24 overflow-hidden">
+      <footer className="bg-[#1b1c1a] text-white py-32 rounded-t-[3rem] lg:rounded-t-[6rem] relative z-10 -mt-24 ">
         {/* Subtle grid pattern */}
         <div
           className="absolute inset-0 opacity-[0.03] pointer-events-none"

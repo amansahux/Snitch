@@ -18,3 +18,7 @@ export const getProfile = async () => {
   const response = await API.get("/profile");
   return response.data;
 };
+export const logout = async () => {
+  const response = await API.post("/logout");
+  return response.data;
+};
