@@ -136,14 +136,14 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-charcoal text-white py-5 rounded-luxury font-medium tracking-widest uppercase text-sm flex items-center justify-center gap-3 hover:translate-y-[-2px] hover:shadow-luxury transition-all duration-300 disabled:opacity-70 group"
+                className="w-full bg-charcoal cursor-pointer text-white py-5 rounded-luxury font-medium tracking-widest uppercase text-sm flex items-center justify-center gap-3 hover:translate-y-[-2px] hover:shadow-luxury transition-all duration-300 disabled:opacity-70 group"
               >
                 {isSubmitting ? (
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 ) : (
                   <>
                     Sign In
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1  transition-transform" />
                   </>
                 )}
               </button>
@@ -167,7 +167,7 @@ const Login = () => {
 
           <p className="mt-12 text-center text-charcoal-light">
             New here?{" "}
-            <Link to="/register" className="text-charcoal font-bold hover:text-gold transition-colors border-b border-charcoal/20 hover:border-gold pb-0.5 ml-1">
+            <Link to="/register" className="text-charcoal cursor-pointer font-bold hover:text-gold transition-colors border-b border-charcoal/20 hover:border-gold pb-0.5 ml-1">
               Create Account
             </Link>
           </p>

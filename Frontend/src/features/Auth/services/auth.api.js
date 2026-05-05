@@ -19,6 +19,6 @@ export const getProfile = async () => {
   return response.data;
 };
 export const logout = async () => {
-  const response = await API.post("/logout");
+  const response = await API.get("/logout");
   return response.data;
 };
