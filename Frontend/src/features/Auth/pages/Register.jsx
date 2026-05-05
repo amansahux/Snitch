@@ -75,30 +75,30 @@ const Register = () => {
       </div>
 
       {/* Form Section */}
-      <div className="w-full lg:w-[55%] flex flex-col justify-start px-6 sm:px-12 lg:px-20 py-12 lg:py-24 overflow-y-auto no-scrollbar relative z-10 mt-[25vh] lg:mt-0 lg:-ml-20">
+      <div className="w-full lg:w-[55%] flex flex-col justify-start px-6 sm:px-12 lg:px-20 pb-12 lg:pb-24 overflow-y-auto no-scrollbar relative z-10 mt-[25vh] lg:mt-0 lg:-ml-20">
         <div className="max-w-md w-full mx-auto bg-cream px-8 py-10 rounded-[2.5rem] lg:rounded-none lg:bg-transparent shadow-luxury lg:shadow-none">
           {/* Mobile Text (Visible only on mobile) */}
-          <div className="lg:hidden mb-8 text-center">
+          <div className="lg:hidden mb-4 text-center">
             <h2 className="text-3xl font-serif text-charcoal">SNITCH</h2>
             <div className="w-8 h-0.5 bg-gold mx-auto mt-2"></div>
           </div>
 
-          <div className="mb-12">
+          <div className="mb-6">
             <Link to="/" className="hidden lg:flex text-3xl font-serif font-bold tracking-[0.2em] text-charcoal items-center gap-2">
               SNITCH
               <span className="w-1.5 h-1.5 bg-gold rounded-full"></span>
             </Link>
           </div>
 
-          <div className="mb-12 space-y-3">
+          <div className="mb-6 space-y-3">
             <h1 className="text-4xl font-serif text-charcoal">Join the Collective</h1>
             <p className="text-charcoal-light font-light text-lg">
               Start your journey into high-end fashion and exclusive drops.
             </p>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
+            <div className="grid grid-cols-1 gap-2">
                {/* Full Name */}
                <div className="space-y-2 group">
                 <label className="text-[10px] uppercase tracking-[0.2em] text-charcoal-light font-bold">
@@ -146,7 +146,7 @@ const Register = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-2">
                {/* Contact */}
                <div className="space-y-2 group">
                 <label className="text-[10px] uppercase tracking-[0.2em] text-charcoal-light font-bold">
@@ -224,11 +224,11 @@ const Register = () => {
               </label>
             </div>
 
-            <div className="pt-4 space-y-6">
+            <div className="pt-3 space-y-4">
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-gold text-white py-5 rounded-luxury font-medium tracking-widest uppercase text-sm flex items-center justify-center gap-3 hover:translate-y-[-2px] hover:shadow-luxury transition-all duration-300 disabled:opacity-70 group relative overflow-hidden"
+                className="w-full bg-gold cursor-pointer text-white py-4 rounded-luxury font-medium tracking-widest uppercase text-sm flex items-center justify-center gap-3 hover:translate-y-[-2px] hover:shadow-luxury transition-all duration-300 disabled:opacity-70 group relative overflow-hidden"
               >
                 {isSubmitting ? (
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>

@@ -123,12 +123,11 @@ const Home = () => {
                   Autumn - Winter 2026
                 </span>
               </div>
-
-              <h1 className=" text-6xl sm:text-7xl md:text-8xl xl:text-9xl font-serif text-[#1b1c1a] leading-none tracking-tight">
+              <h1 className=" text-6xl sm:text-7xl md:text-8xl xl:text-[7rem] font-serif text-[#1b1c1a] leading-none tracking-tight">
                 Architects of <br />
                 <span className="italic font-light text-[#7a6e63]">
                   Contemporary
-                </span>{" "}
+                </span>
                 <br />
                 Silhouettes
               </h1>
