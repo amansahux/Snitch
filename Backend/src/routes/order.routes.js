@@ -20,7 +20,7 @@ orderRouter.post(
 );
 orderRouter.post("/order/verify-order", authenticateUser, verifyOrderPayment);
 orderRouter.get("/my-orders", authenticateUser, getUserOrders);
-orderRouter.get("/:id", authenticateUser, getOrderById);
-orderRouter.put("/:id/status", authenticateUser, updateOrderStatus);
+orderRouter.get("/my-orders/:id", authenticateUser, getOrderById);
+orderRouter.put("/my-orders/:id/status", authenticateUser, updateOrderStatus);
 
 export default orderRouter;

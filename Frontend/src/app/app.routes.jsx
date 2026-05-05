@@ -14,6 +14,7 @@ import SellerProductDetail from "../features/Product/pages/SellerProductDetail.j
 import NotFound from "../features/Product/pages/NotFound.jsx";
 import Cart from "../features/cart/pages/CartPage.jsx";
 import OrderSuccess from "../features/orders/pages/OrderSuccess.jsx";
+import Profile from "../features/profile/pages/Profile.jsx";
 
 export const routes = createBrowserRouter([
   {
@@ -51,6 +52,14 @@ export const routes = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+      {
+        path: "/profile",
+        element: (
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
   {
@@ -62,7 +71,7 @@ export const routes = createBrowserRouter([
     ),
   },
   {
-    path: "/register",
+    path: "/register",  
     element: (
       <GuestRoute>
         <Register />

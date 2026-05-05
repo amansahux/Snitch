@@ -8,6 +8,7 @@ import Skeleton from "../components/home/Skeleton";
 import { toast } from "react-hot-toast";
 import {
   ArrowRight,
+  CircleUser,
   Globe,
   MessageCircle,
   ShoppingBag,
@@ -59,19 +60,34 @@ const Home = () => {
             >
               Shop
             </Link>
+            <button
+              onClick={() => navigate("/cart")}
+              className="relative flex cursor-pointer items-center gap-2 pr-1 transition-all hover:text-[#C9A96E]"
+            >
+              <ShoppingBag size={14} />
+              Cart
+              <span className="absolute -top-2 -right-4 min-w-5 h-5 px-1 rounded-full bg-[#1b1c1a] text-white text-[9px] font-black tracking-normal normal-case flex items-center justify-center">
+                {cartCount}
+              </span>
+            </button>
             {user ? (
               <div className="flex items-center gap-10">
-                <span className="hidden sm:block text-[#7a6e63] border-b border-[#C9A96E] pb-1 hover:text-[#C9A96E]">
-                  {user.fullname}
-                </span>
                 {user.role === "seller" && (
                   <Link
                     to="/seller/dashboard"
-                    className=" text-[#7a6e63] transition-all hover:text-[#C9A96E]"
+                    className=" hidden md:block text-[#7a6e63] transition-all hover:text-[#C9A96E]"
                   >
                     Dashboard
                   </Link>
                 )}
+                <span
+                  onClick={() => {
+                    user ? navigate("/profile") : navigate("/login");
+                  }}
+                  className=" sm:block text-[#7a6e63] cursor-pointer pb-1 hover:text-[#C9A96E]"
+                >
+                  <CircleUser />
+                </span>
               </div>
             ) : (
               <div className="flex items-center gap-10">
@@ -89,24 +105,15 @@ const Home = () => {
                 </Link>
               </div>
             )}
-            <button
-              onClick={() => navigate("/cart")}
-              className="relative flex cursor-pointer items-center gap-2 pr-1 transition-all hover:text-[#C9A96E]"
-            >
-              <ShoppingBag size={14} />
-              Cart
-              <span className="absolute -top-2 -right-4 min-w-5 h-5 px-1 rounded-full bg-[#1b1c1a] text-white text-[9px] font-black tracking-normal normal-case flex items-center justify-center">
-                {cartCount}
-              </span>
-            </button>
-            {user && (
+
+            {/* {user && (
               <button
                 onClick={() => setShowLogoutModal(true)}
                 className="hover:text-[#C9A96E] transition-all hidden md:block cursor-pointer"
               >
                 Logout
               </button>
-            )}
+            )} */}
           </div>
         </div>
       </header>
@@ -379,7 +386,7 @@ const Home = () => {
                     if (res.success) {
                       navigate("/login");
                       toast.success("Logged out successfully");
-                    }else{
+                    } else {
                       toast.error("Logout failed");
                     }
                   }}
