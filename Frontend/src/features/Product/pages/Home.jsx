@@ -9,10 +9,12 @@ import {
   ArrowRight,
   CircleUser,
   Globe,
+  Heart,
   MessageCircle,
   ShoppingBag,
   Sparkles as SparklesIcon,
 } from "lucide-react";
+import useWishlist from "../../wishlist/hooks/useWishlist";
 
 const Home = () => {
   const { products, handleGetAllProducts } = useProduct();
@@ -23,7 +25,9 @@ const Home = () => {
       0,
     ),
   );
+  const wishlistCount = useSelector((state) => state?.wishlist?.items.length);
   const navigate = useNavigate();
+  const { fetchWishlist } = useWishlist();
 
   const [loading, setLoading] = useState(true);
   const fetchProducts = async () => {
@@ -36,6 +40,7 @@ const Home = () => {
   };
   useEffect(() => {
     fetchProducts();
+    fetchWishlist();
   }, [handleGetAllProducts]);
 
   return (
@@ -45,19 +50,34 @@ const Home = () => {
         <div className="max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-20 h-24 flex items-center justify-between">
           <Link
             to="/"
-            className="text-3xl tracking-[0.4em] uppercase font-serif font-black transition-colors hover:text-[#C9A96E]"
+            className=" text-lg md:text-xl sm:text-3xl tracking-[0.4em] uppercase font-serif font-black transition-colors hover:text-[#C9A96E]"
             style={{ color: "#1b1c1a" }}
           >
             Snich<span className="text-[#C9A96E]">.</span>
           </Link>
 
-          <div className="flex items-center gap-10 md:gap-14 text-[10px] uppercase tracking-[0.3em] font-black text-[#7a6e63]">
+          <div className="flex items-center gap-8 md:gap-10 text-[10px] uppercase tracking-[0.3em] font-black text-[#7a6e63]">
             <Link
               to="/shop"
               className="hover:text-[#C9A96E] transition-all hidden md:block"
             >
               Shop
             </Link>
+            <button
+              onClick={() => {
+                user
+                  ? navigate("/wishlist")
+                  : navigate("/login", { state: { from: "/wishlist" } });
+              }}
+              className="relative flex cursor-pointer items-center transition-all hover:text-[#C9A96E]"
+            >
+              <Heart size={20} fill="#ba1a1a" stroke="none" />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-2 -right-3 min-w-4 h-4 pl-0.5  rounded-full bg-[#ba1a1a] text-white text-[8px] text-center font-black flex items-center justify-center">
+                  {wishlistCount}
+                </span>
+              )}
+            </button>
             <button
               onClick={() => navigate("/cart")}
               className="relative flex cursor-pointer items-center gap-2 pr-1 transition-all hover:text-[#C9A96E]"
@@ -84,7 +104,15 @@ const Home = () => {
                   }}
                   className=" sm:block text-[#7a6e63] cursor-pointer pb-1 hover:text-[#C9A96E]"
                 >
-                   {user?.profilePic ? <img src={user?.profilePic} alt="profile picture" className="h-10 w-10 object-cover overflow-hidden rounded-full border border-[#1b1c1a]" /> : <CircleUser />}
+                  {user?.profilePic ? (
+                    <img
+                      src={user?.profilePic}
+                      alt="profile picture"
+                      className="h-10 w-10 object-cover overflow-hidden rounded-full border border-[#1b1c1a]"
+                    />
+                  ) : (
+                    <CircleUser />
+                  )}
                 </span>
               </div>
             ) : (

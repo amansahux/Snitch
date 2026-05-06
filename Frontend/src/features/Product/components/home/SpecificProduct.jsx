@@ -14,17 +14,22 @@ import {
   ArrowRight,
 } from "lucide-react";
 import ProductDetailsSkeleton from "./ProductDetailsSkeleton";
+import { Link } from "react-router-dom";
 import Product from "./Product";
 import useCart from "../../../cart/hooks/useCart";
 import toast from "react-hot-toast";
+import useWishlist from "../../../wishlist/hooks/useWishlist.js";
 
 const SpecificProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const cartCount = useSelector((state) => state.cart.items.length);
+  const wishlistCount = useSelector((state) => state.wishlist.items.length);
   const { handleGetProductById, handleGetVariant, handleGetSimilarProducts } =
     useProduct();
   const { user } = useAuth();
+  const { isWishlisted, handleAddWishlist, handleRemoveWishlist, fetchWishlist } =
+    useWishlist();
 
   const [product, setProduct] = useState(null);
   const [similarProducts, setSimilarProducts] = useState([]);
@@ -152,9 +157,23 @@ const SpecificProduct = () => {
     }
   };
 
+  const handleToggleWishlist = async () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    if (isWishlisted(product._id)) {
+      await handleRemoveWishlist(product._id);
+    } else {
+      await handleAddWishlist(product._id, product);
+    }
+  };
+
   useEffect(() => {
     fetchData();
     fetchSimilarProducts();
+    fetchWishlist();
   }, [id, handleGetProductById, handleGetVariant, handleGetSimilarProducts]);
 
   if (loading) {
@@ -183,19 +202,17 @@ const SpecificProduct = () => {
   const displayDescription = product.description;
 
   const displaySellingPrice =
-    selectedItem.price?.selling || selectedItem.price?.amount ;
-  const displayMrp = selectedItem.price?.mrp || displaySellingPrice ;
-  const displayStock = selectedItem.stock ;
+    selectedItem.price?.selling || selectedItem.price?.amount;
+  const displayMrp = selectedItem.price?.mrp || displaySellingPrice;
+  const displayStock = selectedItem.stock;
 
-  const displaySize = selectedItem.size ;
-  const displayColor = selectedItem.color ;
-  const displayFit = selectedItem.fit ;
-  const displayMaterial = selectedItem.material ;
+  const displaySize = selectedItem.size;
+  const displayColor = selectedItem.color;
+  const displayFit = selectedItem.fit;
+  const displayMaterial = selectedItem.material;
 
   const displayImages =
-    (activeVariant?.images?.length > 0
-      ? activeVariant.images
-      : product.images);
+    activeVariant?.images?.length > 0 ? activeVariant.images : product.images;
   const safeActiveImage = activeImage < displayImages.length ? activeImage : 0;
 
   const isOwner = user?._id === product?.seller?._id;
@@ -219,11 +236,26 @@ const SpecificProduct = () => {
             Shop
           </span>
           <span className="text-[#e8e2da]">/</span>
-          <span className="text-[#1b1c1a] truncate max-w-[150px]">
+          <span className="text-[#1b1c1a] hidden md:block truncate max-w-[150px]">
             {displayTitle}
           </span>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-5">
+          <button
+            onClick={() => {
+              user
+                ? navigate("/wishlist")
+                : navigate("/login", { state: { from: "/wishlist" } });
+            }}
+            className="relative flex cursor-pointer items-center transition-all hover:text-[#C9A96E]"
+          >
+            <Heart size={20} fill="#ba1a1a" stroke="none" />
+            {wishlistCount > 0 && (
+              <span className="absolute -top-2 -right-2 min-w-4 h-4 px-1 rounded-full bg-[#ba1a1a] text-white text-[8px] font-black flex items-center justify-center">
+                {wishlistCount}
+              </span>
+            )}
+          </button>
           <button
             onClick={() => navigate("/cart")}
             className="relative text-[10px] font-black hover:text-[#C9A96E] uppercase tracking-widest text-[#7a6e63] cursor-pointer flex items-center gap-2 pr-1"
@@ -461,17 +493,23 @@ const SpecificProduct = () => {
                   "Sold Out"
                 )}
               </button>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <button className="flex-1 h-16 cursor-pointer border border-[#e8e2da] text-[#1b1c1a] text-[10px] font-black uppercase tracking-widest hover:border-[#1b1c1a] transition-all rounded-2xl group flex items-center justify-center gap-3">
+              <div className="flex gap-4">
+                <button
+                  onClick={handleToggleWishlist}
+                  className={`flex-1 h-16 cursor-pointer border transition-all rounded-2xl group flex items-center justify-center gap-3 ${isWishlisted(product?._id) ? "border-[#ba1a1a] bg-[#ba1a1a]/5 text-[#ba1a1a]" : "border-[#e8e2da] text-[#1b1c1a] hover:border-[#1b1c1a]"}`}
+                >
                   <Heart
                     size={14}
-                    className="group-hover:scale-110 transition-transform"
+                    fill={isWishlisted(product?._id) ? "currentColor" : "none"}
+                    className={`${isWishlisted(product?._id) ? "scale-110" : "group-hover:scale-110"} transition-transform`}
                   />{" "}
-                  Save to Wishlist
+                  {isWishlisted(product?._id)
+                    ? "Wishlisted"
+                    : "Save to Wishlist"}
                 </button>
                 <button
                   onClick={handleShare}
-                  className="w-full sm:w-16 cursor-pointer h-16 border border-[#e8e2da] flex items-center justify-center rounded-2xl hover:border-[#C9A96E] group transition-all active:scale-95"
+                  className="w-16 cursor-pointer h-16 border border-[#e8e2da] flex items-center justify-center rounded-2xl hover:border-[#C9A96E] group transition-all active:scale-95"
                 >
                   <Share2
                     size={14}
@@ -481,7 +519,6 @@ const SpecificProduct = () => {
               </div>
             </div>
           </div>
-
         </div>
       </main>
       {similarProducts.length > 0 && (

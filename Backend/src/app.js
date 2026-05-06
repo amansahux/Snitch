@@ -11,6 +11,7 @@ import VariantRouter from "./routes/varient.routes.js";
 import cartRouter from "./routes/cart.routes.js";
 import addressRouter from "./routes/address.routes.js";
 import orderRouter from "./routes/order.routes.js";
+import WishlistRouter from "./routes/wishlist.routes.js";
 const app = express();
 
 app.use(morgan("dev"));
@@ -42,6 +43,7 @@ app.use("/api/variants", VariantRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/addresses", addressRouter);
 app.use("/api/orders", orderRouter);
+app.use("/api/wishlist", WishlistRouter);
 
 app.use((req, res, next) => {
   res.status(404).json({ status: "error", message: "Route not found" });

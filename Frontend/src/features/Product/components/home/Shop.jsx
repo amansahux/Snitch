@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Search, ChevronDown, X, Filter, ShoppingBag } from "lucide-react";
+import {
+  Search,
+  ChevronDown,
+  X,
+  Filter,
+  ShoppingBag,
+  Heart,
+} from "lucide-react";
 import { useSelector } from "react-redux";
 import useProduct from "../../hooks/useProduct";
 import Product from "./Product";
@@ -15,10 +22,14 @@ const Shop = () => {
   const [priceRange, setPriceRange] = useState(10000);
   const [isLoading, setIsLoading] = useState(true);
   const cartCount = useSelector((state) =>
-    state.cart.items.reduce((total, item) => total + Number(item?.quantity || 0), 0),
+    state.cart.items.reduce(
+      (total, item) => total + Number(item?.quantity || 0),
+      0,
+    ),
   );
 
   const navigate = useNavigate();
+  const {user} = useSelector((state) => state.auth);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -98,6 +109,7 @@ const Shop = () => {
     setPriceRange(100000);
     setSortBy("Newest");
   };
+  const wishlistCount = useSelector((state) => state?.wishlist?.items.length);
 
   return (
     <>
@@ -115,17 +127,33 @@ const Shop = () => {
               <span className="opacity-30">/</span>
               <span className="text-gold font-bold">Shop Collection</span>
             </nav>
-
-            <button
-              onClick={() => navigate("/cart")}
-              className="relative inline-flex items-center cursor-pointer gap-2 rounded-full border border-gold/20 bg-white px-5 py-2.5 pr-8 text-[10px] font-black uppercase tracking-[0.2em] text-charcoal hover:border-gold hover:text-gold transition-all"
-            >
-              <ShoppingBag size={14} />
-              Cart
-              <span className="absolute -top-2 -right-2 min-w-5 h-5 px-1 rounded-full bg-[#1b1c1a] text-white text-[9px] font-black tracking-normal normal-case flex items-center justify-center">
-                {cartCount}
-              </span>
-            </button>
+            <div className="flex gap-10 items-center">
+              <button
+                onClick={() => {
+                  user
+                    ? navigate("/wishlist")
+                    : navigate("/login", { state: { from: "/wishlist" } });
+                }}
+                className="relative flex cursor-pointer items-center transition-all hover:text-[#C9A96E]"
+              >
+                <Heart size={20} fill="#ba1a1a" stroke="none" />
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-1 -right-3 min-w-4 h-4  rounded-full bg-[#ba1a1a] text-white text-[8px] text-center font-black flex items-center justify-center">
+                    {wishlistCount}
+                  </span>
+                )}
+              </button>
+              <button
+                onClick={() => navigate("/cart")}
+                className="relative inline-flex items-center cursor-pointer gap-2 rounded-full border border-gold/20 bg-white px-5 py-2.5 pr-8 text-[10px] font-black uppercase tracking-[0.2em] text-charcoal hover:border-gold hover:text-gold transition-all"
+              >
+                <ShoppingBag size={14} />
+                Cart
+                <span className="absolute -top-2 -right-2 min-w-5 h-5 px-1 rounded-full bg-[#1b1c1a] text-white text-[9px] font-black tracking-normal normal-case flex items-center justify-center">
+                  {cartCount}
+                </span>
+              </button>
+            </div>
           </div>
 
           <span className="text-[10px] font-black uppercase tracking-[0.5em] text-gold/60 mb-4 block animate-in fade-in slide-in-from-top-4 duration-700 delay-100">
@@ -406,4 +434,3 @@ const Shop = () => {
 };
 
 export default Shop;
-

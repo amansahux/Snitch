@@ -22,6 +22,7 @@ import AccountInfo from "../features/profile/components/AccountInfo.jsx";
 import AddressSection from "../features/profile/components/AddressSection.jsx";
 import WishlistSection from "../features/profile/components/WishlistSection.jsx";
 import OrderDetail from "../features/profile/pages/OrderDetail.jsx";
+import Wishlist from "../features/wishlist/pages/Wishlist.jsx";
 
 export const routes = createBrowserRouter([
   {
@@ -42,6 +43,14 @@ export const routes = createBrowserRouter([
       {
         path: "/shop/product/:id",
         element: <SpecificProduct />,
+      },
+      {
+        path: "/wishlist",
+        element: (
+          <ProtectedRoute>
+            <Wishlist />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/cart",

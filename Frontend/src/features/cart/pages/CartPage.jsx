@@ -208,7 +208,7 @@ const CartPage = () => {
           <h1 className="font-serif text-4xl font-medium tracking-tight text-[#1b1c1a] sm:text-5xl">
             Your Wardrobe Selection
           </h1>
-          <p className="font-serif text-sm italic text-[#7a6e63]">
+          <p className="font-serif text-sm md:text-lg lg:text-xl italic text-[#7a6e63]">
             {itemCount} {itemCount === 1 ? "Item" : "Items"}
           </p>
         </header>
@@ -278,49 +278,49 @@ const CartPage = () => {
                 return (
                   <article
                     key={item._id}
-                    className="animate-cart-fade rounded-[2rem] border border-[#e6dfd5] bg-white p-4 shadow-[0_18px_40px_rgba(27,28,26,0.03)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_48px_rgba(27,28,26,0.06)] sm:p-6"
+                    className="animate-cart-fade rounded-[2rem] border border-[#e6dfd5] bg-white md:p-4  shadow-[0_18px_40px_rgba(27,28,26,0.03)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_48px_rgba(27,28,26,0.06)] sm:p-6"
                     style={{ animationDelay: `${Math.min(index * 60, 240)}ms` }}
                   >
                     <div className="flex flex-col gap-4 sm:flex-row sm:gap-5">
-                      <div className="h-40 w-full overflow-hidden rounded-[1.5rem] bg-[#f3eee8] sm:h-36 sm:w-28 sm:shrink-0">
+                      <div className=" h-100 w-full overflow-hidden rounded-t-[1.5rem] md:rounded-[1.5rem] bg-[#f3eee8] sm:h-36 sm:w-28 sm:shrink-0 xl:h-40">
                         <img
                           onClick={() =>
                             navigate(`/shop/product/${product._id}`)
                           }
                           src={imageUrl}
                           alt={title}
-                          className="h-full w-full cursor-pointer object-cover transition-transform duration-500 hover:scale-105"
+                          className="h-full w-full cursor-pointer object-cover object-center transition-transform duration-500 hover:scale-105"
                         />
                       </div>
 
-                      <div className="min-w-0 flex-1">
+                      <div className="min-w-0 flex-1 p-4 md:p-0">
                         <div className="flex flex-col gap-4 sm:flex-row sm:justify-between">
                           <div className="min-w-0">
                             <p className="mb-1 text-[9px] font-semibold uppercase tracking-[0.3em] text-[#C9A96E]">
                               {category}
                             </p>
-                            <h2 className="font-serif text-[2rem] leading-none text-[#1b1c1a]">
+                            <h2 className="font-serif text-xl sm:text-2xl lg:text-[2rem] leading-none text-[#1b1c1a]">
                               {title}
                             </h2>
-                            <p className="mt-2 truncate text-sm text-[#7a6e63]">
+                            <p className="mt-2 truncate text-xs text-[#7a6e63]">
                               {description}
                             </p>
 
                             <div className="mt-3 flex flex-wrap items-center gap-2">
                               <span className="rounded-full bg-[#f3eee8] px-3 py-1 text-[11px] text-[#7a6e63]">
-                                Size: {variant?.size || "M"}
+                                Size: {variant?.size}
                               </span>
                               <span className="rounded-full bg-[#f3eee8] px-3 py-1 text-[11px] text-[#7a6e63]">
-                                Color: {variant?.color || "Charcoal"}
+                                Color: {variant?.color}
                               </span>
                               <span className="rounded-full bg-[#f3eee8] px-3 py-1 text-[11px] text-[#7a6e63]">
-                                Fit: {variant?.fit || "Regular"}
+                                Fit: {variant?.fit}
                               </span>
                             </div>
                           </div>
 
                           <div className="sm:pl-4 sm:text-right">
-                            <p className="text-3xl font-semibold leading-none font-sans text-[#1b1c1a]">
+                            <p className="text-xl md:text-3xl font-semibold leading-none font-sans text-[#1b1c1a]">
                               {formatCurrency(selling)}
                             </p>
                             <p className="mt-1 text-sm text-[#9a9085] line-through font-sans">
@@ -483,7 +483,6 @@ const CartPage = () => {
               selectedAddress={selectedAddress}
               onSelectAddress={setSelectedAddress}
               isCartPage={true}
-              
             />
           </aside>
         </div>
