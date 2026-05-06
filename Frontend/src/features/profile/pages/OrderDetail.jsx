@@ -142,7 +142,7 @@ const OrderDetail = () => {
                   initial={{ height: 0 }}
                   animate={{ 
                     height: getStatusStep(order.orderStatus) === 0 ? "0%" : 
-                            getStatusStep(order.orderStatus) === 1 ? "50%" : "100%" 
+                            getStatusStep(order.orderStatus) === 1 ? "50%" : "90%" 
                   }}
                   className="absolute left-[1.2rem] top-2 w-px bg-[#C9A96E] z-0 transition-all duration-1000"
                 />

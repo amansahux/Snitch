@@ -16,8 +16,11 @@ const OrdersSection = () => {
   const getStatusStyle = (status) => {
     switch (status?.toLowerCase()) {
       case "paid":
+      case "delivered":
         return "bg-emerald-50 text-emerald-600 border-emerald-100";
       case "pending":
+      case "placed":
+      case "shipped":
         return "bg-amber-50 text-amber-600 border-amber-100";
       case "cancelled":
         return "bg-rose-50 text-rose-600 border-rose-100";
@@ -41,7 +44,8 @@ const OrdersSection = () => {
           My Orders
         </h2>
         <p className="font-serif italic text-[#7a6e63] text-lg">
-         Review your past curations and track upcoming deliveries. Elegance takes time.
+          Review your past curations and track upcoming deliveries. Elegance
+          takes time.
         </p>
       </div>
 
@@ -59,9 +63,9 @@ const OrdersSection = () => {
           {orders.map((order) => {
             const firstItem = order.items?.[0];
             const extraItemsCount = (order.items?.length || 0) - 1;
-            const displayImage = 
-              firstItem?.product?.images?.[0]?.url || 
-              firstItem?.images?.[0]?.url || 
+            const displayImage =
+              firstItem?.product?.images?.[0]?.url ||
+              firstItem?.images?.[0]?.url ||
               firstItem?.product?.coverImage?.url ||
               "/placeholder-product.jpg";
 
@@ -77,10 +81,13 @@ const OrdersSection = () => {
                       <img
                         src={displayImage}
                         alt={firstItem?.product?.title}
-                        onClick={() => { navigate(`/profile/orders/${order._id}`) }}
+                        onClick={() => {
+                          navigate(`/profile/orders/${order._id}`);
+                        }}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 cursor-pointer"
                         onError={(e) => {
-                           e.target.src = "https://placehold.co/400x600/fbf9f6/1b1c1a?text=S";
+                          e.target.src =
+                            "https://placehold.co/400x600/fbf9f6/1b1c1a?text=S";
                         }}
                       />
                     </div>
@@ -96,10 +103,10 @@ const OrdersSection = () => {
                     <div className="space-y-4">
                       <div className="space-y-1">
                         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#C9A96E]">
-                          {firstItem?.product?.category }
+                          {firstItem?.product?.category}
                         </p>
                         <h3 className="font-serif text-2xl text-[#1b1c1a] line-clamp-1">
-                          {firstItem?.product?.title }
+                          {firstItem?.product?.title}
                         </h3>
                       </div>
 
@@ -109,7 +116,7 @@ const OrdersSection = () => {
                             Variant:
                           </span>
                           <span className="text-sm font-medium text-[#1b1c1a]">
-                            Size {firstItem?.size || "M"} | {firstItem?.color}
+                            Size {firstItem?.size} | {firstItem?.color}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
@@ -136,12 +143,19 @@ const OrdersSection = () => {
                   {/* RIGHT SIDE: Action & Status */}
                   <div className="flex lg:flex-col justify-between items-end lg:items-end py-1 lg:w-48 gap-4">
                     <div className="flex flex-col items-end gap-2">
-                      <span className="text-3xl font-semibold text-[#1b1c1a]">
-                        ₹{(order.totalAmount).toLocaleString("en-IN")}
+                      <span className=" text-3xl font-semibold text-[#1b1c1a]">
+                        ₹{order.totalAmount.toLocaleString("en-IN")}
                       </span>
                       <div
-                        className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.15em] border ${getStatusStyle(
-                          order.paymentStatus
+                        className={`px-3 py-1 w-24 text-center rounded-full text-[10px] font-black uppercase tracking-[0.15em] border ${getStatusStyle(
+                          order.orderStatus,
+                        )}`}
+                      >
+                        {order.orderStatus || "Pending"}
+                      </div>
+                      <div
+                        className={`px-3 py-1 w-24 text-center rounded-full text-[10px] font-black uppercase tracking-[0.15em] border ${getStatusStyle(
+                          order.paymentStatus,
                         )}`}
                       >
                         {order.paymentStatus || "Pending"}

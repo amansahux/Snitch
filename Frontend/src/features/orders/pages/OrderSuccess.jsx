@@ -184,7 +184,7 @@ const OrderSuccess = () => {
 
         <div className="flex flex-col space-y-4">
           <button
-            onClick={() => navigate(`/orders/${orderId}`)}
+            onClick={() => navigate(`/profile/orders/${orderId}`)}
             className="w-full py-4 rounded-full cursor-pointer bg-[#1b1c1a] text-white text-[11px] font-semibold uppercase tracking-[0.24em] transition-all duration-300 hover:bg-[#C9A96E] hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-black/5"
           >
             View Order
