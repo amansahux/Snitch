@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import config from "../config/config.js";
 
-export const sendTokenResponse = (res, user, message) => {
+export const sendTokenResponse = (res, user, message , statusCode = 200) => {
   const token = jwt.sign({ id: user._id, role: user.role }, config.JWT_SECRET, {
     expiresIn: "7d",
   });
@@ -11,7 +11,7 @@ export const sendTokenResponse = (res, user, message) => {
     secure: false, // production me true karna
   });
 
-  return res.status(201).json({
+  return res.status(statusCode).json({
     message: message,
     success: true,
     data: user,

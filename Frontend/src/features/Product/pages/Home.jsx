@@ -84,7 +84,7 @@ const Home = () => {
                   }}
                   className=" sm:block text-[#7a6e63] cursor-pointer pb-1 hover:text-[#C9A96E]"
                 >
-                  <CircleUser />
+                   {user?.profilePic ? <img src={user?.profilePic} alt="profile picture" className="h-10 w-10 object-cover overflow-hidden rounded-full border border-[#1b1c1a]" /> : <CircleUser />}
                 </span>
               </div>
             ) : (

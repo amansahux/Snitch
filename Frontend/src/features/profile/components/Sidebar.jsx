@@ -18,8 +18,8 @@ const Sidebar = ({
       {/* Sidebar - Desktop */}
       <aside className="hidden lg:flex w-80 h-screen sticky top-0 border-r border-[#e6dfd5] flex-col py-16 px-10">
         <div className="flex flex-col items-center text-center mb-16">
-          <div className="w-24 h-24 rounded-full bg-[#1b1c1a] text-[#fbf9f6] flex items-center justify-center text-3xl font-serif mb-6 shadow-xl">
-            {user?.fullname?.[0]?.toUpperCase()}
+          <div className={`w-24 h-24 rounded-full bg-[#1b1c1a] text-[#fbf9f6] flex items-center justify-center text-3xl font-serif mb-6 shadow-xl overflow-hidden  ${user?.profilePic? "border border-[black]":""}`}>
+           {user?.profilePic ? <img src={user?.profilePic} alt="profile picture" className="h-full w-full object-cover overflow-hidden" /> : user?.fullname?.[0]?.toUpperCase()}
           </div>
           <h3 className="font-serif text-2xl leading-none mb-2">{user?.fullname}</h3>
           <p className="text-[9px] font-black uppercase tracking-[0.4em] text-[#7a6e63]">Verified Member</p>

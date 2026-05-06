@@ -4,6 +4,7 @@ import { sendTokenResponse } from "../utils/sendTokenResponse.js";
 import jwt from "jsonwebtoken";
 import config from "../config/config.js";
 import redis from "../config/cache.js";
+import uploadFile from "../services/storage.service.js";
 
 export const registerController = asyncHandler(async (req, res, next) => {
   const { email, contact } = req.body;
@@ -36,7 +37,7 @@ export const registerController = asyncHandler(async (req, res, next) => {
   };
 
   // 5. Send response
-  sendTokenResponse(res, userResponse, "User registered successfully");
+  sendTokenResponse(res, userResponse, "User registered successfully", 201);
 });
 
 export const loginController = asyncHandler(async (req, res, next) => {
@@ -133,6 +134,37 @@ export const getProfile = asyncHandler(async (req, res, next) => {
     fullname: user.fullname,
     contact: user.contact,
     role: user.role,
+    profilePic: user.profilePic,
+  };
+  res.status(200).json({
+    success: true,
+    user: userResponse,
+    error: null,
+  });
+});
+export const uploadProfilePic = asyncHandler(async (req, res, next) => {
+  const user = await userModel.findById(req.user.id);
+  if (!user) {
+    const error = new Error("User not found");
+    error.statusCode = 404;
+    return next(error);
+  }
+  // console.log(req.file.buffer)
+  const image = await uploadFile({
+    buffer: req.file.buffer,
+    fileName: req.file.originalname,
+    folder: "snitch/profile-pic",
+  });
+  user.profilePic = image.url;
+  await user.save();
+
+  const userResponse = {
+    _id: user._id,
+    email: user.email,
+    fullname: user.fullname,
+    contact: user.contact,
+    role: user.role,
+    profilePic: user.profilePic,
   };
   res.status(200).json({
     success: true,

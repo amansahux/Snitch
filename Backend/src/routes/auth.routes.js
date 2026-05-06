@@ -7,10 +7,12 @@ import {
   loginController,
   logoutController,
   registerController,
+  uploadProfilePic,
 } from "../controllers/auth.controller.js";
 import passport from "passport";
 import config from "../config/config.js";
 import { authenticateUser } from "../middlewares/auth.middleware.js";
+import upload from "../middlewares/multer.middleware.js";
 
 const AuthRouter = Router();
 
@@ -33,5 +35,6 @@ AuthRouter.get(
 );
 AuthRouter.get("/profile", authenticateUser, getProfile);
 AuthRouter.get("/logout", authenticateUser, logoutController);
+AuthRouter.patch("/profile/upload-pic", authenticateUser, upload.single("profilePic"), uploadProfilePic);
 
 export default AuthRouter;
