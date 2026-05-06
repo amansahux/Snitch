@@ -120,6 +120,38 @@ const SpecificProduct = () => {
     }
   };
 
+  const handleShare = async () => {
+    const shareData = {
+      title: product.title,
+      text: product.description,
+      url: `${window.location.origin}/shop/product/${product._id}`,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(shareData.url);
+        toast.success("Product link copied!", {
+          style: {
+            borderRadius: "10px",
+            background: "#1b1c1a",
+            color: "#fff",
+            fontSize: "12px",
+            fontWeight: "bold",
+            letterSpacing: "1px",
+            textTransform: "uppercase",
+          },
+        });
+      }
+    } catch (error) {
+      if (error.name !== "AbortError") {
+        console.error("Error sharing:", error);
+        toast.error("Failed to share product");
+      }
+    }
+  };
+
   useEffect(() => {
     fetchData();
     fetchSimilarProducts();
@@ -437,7 +469,10 @@ const SpecificProduct = () => {
                   />{" "}
                   Save to Wishlist
                 </button>
-                <button className="w-full sm:w-16 cursor-pointer h-16 border border-[#e8e2da] flex items-center justify-center rounded-2xl hover:border-[#C9A96E] group transition-all">
+                <button
+                  onClick={handleShare}
+                  className="w-full sm:w-16 cursor-pointer h-16 border border-[#e8e2da] flex items-center justify-center rounded-2xl hover:border-[#C9A96E] group transition-all active:scale-95"
+                >
                   <Share2
                     size={14}
                     className="text-[#7a6e63] group-hover:text-[#C9A96E]"
