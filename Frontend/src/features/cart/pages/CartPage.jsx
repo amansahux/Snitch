@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
+  ArrowLeft,
   Heart,
   LockKeyhole,
   Minus,
@@ -204,13 +205,25 @@ const CartPage = () => {
   return (
     <div className="min-h-screen bg-[#f7f4ef] pb-24 font-sans text-[#1b1c1a] lg:pb-10">
       <main className="mx-auto max-w-[1280px] px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
-        <header className="mb-7 flex items-end justify-between gap-4 border-b border-[#e6dfd5] pb-5">
-          <h1 className="font-serif text-4xl font-medium tracking-tight text-[#1b1c1a] sm:text-5xl">
-            Your Wardrobe Selection
-          </h1>
-          <p className="font-serif text-sm md:text-lg lg:text-xl italic text-[#7a6e63]">
-            {itemCount} {itemCount === 1 ? "Item" : "Items"}
-          </p>
+        <header className="mb-7 flex flex-col items-start gap-4 border-b border-[#e6dfd5] pb-5">
+          <button
+            onClick={() => navigate(-1)}
+            className="group flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-[#7a6e63] hover:text-[#1b1c1a] transition-all cursor-pointer mb-2"
+          >
+            <ArrowLeft
+              size={14}
+              className="group-hover:-translate-x-1 transition-transform"
+            />
+            Return
+          </button>
+          <div className="flex w-full items-end justify-between gap-4">
+            <h1 className="font-serif text-4xl font-medium tracking-tight text-[#1b1c1a] sm:text-5xl">
+              Your Wardrobe Selection
+            </h1>
+            <p className="font-serif text-sm md:text-lg lg:text-xl italic text-[#7a6e63]">
+              {itemCount} {itemCount === 1 ? "Item" : "Items"}
+            </p>
+          </div>
         </header>
 
         {error && (
