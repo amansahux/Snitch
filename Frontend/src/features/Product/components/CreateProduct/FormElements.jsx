@@ -157,7 +157,7 @@ export const SubmitButton = ({ children, isLoading, disabled, className = "", ..
   return (
     <button
       disabled={isDisabled}
-      className={`relative overflow-hidden inline-flex items-center justify-center bg-charcoal text-white font-medium tracking-[0.2em] uppercase text-[10px] px-10 py-4.5 rounded-xl transition-all duration-500 group shadow-luxury ${
+      className={`relative overflow-hidden inline-flex items-center whitespace-nowrap justify-center bg-charcoal text-white font-medium tracking-[0.2em] uppercase text-[7px] sm:text-[10px] px-5 sm:px-10 py-3 sm:py-4.5 rounded-xl transition-all duration-500 group shadow-luxury ${
         isDisabled 
         ? "opacity-50 cursor-not-allowed" 
         : "hover:bg-gold hover:shadow-[0_20px_40px_rgba(201,169,110,0.3)] hover:-translate-y-1 cursor-pointer"

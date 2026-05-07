@@ -10,7 +10,6 @@ const variantSchema = new mongoose.Schema(
     },
     sku: {
       type: String,
-      required: true,
       trim: true,
       index: true,
       unique: true,

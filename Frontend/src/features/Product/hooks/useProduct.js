@@ -10,7 +10,7 @@ import {
   getSimilarProducts,
 } from "../services/product.api.js";
 import { setProducts, setSellerProducts } from "../state/product.slice.js";
-import { createVariant, getVariants } from "../services/variant.api.js";
+import { createVariant, deleteVariant, getVariants } from "../services/variant.api.js";
 
 const useProduct = () => {
   const dispatch = useDispatch();
@@ -69,7 +69,10 @@ const useProduct = () => {
         if (defaultVariant) {
           prod.price = prod.price || defaultVariant.price;
           prod.stock = prod.stock ?? defaultVariant.stock;
-          prod.images = prod.images && prod.images.length > 0 ? prod.images : defaultVariant.images;
+          prod.images =
+            prod.images && prod.images.length > 0
+              ? prod.images
+              : defaultVariant.images;
         }
         // Return a response-like object keeping other keys intact but with data = prod
         return { ...response, data: prod };
@@ -89,26 +92,6 @@ const useProduct = () => {
     }
   }, []);
 
-  const handleAddVariant = useCallback(async (id, data) => {
-    try {
-      const response = await createVariant(id, data);
-      return response;
-    } catch {
-      return undefined;
-    }
-  }, []);
-
-  const handleGetVariant = useCallback(
-    async (id) => {
-      try {
-        const response = await getVariants(id);
-        return response;
-      } catch {
-        return undefined;
-      }
-    },
-    [],
-  );
   const handleGetSimilarProducts = useCallback(async (id) => {
     try {
       const response = await getSimilarProducts(id);
@@ -118,6 +101,41 @@ const useProduct = () => {
     }
   }, []);
 
+  const handleAddVariant = useCallback(async (id, data) => {
+    try {
+      const response = await createVariant(id, data);
+      return response;
+    } catch {
+      return undefined;
+    }
+  }, []);
+
+  const handleGetVariant = useCallback(async (id) => {
+    try {
+      const response = await getVariants(id);
+      return response;
+    } catch {
+      return undefined;
+    }
+  }, []);
+
+  const handleUpdateVariant = useCallback(async (variantId, data) => {
+    try {
+      const response = await updateVariant(variantId, data);
+      return response;
+    } catch {
+      return undefined;
+    }
+  }, []);
+
+  const handleDeleteVariant = useCallback(async (variantId) => {
+    try {
+      const response = await deleteVariant(variantId);
+      return response;
+    } catch {
+      return undefined;
+    }
+  }, []);
   return {
     sellerProducts,
     products,
@@ -127,9 +145,11 @@ const useProduct = () => {
     handleGetAllProducts,
     handleGetProductById,
     handleUpdateProduct,
+    handleGetSimilarProducts,
     handleAddVariant,
     handleGetVariant,
-    handleGetSimilarProducts,
+    handleUpdateVariant,
+    handleDeleteVariant,
   };
 };
 

@@ -99,7 +99,7 @@ const Inventory = () => {
                     className="group flex flex-col animate-in fade-in slide-in-from-bottom-5 duration-700 hover:-translate-y-2 transition-transform"
                   >
                     {/* Image Container */}
-                    <div className="aspect-[4/5] overflow-hidden mb-6 relative" style={{ backgroundColor: '#f5f3f0' }}>
+                    <div className="aspect-[4/5] max-h-[450px] overflow-hidden mb-6 relative" style={{ backgroundColor: '#f5f3f0' }}>
                        <img
                           src={product.images?.[0]?.url}
                           alt={product.title}
@@ -127,20 +127,11 @@ const Inventory = () => {
                        </p>
 
                        <p
-                          className="text-[13px] line-clamp-3 leading-relaxed mt-1"
+                          className="text-[13px]  truncate leading-relaxed mt-1"
                           style={{ color: '#7A6E63' }}
                        >
                           {product.description}
                        </p>
-
-                       <div className="mt-4 pt-4 border-t border-[#e8e2da]">
-                          <span
-                             className="text-[11px] uppercase tracking-[0.25em] font-black"
-                             style={{ color: '#1b1c1a' }}
-                          >
-                             ₹{product.price?.amount?.toLocaleString()}
-                          </span>
-                       </div>
                     </div>
                   </Link>
                 ))}

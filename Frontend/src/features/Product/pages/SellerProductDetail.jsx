@@ -11,34 +11,38 @@ import {
   Edit,
   Trash2,
   Image as ImageIcon,
+  Edit2,
 } from "lucide-react";
 import useProduct from "../hooks/useProduct";
 import Sidebar from "../components/dashboard/Sidebar";
 import UpdateProductModal from "../components/dashboard/UpdateProductModal";
 import AddVariantModal from "../components/dashboard/AddVariantModal";
+import ConfirmModal from "../components/dashboard/ConfirmModal";
 
 const SellerProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { 
-    handleGetProductById, 
-    handleGetVariant, 
-    handleUpdateProduct, 
+  const {
+    handleGetProductById,
+    handleGetVariant,
+    handleUpdateProduct,
     handleAddVariant,
-    handleDeleteProduct 
+    handleDeleteProduct,
+    handleDeleteVariant,
   } = useProduct();
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("details"); // "details" | "variants"
+  const [activeTab, setActiveTab] = useState("variants"); // "details" | "variants"
   const [activeImage, setActiveImage] = useState(0);
   const [variants, setVariants] = useState(null);
 
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isVariantModalOpen, setIsVariantModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedVariantId, setSelectedVariantId] = useState(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -92,6 +96,17 @@ const SellerProductDetail = () => {
     const response = await handleDeleteProduct(id);
     if (response?.success) {
       navigate("/seller/products");
+    }
+  };
+  // console.log(selectedVariantId)
+
+  const onDeleteVariant = async () => {
+    if (!selectedVariantId) return;
+    const response = await handleDeleteVariant(selectedVariantId);
+    if (response?.success) {
+      fetchProduct();
+      fetchVariants();
+      setSelectedVariantId(null);
     }
   };
 
@@ -270,7 +285,10 @@ const SellerProductDetail = () => {
                     onClick={() => setIsDeleteModalOpen(true)}
                     className="sm:w-24 bg-white border cursor-pointer border-[#e8e2da] text-[#7a6e63] py-6 rounded-xl flex items-center justify-center hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-all active:scale-95 group"
                   >
-                    <Trash2 size={20} className="group-hover:scale-110 transition-transform" />
+                    <Trash2
+                      size={20}
+                      className="group-hover:scale-110 transition-transform"
+                    />
                   </button>
                 </div>
               </div>
@@ -280,16 +298,16 @@ const SellerProductDetail = () => {
             <div className="space-y-12">
               <div className="flex items-center gap-12 border-b border-[#e8e2da] pb-4 overflow-x-auto no-scrollbar">
                 <button
-                  onClick={() => setActiveTab("details")}
-                  className={`text-[11px] font-black uppercase tracking-[0.3em] pb-4 border-b-2 transition-all whitespace-nowrap ${activeTab === "details" ? "text-[#1b1c1a] border-[#C9A96E]" : "text-[#7a6e63]/40 border-transparent hover:text-[#7a6e63]"}`}
-                >
-                  Specifications
-                </button>
-                <button
                   onClick={() => setActiveTab("variants")}
                   className={`text-[11px] font-black uppercase tracking-[0.3em] pb-4 border-b-2 transition-all whitespace-nowrap ${activeTab === "variants" ? "text-[#1b1c1a] border-[#C9A96E]" : "text-[#7a6e63]/40 border-transparent hover:text-[#7a6e63]"}`}
                 >
                   Variation Archive ({variants?.length || 0})
+                </button>
+                <button
+                  onClick={() => setActiveTab("details")}
+                  className={`text-[11px] font-black uppercase tracking-[0.3em] pb-4 border-b-2 transition-all whitespace-nowrap ${activeTab === "details" ? "text-[#1b1c1a] border-[#C9A96E]" : "text-[#7a6e63]/40 border-transparent hover:text-[#7a6e63]"}`}
+                >
+                  Specifications
                 </button>
               </div>
 
@@ -339,15 +357,27 @@ const SellerProductDetail = () => {
                         <div className="flex justify-between items-start mb-6">
                           <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-[#f3eee8] border border-[#e8e2da]/50 group-hover:border-[#C9A96E]/30 transition-colors flex items-center justify-center shrink-0">
                             {v?.images?.[0]?.url ? (
-                              <img src={v.images[0].url} alt="Variant" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                              <img
+                                src={v.images[0].url}
+                                alt="Variant"
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                              />
                             ) : (
-                              <ImageIcon size={20} className="text-[#C9A96E]/50 group-hover:text-[#C9A96E] transition-colors" />
+                              <ImageIcon
+                                size={20}
+                                className="text-[#C9A96E]/50 group-hover:text-[#C9A96E] transition-colors"
+                              />
                             )}
                           </div>
-                          
+
                           <div className="text-right">
                             <span className="inline-block bg-[#fbf9f6] text-[#C9A96E] px-3 py-1.5 rounded-full text-[12px] font-black tracking-widest border border-[#e8e2da]/50 shadow-sm group-hover:bg-[#C9A96E] group-hover:text-white transition-colors duration-500">
-                              ₹{(v.price?.selling || v.price?.amount || 0).toLocaleString()}
+                              ₹
+                              {(
+                                v.price?.selling ||
+                                v.price?.amount ||
+                                0
+                              ).toLocaleString()}
                             </span>
                           </div>
                         </div>
@@ -361,8 +391,12 @@ const SellerProductDetail = () => {
                                   key={key}
                                   className="flex flex-col bg-[#fbf9f6] px-3 py-1.5 rounded-lg border border-[#e8e2da]/60 group-hover:border-[#e8e2da] transition-colors"
                                 >
-                                  <span className="text-[8px] font-black uppercase tracking-[0.2em] text-[#7a6e63]/60 mb-0.5">{key}</span>
-                                  <span className="text-[12px] font-serif text-[#1b1c1a]">{val}</span>
+                                  <span className="text-[8px] font-black uppercase tracking-[0.2em] text-[#7a6e63]/60 mb-0.5">
+                                    {key}
+                                  </span>
+                                  <span className="text-[12px] font-serif text-[#1b1c1a]">
+                                    {val}
+                                  </span>
                                 </div>
                               ))}
                           </div>
@@ -371,10 +405,25 @@ const SellerProductDetail = () => {
                         {/* Bottom Actions */}
                         <div className="pt-5 mt-5 border-t border-[#e8e2da]/40 flex justify-between items-center mt-auto">
                           <div className="flex items-center gap-2">
-                            <div className={`w-2 h-2 rounded-full ${v.stock > 0 ? 'bg-green-500/80' : 'bg-red-500/80'}`}></div>
+                            <div
+                              className={`w-2 h-2 rounded-full ${v.stock > 0 ? "bg-green-500/80" : "bg-red-500/80"}`}
+                            ></div>
                             <p className="text-[10px] font-black uppercase tracking-widest text-[#7a6e63]">
                               {v.stock} in Stock
                             </p>
+                          </div>
+
+                          <div className="flex items-center gap-3">
+                            <button className="flex cursor-pointer items-center gap-3 px-4 py-3 border border-[#e8e2da] rounded-full text-[10px] font-black uppercase tracking-widest text-[#1b1c1a] hover:border-[#C9A96E] hover:text-[#C9A96E] transition-all w-full sm:w-auto justify-center">
+                              <Edit2 size={14} />
+                            </button>
+
+                            <button
+                              onClick={() => setSelectedVariantId(v._id)}
+                              className="flex cursor-pointer items-center gap-3 px-4 py-3 border border-[#e8e2da] rounded-full text-[10px] font-black uppercase tracking-widest text-[#1b1c1a] hover:border-[#C9A96E] hover:text-[#C9A96E] transition-all w-full sm:w-auto justify-center"
+                            >
+                              <Trash2 size={14} />
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -408,45 +457,31 @@ const SellerProductDetail = () => {
       />
 
       {/* Delete Confirmation Modal */}
-      {isDeleteModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
-          <div 
-            className="absolute inset-0 bg-[#1b1c1a]/40 backdrop-blur-md animate-in fade-in duration-500"
-            onClick={() => setIsDeleteModalOpen(false)}
-          />
-          <div className="relative bg-[#fbf9f6] w-full max-w-md rounded-3xl p-10 shadow-2xl border border-[#e8e2da] animate-in zoom-in-95 fade-in duration-300">
-            <div className="space-y-8 text-center">
-              <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto text-red-500">
-                <Trash2 size={32} />
-              </div>
-              
-              <div className="space-y-3">
-                <h3 className="text-2xl font-serif text-[#1b1c1a]">
-                  Remove from Archive?
-                </h3>
-                <p className="text-sm text-[#7a6e63] font-inter font-light leading-relaxed">
-                  This action will permanently delete <span className="font-bold text-[#1b1c1a]">"{product.title}"</span> and all its variations. This process cannot be undone.
-                </p>
-              </div>
+      <ConfirmModal
+        isOpen={!!isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={onDeleteProduct}
+        title="Remove from Archive?"
+        message={`This action will permanently delete ${product.title} and all its variations. This process cannot be undone.`}
+        cancelLabel="Cancel"
+        confirmLabel="Delete"
+        onCancel={() => {
+          setIsDeleteModalOpen(false);
+        }}
+      />
 
-              <div className="flex flex-col gap-3">
-                <button
-                  onClick={onDeleteProduct}
-                  className="w-full bg-[#1B1C1A] text-white cursor-pointer py-5 rounded-xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-red-600 transition-all shadow-lg shadow-red-500/20"
-                >
-                  Confirm Deletion
-                </button>
-                <button
-                  onClick={() => setIsDeleteModalOpen(false)}
-                  className="w-full bg-white cursor-pointer text-[#7a6e63] py-5 rounded-xl text-[10px] font-black uppercase tracking-[0.3em] border border-[#e8e2da] hover:bg-[#f3eee8] transition-all"
-                >
-                  Keep Archive Entry
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmModal
+        isOpen={!!selectedVariantId}
+        onClose={() => setSelectedVariantId(null)}
+        onConfirm={onDeleteVariant}
+        title="Remove Variant?"
+        message="This action will permanently delete this specific variation from the archive. This process cannot be undone."
+        cancelLabel="Cancel"
+        confirmLabel="Delete Variant"
+        onCancel={() => {
+          setSelectedVariantId(null);
+        }}
+      />
     </div>
   );
 };

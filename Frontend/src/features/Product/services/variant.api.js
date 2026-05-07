@@ -20,3 +20,11 @@ export const createVariant = async (productId, data) => {
 export const getVariants = async (productId) => {
   return safeRequest(() => API.get(`/get-variants/${productId}`));
 };
+
+export const updateVariant = async (variantId, data) => {
+  return safeRequest(() => API.put(`/update-variant/${variantId}`, data));
+};
+
+export const deleteVariant = async (variantId) => {
+  return safeRequest(() => API.delete(`/delete-variant/${variantId}`));
+};

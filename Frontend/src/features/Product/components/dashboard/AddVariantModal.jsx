@@ -98,7 +98,7 @@ const AddVariantModal = ({ isOpen, onClose, onAdd }) => {
           </div>
           <button
             onClick={handleClose}
-            className="p-3 bg-white rounded-full text-[#7a6e63] hover:text-[#1b1c1a] transition-all border border-[#e8e2da]"
+            className="p-3 bg-white rounded-full cursor-pointer text-[#7a6e63] hover:text-[#1b1c1a] transition-all border border-[#e8e2da]"
           >
             <X size={20} />
           </button>
@@ -210,7 +210,7 @@ const AddVariantModal = ({ isOpen, onClose, onAdd }) => {
             <button
               type="button"
               onClick={handleClose}
-              className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-[#7a6e63] hover:text-[#1b1c1a] transition-colors"
+              className= " cursor-pointer px-6 py-3 text-[8px] sm:px-8 whitespace-nowrap sm:py-4 sm:text-[10px] font-black uppercase tracking-widest text-[#7a6e63] hover:text-[#1b1c1a] transition-colors"
             >
               Discard Changes
             </button>
