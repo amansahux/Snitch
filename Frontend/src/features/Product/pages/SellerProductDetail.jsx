@@ -30,6 +30,7 @@ const SellerProductDetail = () => {
     handleAddVariant,
     handleDeleteProduct,
     handleDeleteVariant,
+    handleUpdateVariant
   } = useProduct();
 
   const [product, setProduct] = useState(null);
@@ -41,6 +42,7 @@ const SellerProductDetail = () => {
 
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isVariantModalOpen, setIsVariantModalOpen] = useState(false);
+  const [editingVariant, setEditingVariant] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedVariantId, setSelectedVariantId] = useState(null);
 
@@ -86,6 +88,14 @@ const SellerProductDetail = () => {
 
   const onAddVariant = async (data) => {
     const response = await handleAddVariant(id, data);
+    if (response?.success) {
+      fetchProduct();
+      fetchVariants();
+    }
+  };
+
+  const onUpdateVariant = async (variantId, data) => {
+    const response = await handleUpdateVariant(variantId, data);
     if (response?.success) {
       fetchProduct();
       fetchVariants();
@@ -414,7 +424,13 @@ const SellerProductDetail = () => {
                           </div>
 
                           <div className="flex items-center gap-3">
-                            <button className="flex cursor-pointer items-center gap-3 px-4 py-3 border border-[#e8e2da] rounded-full text-[10px] font-black uppercase tracking-widest text-[#1b1c1a] hover:border-[#C9A96E] hover:text-[#C9A96E] transition-all w-full sm:w-auto justify-center">
+                            <button 
+                              onClick={() => {
+                                setEditingVariant(v);
+                                setIsVariantModalOpen(true);
+                              }}
+                              className="flex cursor-pointer items-center gap-3 px-4 py-3 border border-[#e8e2da] rounded-full text-[10px] font-black uppercase tracking-widest text-[#1b1c1a] hover:border-[#C9A96E] hover:text-[#C9A96E] transition-all w-full sm:w-auto justify-center"
+                            >
                               <Edit2 size={14} />
                             </button>
 
@@ -452,8 +468,13 @@ const SellerProductDetail = () => {
       />
       <AddVariantModal
         isOpen={isVariantModalOpen}
-        onClose={() => setIsVariantModalOpen(false)}
+        onClose={() => {
+          setIsVariantModalOpen(false);
+          setEditingVariant(null);
+        }}
         onAdd={onAddVariant}
+        onUpdate={onUpdateVariant}
+        editingVariant={editingVariant}
       />
 
       {/* Delete Confirmation Modal */}

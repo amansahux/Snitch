@@ -10,7 +10,7 @@ import {
   getSimilarProducts,
 } from "../services/product.api.js";
 import { setProducts, setSellerProducts } from "../state/product.slice.js";
-import { createVariant, deleteVariant, getVariants } from "../services/variant.api.js";
+import { createVariant, deleteVariant, getVariants, updateVariant } from "../services/variant.api.js";
 
 const useProduct = () => {
   const dispatch = useDispatch();

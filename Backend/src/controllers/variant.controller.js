@@ -93,7 +93,7 @@ export const getVariantController = asyncHandler(async (req, res, next) => {
 });
 export const updateVariantController = asyncHandler(async (req, res, next) => {
   const { variantId } = req.params;
-  const { size, color, fit, material, price, stock } = req.body;
+  const { size, color, fit, material, price, stock, existingImages } = req.body;
 
   const existingVariant = await VariantModel.findById(variantId);
 
@@ -103,16 +103,27 @@ export const updateVariantController = asyncHandler(async (req, res, next) => {
     return next(error);
   }
 
+  // Parse existingImages if it's sent as a string (from FormData)
+  let imagesToKeep = [];
+  if (existingImages) {
+    try {
+      imagesToKeep = typeof existingImages === "string" ? JSON.parse(existingImages) : existingImages;
+    } catch (e) {
+      imagesToKeep = [];
+    }
+  }
+
   let updateData = {
     size,
     color,
     fit,
     material,
-    price,
+    price: typeof price === "string" ? JSON.parse(price) : price,
     stock,
   };
 
-  // If new images are provided, upload and set them
+  // Handle new image uploads
+  let newImages = [];
   if (req.files && req.files.length > 0) {
     const uploadedImages = await Promise.all(
       req.files.map(async (file) => {
@@ -123,8 +134,12 @@ export const updateVariantController = asyncHandler(async (req, res, next) => {
         });
       }),
     );
-    updateData.images = uploadedImages.map((image) => ({ url: image.url }));
+    newImages = uploadedImages.map((image) => ({ url: image.url }));
   }
+
+  // Combine kept images with new ones
+  // existingImages should be an array of { url: string }
+  updateData.images = [...imagesToKeep, ...newImages];
 
   // Recalculate SKU if size or color changes to maintain unique index integrity
   if (size || color) {

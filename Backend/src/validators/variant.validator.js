@@ -14,5 +14,6 @@ export const VariantSchema = z.object({
   })),
   stock: z.preprocess((val) => Number(val), z.number().min(0, "Stock is required")),
   images: z.array(z.object({ url: z.string() })).optional(),
+  existingImages: z.string().optional(),
 });
     

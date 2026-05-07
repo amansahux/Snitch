@@ -12,8 +12,10 @@ import { addVariantSchema } from "../../validation/product.validation.js";
 
 
 
-const AddVariantModal = ({ isOpen, onClose, onAdd }) => {
+const AddVariantModal = ({ isOpen, onClose, onAdd, onUpdate, editingVariant }) => {
   const [images, setImages] = useState([]);
+  const isEditMode = !!editingVariant;
+
   const {
     register,
     handleSubmit,
@@ -34,6 +36,45 @@ const AddVariantModal = ({ isOpen, onClose, onAdd }) => {
       stock: 0,
     },
   });
+
+  // Prefill form when editingVariant changes
+  React.useEffect(() => {
+    if (editingVariant) {
+      reset({
+        size: editingVariant.size || editingVariant.attributes?.size,
+        color: editingVariant.color || editingVariant.attributes?.color,
+        fit: editingVariant.fit || editingVariant.attributes?.fit,
+        material: editingVariant.material || editingVariant.attributes?.material,
+        stock: editingVariant.stock,
+        price: {
+          mrp: editingVariant.price?.mrp,
+          selling: editingVariant.price?.selling,
+          currency: editingVariant.price?.currency || "INR",
+        },
+      });
+
+      // Handle existing images
+      if (editingVariant.images?.length > 0) {
+        const existingImages = editingVariant.images.map((img) => ({
+          file: null,
+          preview: img.url,
+          id: img.url, // Using URL as ID for existing images
+        }));
+        setImages(existingImages);
+      } else {
+        setImages([]);
+      }
+    } else {
+      reset({
+        size: "M",
+        fit: "Regular",
+        material: "Cotton",
+        price: { mrp: 0, selling: 0, currency: "INR" },
+        stock: 0,
+      });
+      setImages([]);
+    }
+  }, [editingVariant, reset, isOpen]);
 
   React.useEffect(() => {
     if (isOpen) {
@@ -72,10 +113,26 @@ const AddVariantModal = ({ isOpen, onClose, onAdd }) => {
       }),
     );
 
-    images.forEach((img) => {
+    // Split images into existing URLs and new Files
+    const existingImages = images
+      .filter((img) => img.file === null)
+      .map((img) => ({ url: img.preview }));
+    
+    const newFiles = images.filter((img) => img.file !== null);
+
+    if (isEditMode) {
+      formData.append("existingImages", JSON.stringify(existingImages));
+    }
+
+    newFiles.forEach((img) => {
       formData.append("images", img.file);
     });
-    await onAdd(formData);
+
+    if (isEditMode) {
+      await onUpdate(editingVariant._id, formData);
+    } else {
+      await onAdd(formData);
+    }
     handleClose();
   };
 
@@ -90,10 +147,12 @@ const AddVariantModal = ({ isOpen, onClose, onAdd }) => {
         <div className="flex items-center justify-between px-10 py-8 border-b border-[#e8e2da]">
           <div>
             <h2 className="text-3xl font-serif text-[#1b1c1a]">
-              Archive Variation
+              {isEditMode ? "Refine Variation" : "Archive Variation"}
             </h2>
             <p className="text-[10px] uppercase tracking-widest text-[#7a6e63] mt-2">
-              Define specific dimensions and technical specs
+              {isEditMode 
+                ? "Update technical specifications and visual assets" 
+                : "Define specific dimensions and technical specs"}
             </p>
           </div>
           <button
@@ -215,7 +274,7 @@ const AddVariantModal = ({ isOpen, onClose, onAdd }) => {
               Discard Changes
             </button>
             <SubmitButton isLoading={isSubmitting}>
-              Unveil Variation
+              {isEditMode ? "Update Archive" : "Unveil Variation"}
             </SubmitButton>
           </div>
         </form>
