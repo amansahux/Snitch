@@ -14,7 +14,7 @@ import { ImageUploadZone } from "../components/CreateProduct/ImageUploadZone";
 import useProduct from "../hooks/useProduct";
 import { toast } from "react-hot-toast";
 import { ArrowRight, Sparkles, SquareArrowRightExit } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const CreateProduct = () => {
   const { handleCreateProduct } = useProduct();
@@ -78,35 +78,12 @@ const CreateProduct = () => {
   };
 
   return (
-    <div className="min-h-screen bg-cream font-sans pb-12 relative overflow-x-hidden no-scrollbar">
+    <div className="relative pb-12 bg-[#FBF9F6]">
       {/* Background Decorative Gradient */}
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gold/5 rounded-full blur-[100px] -z-10 translate-x-1/2 -translate-y-1/2"></div>
 
-      {/* Navigation / Header Branding */}
-      <nav className="px-6 lg:px-12 py-8 flex justify-between items-center relative z-20">
-        <Link to="/" className="text-2xl font-serif font-bold tracking-[0.3em] text-charcoal flex items-center gap-1.5 transition-opacity hover:opacity-70">
-          SNICH<span className="text-gold">.</span>
-        </Link>
-        <div className="hidden lg:flex items-center gap-6">
-            <span className="text-[10px] uppercase font-bold tracking-widest text-[#C9A96E]">Admin Dashboard</span>
-        </div>
-      </nav>
-
       <div className="max-w-6xl mx-auto px-6 pt-4 lg:pt-12 pb-8">
 
-        {/* Back Button */}
-        <button 
-          onClick={() => navigate(-1)}
-          className="group flex items-center cursor-pointer gap-3 text-charcoal/40 hover:text-gold transition-all duration-500 mb-10 animate-in fade-in slide-in-from-left-4 duration-700"
-        >
-          <div className="w-10 h-10 rounded-full border border-charcoal/10 flex items-center justify-center group-hover:border-gold group-hover:bg-gold/5 transition-all duration-500">
-            <SquareArrowRightExit size={18} className="rotate-180 group-hover:-translate-x-0.5 transition-transform" />
-          </div>
-          <div className="flex flex-col items-start">
-            <span className="text-[9px] font-black uppercase tracking-[0.3em] leading-none mb-1">Return</span>
-            <span className="text-[10px] font-serif italic text-charcoal/30 group-hover:text-charcoal transition-colors">to Dashboard</span>
-          </div>
-        </button>
         {/* Editorial Header Section */}
         <header className="mb-16 space-y-4">
           <div className="flex items-center gap-3 animate-in fade-in slide-in-from-left-4 duration-700">

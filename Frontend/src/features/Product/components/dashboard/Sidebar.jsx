@@ -75,8 +75,9 @@ const Sidebar = ({ isOpen, onClose }) => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-full w-[280px] bg-cream border-r border-charcoal/5 z-[70] flex flex-col transition-transform duration-500 ease-in-out no-scrollbar
-          ${isOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 lg:static lg:z-auto lg:h-screen lg:sticky`}
+        className={`fixed top-0 left-0 h-full w-[280px] bg-cream border-r border-charcoal/5 z-[70] flex flex-col transition-all duration-500 ease-in-out no-scrollbar
+          ${isOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 lg:static lg:z-auto lg:h-screen lg:sticky
+          ${!isOpen ? "lg:-ml-[280px] lg:opacity-0" : "lg:ml-0 lg:opacity-100"}`}
       >
         {/* Logo Section */}
         <div className="flex items-center justify-between px-8 py-10">

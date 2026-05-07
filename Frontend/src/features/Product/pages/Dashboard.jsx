@@ -2,11 +2,8 @@ import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus, Package } from "lucide-react";
 
-import useAuth from "../../Auth/hooks/useAuth";
 import useProduct from "../hooks/useProduct";
 
-import Sidebar from "../components/dashboard/Sidebar";
-import TopNavbar from "../components/dashboard/TopNavbar";
 import FilterPanel from "../components/dashboard/FilterPanel";
 import ProductTable from "../components/dashboard/ProductTable";
 import ProductCardMobile from "../components/dashboard/ProductCardMobile";
@@ -115,11 +112,9 @@ const StatCard = ({ label, value, sub, accent }) => (
 // ─── Main Dashboard ──────────────────────────────────────────────────────────
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const { sellerProducts, handleGetSellerProducts, handleDeleteProduct } =
     useProduct();
 
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [view, setView] = useState("list"); // "list" | "grid"
@@ -214,180 +209,163 @@ const Dashboard = () => {
 
   // ─────────────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-zinc-950 flex font-sans">
-      {/* Sidebar */}
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+    <main className="flex-1 p-4 lg:p-6 xl:p-8 space-y-6 overflow-x-hidden bg-[#FBF9F6]">
+      {/* ── Stats Row ────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard
+          label="Total Products"
+          value={isLoading ? "—" : stats.total}
+          sub="in your store"
+          accent="text-zinc-100"
+        />
+        <StatCard
+          label="In Stock"
+          value={isLoading ? "—" : stats.inStock}
+          sub="ready to sell"
+          accent="text-zinc-100"
+        />
+        <StatCard
+          label="Out of Stock"
+          value={isLoading ? "—" : stats.outOfStock}
+          sub="needs restocking"
+          accent="text-zinc-100"
+        />
+        <StatCard
+          label="Avg. Price"
+          value={isLoading ? "—" : `₹${stats.avgPrice.toLocaleString()}`}
+          sub="per product"
+          accent="text-zinc-100"
+        />
+      </div>
 
-      {/* Main content area */}
-      <div className="flex-1 flex flex-col min-w-0 lg:ml-0">
-        {/* Top Navbar */}
-        <TopNavbar
-          onMenuClick={() => setSidebarOpen(true)}
-          pageTitle={user?.fullname}
-          user={user}
+      {/* ── Products Panel ───────────────────────────────────────────── */}
+      <div className="bg-white rounded-2xl overflow-hidden shadow-2xl shadow-charcoal/5 border w-full border-charcoal/5">
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-4 bg-[#FBF9F6]">
+          <div className="flex items-center gap-2.5">
+            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#FBF9F6] border border-[#FBF9F6]">
+              <Package className="w-4 h-4 text-[#C9A96E]" />
+            </div>
+            <div>
+              <h2 className="text-sm font-bold text-[#C9A96E] tracking-wide">
+                My Products
+              </h2>
+              {!isLoading && (
+                <p className="text-[11px] text-zinc-500">
+                  {filteredProducts.length} of {sellerProducts.length}{" "}
+                  products
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Add Product CTA (desktop) */}
+          <button
+            onClick={() => navigate("/seller/create-product")}
+            className="hidden sm:inline-flex items-center gap-2 px-4 py-2 bg-[#C9A96E] hover:bg-[#C9A96E]/80 text-[#FBF9F6] font-bold text-sm rounded-xl transition-all duration-200 shadow-[0_0_15px_rgba(234,179,8,0.2)] hover:shadow-[0_0_25px_rgba(234,179,8,0.4)] cursor-pointer"
+          >
+            <Plus className="w-4 h-4" strokeWidth={2.5} />
+            Add Product
+          </button>
+        </div>
+
+        {/* Filter Panel */}
+        <FilterPanel
+          filters={filters}
+          onChange={handleFilterChange}
+          onReset={handleResetFilters}
+          view={view}
+          onViewChange={setView}
         />
 
-        {/* Page body */}
-        <main className="flex-1 p-4 lg:p-6 xl:p-8 space-y-6 overflow-x-hidden bg-[#FBF9F6]">
-          {/* ── Stats Row ────────────────────────────────────────────────── */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard
-              label="Total Products"
-              value={isLoading ? "—" : stats.total}
-              sub="in your store"
-              accent="text-zinc-100"
+        {/* Product Listing */}
+        <div className="hidden md:block">
+          {view === "list" ? (
+            <ProductTable
+              products={paginatedProducts}
+              isLoading={isLoading}
+              hasFilters={!!hasActiveFilters}
+              onView={handleView}
+              onEdit={handleEdit}
+              onDelete={handleDeleteClick}
+              onResetFilters={handleResetFilters}
             />
-            <StatCard
-              label="In Stock"
-              value={isLoading ? "—" : stats.inStock}
-              sub="ready to sell"
-              accent="text-zinc-100"
-            />
-            <StatCard
-              label="Out of Stock"
-              value={isLoading ? "—" : stats.outOfStock}
-              sub="needs restocking"
-              accent="text-zinc-100"
-            />
-            <StatCard
-              label="Avg. Price"
-              value={isLoading ? "—" : `₹${stats.avgPrice.toLocaleString()}`}
-              sub="per product"
-              accent="text-zinc-100"
-            />
-          </div>
-
-          {/* ── Products Panel ───────────────────────────────────────────── */}
-          <div className="bg-white rounded-2xl overflow-hidden shadow-2xl shadow-charcoal/5 border w-full border-charcoal/5">
-            {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 bg-[#FBF9F6]">
-              <div className="flex items-center gap-2.5">
-                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#FBF9F6] border border-[#FBF9F6]">
-                  <Package className="w-4 h-4 text-[#C9A96E]" />
-                </div>
-                <div>
-                  <h2 className="text-sm font-bold text-[#C9A96E] tracking-wide">
-                    My Products
-                  </h2>
-                  {!isLoading && (
-                    <p className="text-[11px] text-zinc-500">
-                      {filteredProducts.length} of {sellerProducts.length}{" "}
-                      products
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              {/* Add Product CTA (desktop) */}
-              <button
-                onClick={() => navigate("/seller/create-product")}
-                className="hidden sm:inline-flex items-center gap-2 px-4 py-2 bg-[#C9A96E] hover:bg-[#C9A96E]/80 text-[#FBF9F6] font-bold text-sm rounded-xl transition-all duration-200 shadow-[0_0_15px_rgba(234,179,8,0.2)] hover:shadow-[0_0_25px_rgba(234,179,8,0.4)] cursor-pointer"
-              >
-                <Plus className="w-4 h-4" strokeWidth={2.5} />
-                Add Product
-              </button>
-            </div>
-
-            {/* Filter Panel */}
-            <FilterPanel
-              filters={filters}
-              onChange={handleFilterChange}
-              onReset={handleResetFilters}
-              view={view}
-              onViewChange={setView}
-            />
-
-            {/* Product Listing */}
-            {/* Desktop: Table (list view) OR Grid (grid view) */}
-            <div className="hidden md:block">
-              {view === "list" ? (
-                <ProductTable
-                  products={paginatedProducts}
-                  isLoading={isLoading}
-                  hasFilters={!!hasActiveFilters}
-                  onView={handleView}
-                  onEdit={handleEdit}
-                  onDelete={handleDeleteClick}
-                  onResetFilters={handleResetFilters}
-                />
-              ) : /* Grid view on desktop */
-              isLoading ? (
-                <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-5 bg-white">
-                  {Array.from({ length: 8 }).map((_, i) => (
-                    <div
-                      key={i}
-                      className="bg-zinc-50 border border-zinc-100 rounded-xl p-4 space-y-4 animate-pulse"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="w-16 h-16 rounded-lg bg-zinc-200 flex-shrink-0" />
-                        <div className="flex-1 space-y-2">
-                          <div className="h-4 w-3/4 bg-zinc-200 rounded" />
-                          <div className="h-3 w-1/2 bg-zinc-200/70 rounded" />
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div className="h-6 w-20 bg-zinc-200 rounded-full" />
-                        <div className="h-4 w-16 bg-zinc-200 rounded" />
-                      </div>
+          ) : (
+          isLoading ? (
+            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-5 bg-white">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="bg-zinc-50 border border-zinc-100 rounded-xl p-4 space-y-4 animate-pulse"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-lg bg-zinc-200 flex-shrink-0" />
+                    <div className="flex-1 space-y-2">
+                      <div className="h-4 w-3/4 bg-zinc-200 rounded" />
+                      <div className="h-3 w-1/2 bg-zinc-200/70 rounded" />
                     </div>
-                  ))}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="h-6 w-20 bg-zinc-200 rounded-full" />
+                    <div className="h-4 w-16 bg-zinc-200 rounded" />
+                  </div>
                 </div>
-              ) : paginatedProducts.length === 0 ? (
-                <EmptyState
-                  hasFilters={!!hasActiveFilters}
-                  onReset={handleResetFilters}
-                />
-              ) : (
-                <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-5 bg-white">
-                  {paginatedProducts.map((product) => (
-                    <ProductCardMobile
-                      key={`grid-${product._id}`}
-                      product={product}
-                      onView={() => handleView(product)}
-                      onEdit={() => handleEdit(product)}
-                      onDelete={() => handleDeleteClick(product)}
-                    />
-                  ))}
-                </div>
-              )}
+              ))}
             </div>
-
-            {/* Mobile / Grid Cards */}
-            <div className="md:hidden">
-              {isLoading ? (
-                <div className="grid grid-cols-1 gap-3 p-4">
-                  <SkeletonLoader count={4} view="grid" />
-                </div>
-              ) : paginatedProducts.length === 0 ? (
-                <EmptyState
-                  hasFilters={!!hasActiveFilters}
-                  onReset={handleResetFilters}
+          ) : paginatedProducts.length === 0 ? (
+            <EmptyState
+              hasFilters={!!hasActiveFilters}
+              onReset={handleResetFilters}
+            />
+          ) : (
+            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-5 bg-white">
+              {paginatedProducts.map((product) => (
+                <ProductCardMobile
+                  key={`grid-${product._id}`}
+                  product={product}
+                  onView={() => handleView(product)}
+                  onEdit={() => handleEdit(product)}
+                  onDelete={() => handleDeleteClick(product)}
                 />
-              ) : (
-                <div className="grid grid-cols-1 gap-3 p-4">
-                  {paginatedProducts.map((product) => (
-                    <ProductCardMobile
-                      key={product._id}
-                      product={product}
-                      onView={() => handleView(product)}
-                      onEdit={() => handleEdit(product)}
-                      onDelete={() => handleDeleteClick(product)}
-                    />
-                  ))}
-                </div>
-              )}
+              ))}
             </div>
+          ))}
+        </div>
 
-            {/* Pagination */}
-            {!isLoading && filteredProducts.length > ITEMS_PER_PAGE && (
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={setCurrentPage}
-              />
-            )}
-          </div>
-        </main>
+        {/* Mobile / Grid Cards */}
+        <div className="md:hidden">
+          {isLoading ? (
+            <div className="grid grid-cols-1 gap-3 p-4">
+              <SkeletonLoader count={4} view="grid" />
+            </div>
+          ) : paginatedProducts.length === 0 ? (
+            <EmptyState
+              hasFilters={!!hasActiveFilters}
+              onReset={handleResetFilters}
+            />
+          ) : (
+            <div className="grid grid-cols-1 gap-3 p-4">
+              {paginatedProducts.map((product) => (
+                <ProductCardMobile
+                  key={product._id}
+                  product={product}
+                  onView={() => handleView(product)}
+                  onEdit={() => handleEdit(product)}
+                  onDelete={() => handleDeleteClick(product)}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Pagination */}
+        {!isLoading && filteredProducts.length > ITEMS_PER_PAGE && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        )}
       </div>
 
       {/* Delete Confirm Modal */}
@@ -404,7 +382,7 @@ const Dashboard = () => {
 
       {/* Mobile FAB */}
       <FloatingActionButton />
-    </div>
+    </main>
   );
 };
 

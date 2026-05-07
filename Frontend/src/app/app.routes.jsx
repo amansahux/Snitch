@@ -24,6 +24,8 @@ import WishlistSection from "../features/profile/components/WishlistSection.jsx"
 import OrderDetail from "../features/profile/pages/OrderDetail.jsx";
 import Wishlist from "../features/wishlist/pages/Wishlist.jsx";
 
+import SellerLayout from "../features/Product/components/dashboard/SellerLayout.jsx";
+
 export const routes = createBrowserRouter([
   {
     path: "/",
@@ -138,38 +140,27 @@ export const routes = createBrowserRouter([
 
   {
     path: "/seller",
+    element: (
+      <ProtectedRoute role="seller">
+        <SellerLayout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         path: "dashboard",
-        element: (
-          <ProtectedRoute role="seller">
-            <Dashboard />
-          </ProtectedRoute>
-        ),
+        element: <Dashboard />,
       },
       {
         path: "create-product",
-        element: (
-          <ProtectedRoute role="seller">
-            <CreateProduct />
-          </ProtectedRoute>
-        ),
+        element: <CreateProduct />,
       },
       {
         path: "products",
-        element: (
-          <ProtectedRoute role="seller">
-            <Inventory />
-          </ProtectedRoute>
-        ),
+        element: <Inventory />,
       },
       {
         path: "products/:id",
-        element: (
-          <ProtectedRoute role="seller">
-            <SellerProductDetail />
-          </ProtectedRoute>
-        ),
+        element: <SellerProductDetail />,
       },
     ],
   },

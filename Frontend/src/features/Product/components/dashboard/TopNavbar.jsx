@@ -10,8 +10,8 @@ const TopNavbar = ({ onMenuClick, pageTitle = "Dashboard", user }) => {
       <div className="flex items-center gap-6">
         <button
           onClick={onMenuClick}
-          className="flex items-center justify-center w-10 h-10 rounded-xl text-charcoal/40 hover:text-charcoal hover:bg-gold/5 transition-all lg:hidden cursor-pointer"
-          aria-label="Open sidebar"
+          className="flex items-center justify-center w-10 h-10 rounded-xl text-charcoal/40 hover:text-charcoal hover:bg-gold/5 transition-all cursor-pointer"
+          aria-label="Toggle sidebar"
         >
           <Menu className="w-5 h-5" />
         </button>
