@@ -61,7 +61,6 @@ const orderObjectSchema = z.object({
     .enum([
       "pending",
       "placed",
-      "confirmed",
       "shipped",
       "out_for_delivery",
       "delivered",

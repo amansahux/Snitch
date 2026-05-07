@@ -147,14 +147,14 @@ const OrdersSection = () => {
                         ₹{order.totalAmount.toLocaleString("en-IN")}
                       </span>
                       <div
-                        className={`px-3 py-1 w-24 text-center rounded-full text-[10px] font-black uppercase tracking-[0.15em] border ${getStatusStyle(
+                        className={`px-3 py-1  text-center rounded-full text-[10px] font-black uppercase tracking-[0.15em] border ${getStatusStyle(
                           order.orderStatus,
                         )}`}
                       >
                         {order.orderStatus || "Pending"}
                       </div>
                       <div
-                        className={`px-3 py-1 w-24 text-center rounded-full text-[10px] font-black uppercase tracking-[0.15em] border ${getStatusStyle(
+                        className={`px-3 py-1  text-center rounded-full text-[10px] font-black uppercase tracking-[0.15em] border ${getStatusStyle(
                           order.paymentStatus,
                         )}`}
                       >
