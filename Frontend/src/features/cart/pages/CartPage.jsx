@@ -86,7 +86,7 @@ const CartPage = () => {
   };
   useEffect(() => {
     fetchCart();
-  }, []);
+  }, [handleGetCart]);
 
   const proceedToCheckout = async () => {
     if (!items.length) {

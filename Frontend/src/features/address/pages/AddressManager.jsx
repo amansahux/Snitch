@@ -53,7 +53,7 @@ const AddressManager = ({
   const activeSelectedAddress = selectedAddressProp || selectedAddress;
 
   useEffect(() => {
-    handleGetAddresses().catch(() => {});
+    handleGetAddresses();
   }, [handleGetAddresses]);
 
   useEffect(() => {
@@ -159,7 +159,6 @@ const AddressManager = ({
                       await handleUpdateAddress(address._id, {
                         isDefault: true,
                       });
-                      await handleGetAddresses();
                     } catch (error) {
                       console.error("Failed to set address as default", error);
                     }

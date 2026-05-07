@@ -32,18 +32,51 @@ const addressSlice = createSlice({
       state.selectedAddress = action.payload || null;
     },
     addAddress: (state, action) => {
-      if (!action.payload) return;
-      state.addresses = [action.payload, ...state.addresses.filter((a) => a._id !== action.payload._id)];
-      state.selectedAddress = action.payload;
+      const newAddress = action.payload;
+      if (!newAddress?._id) return;
+
+      // If new address is default, set all others to non-default
+      let currentAddresses = state.addresses;
+      if (newAddress.isDefault) {
+        currentAddresses = currentAddresses.map((a) => ({
+          ...a,
+          isDefault: false,
+        }));
+      }
+
+      // Add new address and filter out any existing with same ID
+      const updatedAddresses = [
+        newAddress,
+        ...currentAddresses.filter((a) => a._id !== newAddress._id),
+      ];
+
+      // Sort: Default first, then by date (most recent first)
+      state.addresses = updatedAddresses.sort((a, b) => {
+        if (a.isDefault) return -1;
+        if (b.isDefault) return 1;
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
+
+      state.selectedAddress = newAddress;
       state.error = null;
     },
     updateAddressInState: (state, action) => {
       const updated = action.payload;
       if (!updated?._id) return;
 
-      state.addresses = state.addresses.map((address) =>
-        address._id === updated._id ? updated : address,
-      );
+      // Map over addresses, updating the target and unsetting others if updated is default
+      const updatedAddresses = state.addresses.map((address) => {
+        if (address._id === updated._id) return updated;
+        if (updated.isDefault) return { ...address, isDefault: false };
+        return address;
+      });
+
+      // Maintain sorting: Default first, then by date
+      state.addresses = updatedAddresses.sort((a, b) => {
+        if (a.isDefault) return -1;
+        if (b.isDefault) return 1;
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
 
       if (state.selectedAddress?._id === updated._id || updated.isDefault) {
         state.selectedAddress = updated;

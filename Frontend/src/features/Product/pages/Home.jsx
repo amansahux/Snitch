@@ -18,7 +18,8 @@ import useWishlist from "../../wishlist/hooks/useWishlist";
 
 const Home = () => {
   const { products, handleGetAllProducts } = useProduct();
-  const { user } = useAuth();
+
+  const { user, handleGetProfile } = useAuth();
   const cartCount = useSelector((state) =>
     state.cart.items.reduce(
       (total, item) => total + Number(item?.quantity || 0),
@@ -41,6 +42,7 @@ const Home = () => {
   useEffect(() => {
     fetchProducts();
     fetchWishlist();
+    handleGetProfile();
   }, [handleGetAllProducts]);
 
   return (
