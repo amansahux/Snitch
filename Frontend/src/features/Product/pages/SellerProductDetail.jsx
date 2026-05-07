@@ -9,6 +9,7 @@ import {
   Layers,
   Menu,
   Edit,
+  Trash2,
   Image as ImageIcon,
 } from "lucide-react";
 import useProduct from "../hooks/useProduct";
@@ -20,8 +21,13 @@ const SellerProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { handleGetProductById, handleGetVariant, handleUpdateProduct, handleAddVariant } =
-    useProduct();
+  const { 
+    handleGetProductById, 
+    handleGetVariant, 
+    handleUpdateProduct, 
+    handleAddVariant,
+    handleDeleteProduct 
+  } = useProduct();
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -32,6 +38,7 @@ const SellerProductDetail = () => {
 
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isVariantModalOpen, setIsVariantModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -78,6 +85,13 @@ const SellerProductDetail = () => {
     if (response?.success) {
       fetchProduct();
       fetchVariants();
+    }
+  };
+
+  const onDeleteProduct = async () => {
+    const response = await handleDeleteProduct(id);
+    if (response?.success) {
+      navigate("/seller/products");
     }
   };
 
@@ -144,12 +158,18 @@ const SellerProductDetail = () => {
               />
               Return to Archive
             </button>
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4">
               <button
                 onClick={() => setIsUpdateModalOpen(true)}
-                className="p-3 bg-white rounded-full cursor-pointer text-[#7a6e63] hover:text-[#C9A96E] hover:shadow-xl transition-all border border-[#e8e2da]/50"
+                className="p-3 bg-white rounded-full cursor-pointer text-[#7a6e63] hover:text-[#C9A96E] hover:shadow-xl transition-all border border-[#e8e2da]/50 group"
               >
                 <Edit size={16} />
+              </button>
+              <button
+                onClick={() => setIsDeleteModalOpen(true)}
+                className="p-3 bg-white rounded-full cursor-pointer text-[#7a6e63] hover:text-red-500 hover:shadow-xl transition-all border border-[#e8e2da]/50 group"
+              >
+                <Trash2 size={16} />
               </button>
             </div>
           </nav>
@@ -239,12 +259,20 @@ const SellerProductDetail = () => {
                   </div>
                 </div>
 
-                <button
-                  onClick={() => setIsUpdateModalOpen(true)}
-                  className="w-full bg-[#1b1c1a] text-white py-6 rounded-xl text-[11px] font-black uppercase tracking-[0.3em] hover:bg-[#C9A96E] transition-all shadow-luxury active:scale-95"
-                >
-                  Modify Base Details
-                </button>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <button
+                    onClick={() => setIsUpdateModalOpen(true)}
+                    className="flex-1 bg-[#1b1c1a] text-white cursor-pointer py-6 rounded-xl text-[11px] font-black uppercase tracking-[0.3em] hover:bg-[#C9A96E] transition-all shadow-luxury active:scale-95"
+                  >
+                    Modify Base Details
+                  </button>
+                  <button
+                    onClick={() => setIsDeleteModalOpen(true)}
+                    className="sm:w-24 bg-white border cursor-pointer border-[#e8e2da] text-[#7a6e63] py-6 rounded-xl flex items-center justify-center hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-all active:scale-95 group"
+                  >
+                    <Trash2 size={20} className="group-hover:scale-110 transition-transform" />
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -378,6 +406,47 @@ const SellerProductDetail = () => {
         onClose={() => setIsVariantModalOpen(false)}
         onAdd={onAddVariant}
       />
+
+      {/* Delete Confirmation Modal */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+          <div 
+            className="absolute inset-0 bg-[#1b1c1a]/40 backdrop-blur-md animate-in fade-in duration-500"
+            onClick={() => setIsDeleteModalOpen(false)}
+          />
+          <div className="relative bg-[#fbf9f6] w-full max-w-md rounded-3xl p-10 shadow-2xl border border-[#e8e2da] animate-in zoom-in-95 fade-in duration-300">
+            <div className="space-y-8 text-center">
+              <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto text-red-500">
+                <Trash2 size={32} />
+              </div>
+              
+              <div className="space-y-3">
+                <h3 className="text-2xl font-serif text-[#1b1c1a]">
+                  Remove from Archive?
+                </h3>
+                <p className="text-sm text-[#7a6e63] font-inter font-light leading-relaxed">
+                  This action will permanently delete <span className="font-bold text-[#1b1c1a]">"{product.title}"</span> and all its variations. This process cannot be undone.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <button
+                  onClick={onDeleteProduct}
+                  className="w-full bg-[#1B1C1A] text-white cursor-pointer py-5 rounded-xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-red-600 transition-all shadow-lg shadow-red-500/20"
+                >
+                  Confirm Deletion
+                </button>
+                <button
+                  onClick={() => setIsDeleteModalOpen(false)}
+                  className="w-full bg-white cursor-pointer text-[#7a6e63] py-5 rounded-xl text-[10px] font-black uppercase tracking-[0.3em] border border-[#e8e2da] hover:bg-[#f3eee8] transition-all"
+                >
+                  Keep Archive Entry
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

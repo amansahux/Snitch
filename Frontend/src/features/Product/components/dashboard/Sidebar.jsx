@@ -111,10 +111,10 @@ const Sidebar = ({ isOpen, onClose }) => {
         <div className="p-6">
           <div className="p-4 rounded-[1.5rem] bg-white shadow-luxury border border-charcoal/5 flex items-center gap-3 group">
             <div className="w-10 h-10 rounded-full bg-cream-dark border border-charcoal/5 flex items-center justify-center text-gold font-serif text-lg overflow-hidden relative">
-              {user?.avatar ? (
-                <img src={user.avatar} className="w-full h-full object-cover" alt="Avatar" />
-              ) : (
-                user?.fullname?.[0] || 'S'
+              {user?.profilePic ? (
+                <img src={user?.profilePic} className="w-full h-full object-cover" alt="Avatar" />
+              ) : ( 
+                user?.fullname?.[0]?.toUpperCase()
               )}
               <div className="absolute inset-0 bg-gold/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
             </div>
@@ -132,4 +132,4 @@ const Sidebar = ({ isOpen, onClose }) => {
   );
 };
 
-export default Sidebar;
+export default Sidebar; 

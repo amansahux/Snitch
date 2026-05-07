@@ -106,7 +106,7 @@ const AccountInfo = () => {
             </div>
           </div>
 
-          <button className="w-full py-4 rounded-full border border-[#1b1c1a] text-[10px] font-black uppercase tracking-[0.3em] text-[#1b1c1a] hover:bg-[#1b1c1a] hover:text-white transition-all duration-500 cursor-pointer">
+          <button className="w-full py-4  rounded-full border border-[#1b1c1a] text-[10px] font-black uppercase tracking-[0.3em] text-[#1b1c1a] hover:bg-[#1b1c1a] hover:text-white transition-all duration-500 cursor-not-allowed">
             Edit Information
           </button>
         </div>
@@ -118,7 +118,7 @@ const AccountInfo = () => {
               Protect your account by regularly updating your security
               protocols.
             </p>
-            <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-[#1b1c1a] border-b border-[#1b1c1a] pb-1 hover:text-[#C9A96E] hover:border-[#C9A96E] transition-all cursor-pointer">
+            <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-[#1b1c1a] border-b border-[#1b1c1a] pb-1 hover:text-[#C9A96E] hover:border-[#C9A96E] transition-all cursor-not-allowed">
               Update Password
             </button>
           </div>
@@ -128,7 +128,7 @@ const AccountInfo = () => {
               Manage how we communicate new arrivals and exclusive archive
               access.
             </p>
-            <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-[#C9A96E] border-b border-[#C9A96E] pb-1 hover:text-white hover:border-white transition-all cursor-pointer">
+            <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-[#C9A96E] border-b border-[#C9A96E] pb-1 hover:text-white hover:border-white transition-all cursor-not-allowed">
               Notification Settings
             </button>
           </div>
