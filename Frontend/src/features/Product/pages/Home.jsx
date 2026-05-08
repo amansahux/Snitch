@@ -14,12 +14,11 @@ import {
   ShoppingBag,
   Sparkles as SparklesIcon,
 } from "lucide-react";
-import useWishlist from "../../wishlist/hooks/useWishlist";
 
 const Home = () => {
   const { products, handleGetAllProducts } = useProduct();
 
-  const { user, handleGetProfile } = useAuth();
+  const { user } = useAuth();
   const cartCount = useSelector((state) =>
     state.cart.items.reduce(
       (total, item) => total + Number(item?.quantity || 0),
@@ -28,22 +27,16 @@ const Home = () => {
   );
   const wishlistCount = useSelector((state) => state?.wishlist?.items.length);
   const navigate = useNavigate();
-  const { fetchWishlist } = useWishlist();
 
-  const [loading, setLoading] = useState(true);
+  const loading = useSelector((state) => state.product.loading);
+
   const fetchProducts = async () => {
     try {
-      setLoading(true);
       await handleGetAllProducts();
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      console.error(error);
     }
   };
-  useEffect(() => {
-    fetchProducts();
-    fetchWishlist();
-    handleGetProfile();
-  }, [handleGetAllProducts]);
 
   return (
     <div className="min-h-screen bg-[#fbf9f6] selection:bg-[#C9A96E] selection:text-white font-inter  no-scrollbar">

@@ -8,19 +8,18 @@ import {
   Heart,
 } from "lucide-react";
 import { useSelector } from "react-redux";
-import useProduct from "../../hooks/useProduct";
 import Product from "./Product";
 import { useNavigate } from "react-router-dom";
 
 const Shop = () => {
-  const { products, handleGetAllProducts } = useProduct();
+  const { products, loading } = useSelector((state) => state.product);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("Newest");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [priceRange, setPriceRange] = useState(10000);
-  const [isLoading, setIsLoading] = useState(true);
+  
   const cartCount = useSelector((state) =>
     state.cart.items.reduce(
       (total, item) => total + Number(item?.quantity || 0),
@@ -30,15 +29,6 @@ const Shop = () => {
 
   const navigate = useNavigate();
   const {user} = useSelector((state) => state.auth);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setIsLoading(true);
-      await handleGetAllProducts();
-      setIsLoading(false);
-    };
-    fetchProducts();
-  }, [handleGetAllProducts]);
 
   // Categories derived from products
   const categories = useMemo(() => {
@@ -304,7 +294,7 @@ const Shop = () => {
 
           {/* Product Grid */}
           <div className="flex-1">
-            {isLoading ? (
+            {loading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-12">
                 {[...Array(8)].map((_, i) => (
                   <div key={i} className="animate-pulse space-y-4">
@@ -342,7 +332,7 @@ const Shop = () => {
             )}
 
             {/* Load More (Static for UI) */}
-            {!isLoading && filteredProducts.length > 0 && (
+            {!loading && filteredProducts.length > 0 && (
               <div className="mt-20 text-center border-t border-gold/10 pt-12">
                 <p className="mt-6 text-[10px] text-charcoal/40 uppercase tracking-widest">
                   Showing {filteredProducts.length} of {products.length}{" "}

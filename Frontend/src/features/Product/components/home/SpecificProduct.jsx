@@ -14,7 +14,6 @@ import {
   ArrowRight,
 } from "lucide-react";
 import ProductDetailsSkeleton from "./ProductDetailsSkeleton";
-import { Link } from "react-router-dom";
 import Product from "./Product";
 import useCart from "../../../cart/hooks/useCart";
 import toast from "react-hot-toast";
@@ -28,7 +27,7 @@ const SpecificProduct = () => {
   const { handleGetProductById, handleGetVariant, handleGetSimilarProducts } =
     useProduct();
   const { user } = useAuth();
-  const { isWishlisted, handleAddWishlist, handleRemoveWishlist, fetchWishlist } =
+  const { isWishlisted, handleAddWishlist, handleRemoveWishlist } =
     useWishlist();
 
   const [product, setProduct] = useState(null);
@@ -173,7 +172,7 @@ const SpecificProduct = () => {
   useEffect(() => {
     fetchData();
     fetchSimilarProducts();
-    fetchWishlist();
+    // fetchWishlist();
   }, [id, handleGetProductById, handleGetVariant, handleGetSimilarProducts]);
 
   if (loading) {

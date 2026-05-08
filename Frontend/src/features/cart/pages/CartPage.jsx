@@ -75,18 +75,6 @@ const CartPage = () => {
       setRemovingItemId(null);
     }
   };
-  const fetchCart = async () => {
-    try {
-      await handleGetCart();
-    } catch (fetchError) {
-      const message =
-        fetchError?.response?.data?.message || "Unable to load cart right now";
-      toast.error(message);
-    }
-  };
-  useEffect(() => {
-    fetchCart();
-  }, [handleGetCart]);
 
   const proceedToCheckout = async () => {
     if (!items.length) {

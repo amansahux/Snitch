@@ -5,12 +5,17 @@ import useAuth from "../features/Auth/hooks/useAuth.js";
 import useCart from "../features/cart/hooks/useCart.js";
 
 import { Toaster } from "react-hot-toast";
+import useProduct from "../features/Product/hooks/useProduct.js";
+import useWishlist from "../features/wishlist/hooks/useWishlist.js";
 
 const App = () => {
   const { handleGetProfile, user } = useAuth();
   const { handleGetCart } = useCart();
+  const { handleGetAllProducts } = useProduct();
+  const { fetchWishlist } = useWishlist();
 
   useEffect(() => {
+    handleGetAllProducts();
     handleGetProfile();
   }, []);
 
@@ -18,11 +23,12 @@ const App = () => {
     if (!user) return;
 
     handleGetCart().catch(() => {});
+    fetchWishlist().catch(() => {});
   }, [user]);
 
   return (
     <>
-      <Toaster 
+      <Toaster
         position="bottom-center"
         toastOptions={{
           duration: 5000,
@@ -54,7 +60,7 @@ const App = () => {
             },
             style: {
               border: "1px solid rgba(186, 26, 26, 0.3)",
-            }
+            },
           },
         }}
       />
