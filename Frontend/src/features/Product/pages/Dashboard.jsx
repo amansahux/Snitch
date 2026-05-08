@@ -126,7 +126,9 @@ const Dashboard = () => {
   useEffect(() => {
     const fetch = async () => {
       setIsLoading(true);
-      await handleGetSellerProducts();
+      if (!sellerProducts || sellerProducts.length === 0) {
+        await handleGetSellerProducts();
+      }
       setIsLoading(false);
     };
     fetch();

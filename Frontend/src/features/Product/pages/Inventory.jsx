@@ -9,13 +9,9 @@ import { useNavigate, Link } from "react-router-dom";
 import useProduct from "../hooks/useProduct";
 
 const Inventory = () => {
-  const { handleGetSellerProducts, sellerProducts } = useProduct();
+  const { sellerProducts } = useProduct();
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
-
-  useEffect(() => {
-    handleGetSellerProducts();
-  }, [handleGetSellerProducts]);
 
   const filteredProducts = useMemo(() => {
     return sellerProducts.filter(p => 
