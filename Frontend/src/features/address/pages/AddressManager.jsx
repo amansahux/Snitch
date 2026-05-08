@@ -3,7 +3,6 @@ import { toast } from "react-hot-toast";
 import { Plus, MapPin, Pencil, Trash2, X, AlertTriangle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import useAddress from "../hooks/useAddress.js";
 import { addressFormSchema } from "../validation/Address.validation.js";
 
@@ -53,7 +52,9 @@ const AddressManager = ({
   const activeSelectedAddress = selectedAddressProp || selectedAddress;
 
   useEffect(() => {
-    handleGetAddresses();
+    if (!addresses?.length) {
+      handleGetAddresses();
+    }
   }, [handleGetAddresses]);
 
   useEffect(() => {

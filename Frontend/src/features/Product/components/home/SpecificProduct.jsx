@@ -172,7 +172,6 @@ const SpecificProduct = () => {
   useEffect(() => {
     fetchData();
     fetchSimilarProducts();
-    // fetchWishlist();
   }, [id, handleGetProductById, handleGetVariant, handleGetSimilarProducts]);
 
   if (loading) {

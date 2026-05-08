@@ -22,8 +22,11 @@ const addressSlice = createSlice({
       }
 
       const currentSelectedId = state.selectedAddress?._id;
-      const preservedSelected = addresses.find((a) => a._id === currentSelectedId);
-      const fallbackSelected = addresses.find((a) => a.isDefault) || addresses[0];
+      const preservedSelected = addresses.find(
+        (a) => a._id === currentSelectedId,
+      );
+      const fallbackSelected =
+        addresses.find((a) => a.isDefault) || addresses[0];
 
       state.selectedAddress = preservedSelected || fallbackSelected;
       state.error = null;
@@ -85,11 +88,15 @@ const addressSlice = createSlice({
     },
     removeAddressFromState: (state, action) => {
       const removeId = action.payload;
-      state.addresses = state.addresses.filter((address) => address._id !== removeId);
+      state.addresses = state.addresses.filter(
+        (address) => address._id !== removeId,
+      );
 
       if (state.selectedAddress?._id === removeId) {
         state.selectedAddress =
-          state.addresses.find((address) => address.isDefault) || state.addresses[0] || null;
+          state.addresses.find((address) => address.isDefault) ||
+          state.addresses[0] ||
+          null;
       }
       state.error = null;
     },

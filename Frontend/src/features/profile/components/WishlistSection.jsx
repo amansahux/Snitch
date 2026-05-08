@@ -4,12 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import useWishlist from "../../wishlist/hooks/useWishlist.js";
 
 const WishlistSection = () => {
-  const { items, loading, fetchWishlist, handleRemoveWishlist } = useWishlist();
+  const { items, loading,  handleRemoveWishlist } = useWishlist();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    fetchWishlist();
-  }, []);
 
   if (loading && items.length === 0) {
     return (

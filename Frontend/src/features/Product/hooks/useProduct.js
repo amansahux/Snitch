@@ -8,12 +8,14 @@ import {
   updateProduct,
   deleteProduct,
   getSimilarProducts,
+
 } from "../services/product.api.js";
 import {
   setProducts,
   setSellerProducts,
   setLoading,
   setError,
+  setSimilarProducts
 } from "../state/product.slice.js";
 import {
   createVariant,
@@ -168,6 +170,7 @@ const useProduct = () => {
         if (!response?.success) {
           dispatch(setError(response?.message || "Failed to fetch similar products"));
         }
+        dispatch(setSimilarProducts(response.data));
         return response;
       } catch (error) {
         dispatch(setError("An unexpected error occurred"));

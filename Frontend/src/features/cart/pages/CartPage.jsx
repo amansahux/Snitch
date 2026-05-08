@@ -24,7 +24,7 @@ const CartPage = () => {
   const navigate = useNavigate();
   const { items, totalSelling, totalMrp, totalDiscount, isLoading, error } =
     useSelector((state) => state.cart);
-  const { handleGetCart, handleUpdateCart, handleRemoveCartItem } = useCart();
+  const {  handleUpdateCart, handleRemoveCartItem } = useCart();
   const { handleCreateOrder, handleVerifyOrderPayment } = useOrder();
   const { Razorpay } = useRazorpay();
   const { user } = useSelector((state) => state.auth);

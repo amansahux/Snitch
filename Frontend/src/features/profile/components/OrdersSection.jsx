@@ -10,7 +10,9 @@ const OrdersSection = () => {
   const { handleGetOrders } = useOrder();
 
   useEffect(() => {
-    handleGetOrders();
+    if (!orders?.length) {
+      handleGetOrders();
+    }
   }, []);
 
   const getStatusStyle = (status) => {
