@@ -1,6 +1,15 @@
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  setSellerProducts,
+  setProducts,
+  setLoading,
+  setError,
+  setProductCache,
+  setVariantCache,
+  setSimilarProducts,
+} from "../state/product.slice.js";
+import {
   createProducts,
   getAllProducts,
   getSellerProducts,
@@ -8,27 +17,23 @@ import {
   updateProduct,
   deleteProduct,
   getSimilarProducts,
-
 } from "../services/product.api.js";
-import {
-  setProducts,
-  setSellerProducts,
-  setLoading,
-  setError,
-  setSimilarProducts
-} from "../state/product.slice.js";
 import {
   createVariant,
   deleteVariant,
   getVariants,
   updateVariant,
 } from "../services/variant.api.js";
-
 const useProduct = () => {
   const dispatch = useDispatch();
-  const { sellerProducts, products, loading, error } = useSelector(
-    (state) => state.product
-  );
+  const {
+    sellerProducts,
+    products,
+    loading,
+    error,
+    productCache,
+    variantCache,
+  } = useSelector((state) => state.product);
 
   const handleCreateProduct = useCallback(
     async (data) => {
@@ -47,7 +52,7 @@ const useProduct = () => {
         dispatch(setLoading(false));
       }
     },
-    [dispatch]
+    [dispatch],
   );
 
   const handleDeleteProduct = useCallback(
@@ -67,7 +72,7 @@ const useProduct = () => {
         dispatch(setLoading(false));
       }
     },
-    [dispatch]
+    [dispatch],
   );
 
   const handleGetSellerProducts = useCallback(async () => {
@@ -78,7 +83,9 @@ const useProduct = () => {
       if (response?.success) {
         dispatch(setSellerProducts(response.data));
       } else {
-        dispatch(setError(response?.message || "Failed to fetch seller products"));
+        dispatch(
+          setError(response?.message || "Failed to fetch seller products"),
+        );
       }
       return response;
     } catch (error) {
@@ -110,6 +117,10 @@ const useProduct = () => {
 
   const handleGetProductById = useCallback(
     async (id) => {
+      // Return cached product if available
+      if (productCache && productCache[id]) {
+        return { success: true, data: productCache[id] };
+      }
       dispatch(setLoading(true));
       dispatch(setError(null));
       try {
@@ -117,7 +128,8 @@ const useProduct = () => {
         if (response && response.data && response.data.product) {
           const prod = response.data.product;
           const variants = response.data.variants || [];
-          const defaultVariant = variants.find((v) => v.isDefault) || variants[0];
+          const defaultVariant =
+            variants.find((v) => v.isDefault) || variants[0];
           if (defaultVariant) {
             prod.price = prod.price || defaultVariant.price;
             prod.stock = prod.stock ?? defaultVariant.stock;
@@ -126,6 +138,8 @@ const useProduct = () => {
                 ? prod.images
                 : defaultVariant.images;
           }
+          // Cache enriched product
+          dispatch(setProductCache({ id, data: prod }));
           return { ...response, data: prod };
         } else {
           dispatch(setError(response?.message || "Failed to fetch product"));
@@ -138,7 +152,7 @@ const useProduct = () => {
         dispatch(setLoading(false));
       }
     },
-    [dispatch]
+    [dispatch, productCache],
   );
 
   const handleUpdateProduct = useCallback(
@@ -158,7 +172,7 @@ const useProduct = () => {
         dispatch(setLoading(false));
       }
     },
-    [dispatch]
+    [dispatch],
   );
 
   const handleGetSimilarProducts = useCallback(
@@ -168,7 +182,9 @@ const useProduct = () => {
       try {
         const response = await getSimilarProducts(id);
         if (!response?.success) {
-          dispatch(setError(response?.message || "Failed to fetch similar products"));
+          dispatch(
+            setError(response?.message || "Failed to fetch similar products"),
+          );
         }
         dispatch(setSimilarProducts(response.data));
         return response;
@@ -179,7 +195,7 @@ const useProduct = () => {
         dispatch(setLoading(false));
       }
     },
-    [dispatch]
+    [dispatch],
   );
 
   const handleAddVariant = useCallback(
@@ -199,17 +215,24 @@ const useProduct = () => {
         dispatch(setLoading(false));
       }
     },
-    [dispatch]
+    [dispatch],
   );
 
   const handleGetVariant = useCallback(
     async (id) => {
+      // Return cached variants if present
+      if (variantCache && variantCache[id]) {
+        return { success: true, variants: variantCache[id] };
+      }
       dispatch(setLoading(true));
       dispatch(setError(null));
       try {
         const response = await getVariants(id);
         if (!response?.success) {
           dispatch(setError(response?.message || "Failed to fetch variants"));
+        } else {
+          // Cache the variants list
+          dispatch(setVariantCache({ id, variants: response.variants }));
         }
         return response;
       } catch (error) {
@@ -219,7 +242,7 @@ const useProduct = () => {
         dispatch(setLoading(false));
       }
     },
-    [dispatch]
+    [dispatch, variantCache],
   );
 
   const handleUpdateVariant = useCallback(
@@ -239,7 +262,7 @@ const useProduct = () => {
         dispatch(setLoading(false));
       }
     },
-    [dispatch]
+    [dispatch],
   );
 
   const handleDeleteVariant = useCallback(
@@ -259,7 +282,7 @@ const useProduct = () => {
         dispatch(setLoading(false));
       }
     },
-    [dispatch]
+    [dispatch],
   );
 
   return {

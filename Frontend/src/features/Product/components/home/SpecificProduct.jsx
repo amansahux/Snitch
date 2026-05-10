@@ -26,14 +26,14 @@ const SpecificProduct = () => {
   const wishlistCount = useSelector((state) => state.wishlist.items.length);
   const { handleGetProductById, handleGetVariant, handleGetSimilarProducts } =
     useProduct();
+  const { handleAddToCart } = useCart();
   const { user } = useAuth();
   const { isWishlisted, handleAddWishlist, handleRemoveWishlist } =
     useWishlist();
+  const { similarProducts, loading } = useSelector((state) => state.product);
 
   const [product, setProduct] = useState(null);
-  const [similarProducts, setSimilarProducts] = useState([]);
   const [variants, setVariants] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
   const [activeVariant, setActiveVariant] = useState(null);
@@ -59,7 +59,6 @@ const SpecificProduct = () => {
     window.scrollTo(0, 0);
   }, [id]);
   const fetchData = async () => {
-    setLoading(true);
     try {
       const [prodRes, variantRes] = await Promise.all([
         handleGetProductById(id),
@@ -77,24 +76,15 @@ const SpecificProduct = () => {
         setActiveVariant(defaultVariant);
         setActiveImage(0);
       }
-    } catch {
-    } finally {
-      setLoading(false);
-    }
+    } catch {}
   };
   const fetchSimilarProducts = async () => {
-    setLoading(true);
     try {
-      const res = await handleGetSimilarProducts(id);
-      if (res?.success) {
-        setSimilarProducts(res.data);
-      }
-    } catch {
-    } finally {
-      setLoading(false);
-    }
+      if (similarProducts?.length > 0) return;
+
+      await handleGetSimilarProducts(id);
+    } catch {}
   };
-  const { handleAddToCart } = useCart();
 
   const handleCart = async () => {
     if (!product?._id || !activeVariant?._id) {
@@ -168,11 +158,15 @@ const SpecificProduct = () => {
       await handleAddWishlist(product._id, product);
     }
   };
+    useEffect(() => {
+    fetchData();
+  }, [id]);
 
   useEffect(() => {
-    fetchData();
     fetchSimilarProducts();
-  }, [id, handleGetProductById, handleGetVariant, handleGetSimilarProducts]);
+  }, [id]);
+
+
 
   if (loading) {
     return <ProductDetailsSkeleton />;

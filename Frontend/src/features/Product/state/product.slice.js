@@ -7,7 +7,10 @@ const productSlice = createSlice({
     products: [],
     loading: false,
     error: null,
-    similarProducts:[],
+    similarProducts: [],
+    // caches for individual product details and variant lists
+    productCache: {}, // { [productId]: productData }
+    variantCache: {}, // { [productId]: variantsArray }
   },
   reducers: {
     setSellerProducts: (state, action) => {
@@ -24,9 +27,26 @@ const productSlice = createSlice({
     },
     setSimilarProducts: (state, action) => {
       state.similarProducts = action.payload;
-    }
+    },
+    // cache reducers
+    setProductCache: (state, action) => {
+      const { id, data } = action.payload;
+      state.productCache[id] = data;
+    },
+    setVariantCache: (state, action) => {
+      const { id, variants } = action.payload;
+      state.variantCache[id] = variants;
+    },
   },
 });
 
-export const { setSellerProducts,setLoading,setError,setProducts , setSimilarProducts } = productSlice.actions;
+export const {
+  setSellerProducts,
+  setLoading,
+  setError,
+  setProducts,
+  setSimilarProducts,
+  setProductCache,
+  setVariantCache,
+} = productSlice.actions;
 export default productSlice.reducer;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useNavigate, useLocation, Link } from "react-router-dom";
 import {
   ArrowLeft,
   Plus,
@@ -149,17 +149,7 @@ const SellerProductDetail = () => {
   return (
     <div className="pt-8 pb-20 px-6 lg:px-12 flex-1 animate-in fade-in duration-1000 bg-[#FBF9F6] selection:bg-[#C9A96E] selection:text-white">
       {/* Navigation Header */}
-      <nav className="max-w-[1200px] mx-auto flex items-center justify-between mb-12">
-        <button
-          onClick={() => navigate("/seller/products")}
-          className="group flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-[#7a6e63] hover:text-[#1b1c1a] transition-all cursor-pointer"
-        >
-          <ArrowLeft
-            size={14}
-            className="group-hover:-translate-x-1 transition-transform"
-          />
-          Return to Archive
-        </button>
+      <nav className="max-w-[1200px] mx-auto flex items-center justify-end mb-12">
         <div className="flex items-center gap-4">
           <button
             onClick={() => setIsUpdateModalOpen(true)}

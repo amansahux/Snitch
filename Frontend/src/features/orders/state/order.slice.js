@@ -6,6 +6,7 @@ const orderSlice = createSlice({
     orders: [],
     isLoading: false,
     error: null,
+    orderCache: {}, // cache individual orders by id
   },
   reducers: {
     setOrders: (state, action) => {
@@ -17,9 +18,13 @@ const orderSlice = createSlice({
     setOrderError: (state, action) => {
       state.error = action.payload;
     },
+    setOrderCache: (state, action) => {
+      const { id, data } = action.payload;
+      state.orderCache[id] = data;
+    },
   },
 });
 
-export const { setOrders, setOrderLoading, setOrderError } = orderSlice.actions;
+export const { setOrders, setOrderLoading, setOrderError, setOrderCache } = orderSlice.actions;
 
 export default orderSlice.reducer;

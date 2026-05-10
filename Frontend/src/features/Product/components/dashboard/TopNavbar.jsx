@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Menu, Bell, Search, Sparkles } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const TopNavbar = ({ onMenuClick, pageTitle = "Dashboard", user }) => {
   const [searchOpen, setSearchOpen] = useState(false);
+  const navigate = useNavigate()
 
   return (
     <header className="h-20 bg-cream border-b border-charcoal/5 flex items-center justify-between px-6 lg:px-10 flex-shrink-0 sticky top-0 z-50">
@@ -58,7 +60,7 @@ const TopNavbar = ({ onMenuClick, pageTitle = "Dashboard", user }) => {
         <div className="w-[1px] h-6 bg-charcoal/5 mx-1 hidden sm:block"></div>
 
         {/* User Status */}
-        <div className="flex items-center gap-3 pl-2">
+        <div onClick={() => { navigate("/profile/orders") }} className="flex items-center gap-3 pl-2">
           <div className="hidden xl:block text-right">
             <p className="text-[10px] font-black uppercase tracking-widest text-charcoal leading-none">
               Pro Seller
