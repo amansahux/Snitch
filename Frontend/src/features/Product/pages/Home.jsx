@@ -3,8 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import useProduct from "../hooks/useProduct";
 import useAuth from "../../Auth/hooks/useAuth";
-import Product from "../components/home/Product";
-import Skeleton from "../components/home/Skeleton";
+import Product from "../components/Product";
+import Skeleton from "../components/Skeleton";
 import {
   ArrowRight,
   CircleUser,

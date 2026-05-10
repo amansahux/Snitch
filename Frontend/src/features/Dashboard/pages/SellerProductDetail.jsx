@@ -11,7 +11,7 @@ import {
   Image as ImageIcon,
   Edit2,
 } from "lucide-react";
-import useProduct from "../hooks/useProduct";
+import useDashboard from "../hooks/useDashboard";
 import UpdateProductModal from "../components/dashboard/UpdateProductModal";
 import AddVariantModal from "../components/dashboard/AddVariantModal";
 import ConfirmModal from "../components/dashboard/ConfirmModal";
@@ -27,8 +27,8 @@ const SellerProductDetail = () => {
     handleAddVariant,
     handleDeleteProduct,
     handleDeleteVariant,
-    handleUpdateVariant
-  } = useProduct();
+    handleUpdateVariant,
+  } = useDashboard();
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -173,7 +173,7 @@ const SellerProductDetail = () => {
           <div className="lg:col-span-6 space-y-6">
             <div className="aspect-[4/5] bg-[#f3eee8] overflow-hidden rounded-3xl shadow-xl relative group">
               <img
-                src={product.images?.[activeImage]?.url}
+                src={product.images?.[activeImage]?.url || variants[0]?.images?.[0]?.url}
                 alt={product.title}
                 className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-105"
               />
@@ -210,7 +210,7 @@ const SellerProductDetail = () => {
               <div className="flex items-center gap-3">
                 <div className="w-8 h-[1px] bg-[#C9A96E]"></div>
                 <span className="text-[9px] font-black uppercase tracking-[0.5em] text-[#C9A96E]">
-                  Archive Ident: {product._id.slice(-8).toUpperCase()}
+                  Archive Ident: {product?._id?.slice(-8).toUpperCase()}
                 </span>
               </div>
               <h1 className="text-5xl md:text-6xl font-serif text-[#1b1c1a] leading-none tracking-tight">
@@ -298,10 +298,11 @@ const SellerProductDetail = () => {
               <DetailCard
                 icon={Info}
                 title="Archive Date"
-                value={new Date(product.createdAt).toLocaleDateString(
-                  "en-GB",
-                  { day: "2-digit", month: "long", year: "numeric" },
-                )}
+                value={new Date(product.createdAt).toLocaleDateString("en-GB", {
+                  day: "2-digit",
+                  month: "long",
+                  year: "numeric",
+                })}
               />
               <DetailCard
                 icon={Layers}
@@ -391,7 +392,7 @@ const SellerProductDetail = () => {
                       </div>
 
                       <div className="flex items-center gap-3">
-                        <button 
+                        <button
                           onClick={() => {
                             setEditingVariant(v);
                             setIsVariantModalOpen(true);

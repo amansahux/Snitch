@@ -3,7 +3,6 @@ import { createSlice } from "@reduxjs/toolkit";
 const productSlice = createSlice({
   name: "product",
   initialState: {
-    sellerProducts: [],
     products: [],
     loading: false,
     error: null,
@@ -14,9 +13,6 @@ const productSlice = createSlice({
     similarCache: {}, // { [productId]: similarProductsArray }
   },
   reducers: {
-    setSellerProducts: (state, action) => {
-      state.sellerProducts = action.payload;
-    },
     setLoading: (state, action) => {
       state.loading = action.payload;
     },
@@ -46,7 +42,6 @@ const productSlice = createSlice({
 });
 
 export const {
-  setSellerProducts,
   setLoading,
   setError,
   setProducts,

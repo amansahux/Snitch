@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import useProduct from "../../hooks/useProduct";
-import useAuth from "../../../Auth/hooks/useAuth";
+import useProduct from "../hooks/useProduct.js";
+import useAuth from "../../Auth/hooks/useAuth.js";
 import {
   ShoppingBag,
   Heart,
@@ -15,9 +15,9 @@ import {
 } from "lucide-react";
 import ProductDetailsSkeleton from "./ProductDetailsSkeleton";
 import Product from "./Product";
-import useCart from "../../../cart/hooks/useCart";
+import useCart from "../../cart/hooks/useCart.js";
 import toast from "react-hot-toast";
-import useWishlist from "../../../wishlist/hooks/useWishlist.js";
+import useWishlist from "../../wishlist/hooks/useWishlist.js";
 
 const SpecificProduct = () => {
   const { id } = useParams();
@@ -156,15 +156,13 @@ const SpecificProduct = () => {
       await handleAddWishlist(product._id, product);
     }
   };
-    useEffect(() => {
+  useEffect(() => {
     fetchData();
   }, [id]);
 
   useEffect(() => {
     fetchSimilarProducts();
   }, [id]);
-
-
 
   if (loading) {
     return <ProductDetailsSkeleton />;

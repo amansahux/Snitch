@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { Plus, Package, Search, ChevronRight, Loader2 } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
-import useProduct from "../hooks/useProduct";
+import useDashboard from "../hooks/useDashboard";
 
 const Inventory = () => {
-  const { sellerProducts, handleGetSellerProducts } = useProduct();
+  const { sellerProducts, handleGetSellerProducts } = useDashboard();
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
@@ -12,8 +12,8 @@ const Inventory = () => {
   const filteredProducts = useMemo(() => {
     return sellerProducts.filter(
       (p) =>
-        p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.category?.toLowerCase().includes(searchQuery.toLowerCase()),
+        p?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p?.category?.toLowerCase().includes(searchQuery.toLowerCase()),
     );
   }, [sellerProducts, searchQuery]);
   useEffect(() => {

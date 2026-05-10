@@ -1,33 +1,26 @@
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  setSellerProducts,
   setProducts,
   setLoading,
   setError,
   setProductCache,
   setVariantCache,
   setSimilarProducts,
+  setSimilarCache,
 } from "../state/product.slice.js";
 import {
-  createProducts,
   getAllProducts,
-  getSellerProducts,
   getProductById,
-  updateProduct,
-  deleteProduct,
   getSimilarProducts,
 } from "../services/product.api.js";
 import {
-  createVariant,
-  deleteVariant,
   getVariants,
-  updateVariant,
 } from "../services/variant.api.js";
+
 const useProduct = () => {
   const dispatch = useDispatch();
   const {
-    sellerProducts,
     products,
     loading,
     error,
@@ -35,67 +28,6 @@ const useProduct = () => {
     variantCache,
     similarCache,
   } = useSelector((state) => state.product);
-
-  const handleCreateProduct = useCallback(
-    async (data) => {
-      dispatch(setLoading(true));
-      dispatch(setError(null));
-      try {
-        const response = await createProducts(data);
-        if (!response?.success) {
-          dispatch(setError(response?.message || "Failed to create product"));
-        }
-        return response;
-      } catch (error) {
-        dispatch(setError("An unexpected error occurred"));
-        return undefined;
-      } finally {
-        dispatch(setLoading(false));
-      }
-    },
-    [dispatch],
-  );
-
-  const handleDeleteProduct = useCallback(
-    async (id) => {
-      dispatch(setLoading(true));
-      dispatch(setError(null));
-      try {
-        const response = await deleteProduct(id);
-        if (!response?.success) {
-          dispatch(setError(response?.message || "Failed to delete product"));
-        }
-        return response;
-      } catch (error) {
-        dispatch(setError("An unexpected error occurred"));
-        return undefined;
-      } finally {
-        dispatch(setLoading(false));
-      }
-    },
-    [dispatch],
-  );
-
-  const handleGetSellerProducts = useCallback(async () => {
-    dispatch(setLoading(true));
-    dispatch(setError(null));
-    try {
-      const response = await getSellerProducts();
-      if (response?.success) {
-        dispatch(setSellerProducts(response.data));
-      } else {
-        dispatch(
-          setError(response?.message || "Failed to fetch seller products"),
-        );
-      }
-      return response;
-    } catch (error) {
-      dispatch(setError("An unexpected error occurred"));
-      return undefined;
-    } finally {
-      dispatch(setLoading(false));
-    }
-  }, [dispatch]);
 
   const handleGetAllProducts = useCallback(async () => {
     dispatch(setLoading(true));
@@ -153,27 +85,7 @@ const useProduct = () => {
         dispatch(setLoading(false));
       }
     },
-    [dispatch, productCache],
-  );
-
-  const handleUpdateProduct = useCallback(
-    async (id, data) => {
-      dispatch(setLoading(true));
-      dispatch(setError(null));
-      try {
-        const response = await updateProduct(id, data);
-        if (!response?.success) {
-          dispatch(setError(response?.message || "Failed to update product"));
-        }
-        return response;
-      } catch (error) {
-        dispatch(setError("An unexpected error occurred"));
-        return undefined;
-      } finally {
-        dispatch(setLoading(false));
-      }
-    },
-    [dispatch],
+    [dispatch, productCache]
   );
 
   const handleGetSimilarProducts = useCallback(
@@ -188,7 +100,7 @@ const useProduct = () => {
         const response = await getSimilarProducts(id);
         if (!response?.success) {
           dispatch(
-            setError(response?.message || "Failed to fetch similar products"),
+            setError(response?.message || "Failed to fetch similar products")
           );
         } else {
           dispatch(setSimilarProducts(response.data));
@@ -202,27 +114,7 @@ const useProduct = () => {
         dispatch(setLoading(false));
       }
     },
-    [dispatch, similarCache],
-  );
-
-  const handleAddVariant = useCallback(
-    async (id, data) => {
-      dispatch(setLoading(true));
-      dispatch(setError(null));
-      try {
-        const response = await createVariant(id, data);
-        if (!response?.success) {
-          dispatch(setError(response?.message || "Failed to add variant"));
-        }
-        return response;
-      } catch (error) {
-        dispatch(setError("An unexpected error occurred"));
-        return undefined;
-      } finally {
-        dispatch(setLoading(false));
-      }
-    },
-    [dispatch],
+    [dispatch, similarCache]
   );
 
   const handleGetVariant = useCallback(
@@ -249,65 +141,17 @@ const useProduct = () => {
         dispatch(setLoading(false));
       }
     },
-    [dispatch, variantCache],
-  );
-
-  const handleUpdateVariant = useCallback(
-    async (variantId, data) => {
-      dispatch(setLoading(true));
-      dispatch(setError(null));
-      try {
-        const response = await updateVariant(variantId, data);
-        if (!response?.success) {
-          dispatch(setError(response?.message || "Failed to update variant"));
-        }
-        return response;
-      } catch (error) {
-        dispatch(setError("An unexpected error occurred"));
-        return undefined;
-      } finally {
-        dispatch(setLoading(false));
-      }
-    },
-    [dispatch],
-  );
-
-  const handleDeleteVariant = useCallback(
-    async (variantId) => {
-      dispatch(setLoading(true));
-      dispatch(setError(null));
-      try {
-        const response = await deleteVariant(variantId);
-        if (!response?.success) {
-          dispatch(setError(response?.message || "Failed to delete variant"));
-        }
-        return response;
-      } catch (error) {
-        dispatch(setError("An unexpected error occurred"));
-        return undefined;
-      } finally {
-        dispatch(setLoading(false));
-      }
-    },
-    [dispatch],
+    [dispatch, variantCache]
   );
 
   return {
-    sellerProducts,
     products,
     loading,
     error,
-    handleCreateProduct,
-    handleDeleteProduct,
-    handleGetSellerProducts,
     handleGetAllProducts,
     handleGetProductById,
-    handleUpdateProduct,
     handleGetSimilarProducts,
-    handleAddVariant,
     handleGetVariant,
-    handleUpdateVariant,
-    handleDeleteVariant,
   };
 };
 

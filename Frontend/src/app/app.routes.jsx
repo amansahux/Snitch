@@ -1,16 +1,16 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import Login from "../features/Auth/pages/Login.jsx";
 import Register from "../features/Auth/pages/Register.jsx";
-import CreateProduct from "../features/Product/pages/CreateProduct.jsx";
-import Dashboard from "../features/Product/pages/Dashboard.jsx";
+import CreateProduct from "../features/Dashboard/pages/CreateProduct.jsx";
+import Dashboard from "../features/Dashboard/pages/Dashboard.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import GuestRoute from "./components/GuestRoute.jsx";
 import { HomeRedirect } from "./components/HomeRedirect.jsx";
 import Home from "../features/Product/pages/Home.jsx";
-import SpecificProduct from "../features/Product/components/home/SpecificProduct.jsx";
-import Shop from "../features/Product/components/home/Shop.jsx";
-import Inventory from "../features/Product/pages/Inventory.jsx";
-import SellerProductDetail from "../features/Product/pages/SellerProductDetail.jsx";
+import SpecificProduct from "../features/Product/components/SpecificProduct.jsx";
+import Shop from "../features/Product/components/Shop.jsx";
+import Inventory from "../features/Dashboard/pages/Inventory.jsx";
+import SellerProductDetail from "../features/Dashboard/pages/SellerProductDetail.jsx";
 import NotFound from "../features/Product/pages/NotFound.jsx";
 import Cart from "../features/cart/pages/CartPage.jsx";
 import OrderSuccess from "../features/orders/pages/OrderSuccess.jsx";
@@ -24,7 +24,7 @@ import WishlistSection from "../features/profile/components/WishlistSection.jsx"
 import OrderDetail from "../features/profile/pages/OrderDetail.jsx";
 import Wishlist from "../features/wishlist/pages/Wishlist.jsx";
 
-import SellerLayout from "../features/Product/components/dashboard/SellerLayout.jsx";
+import SellerLayout from "../features/Dashboard/components/dashboard/SellerLayout.jsx";
 
 export const routes = createBrowserRouter([
   {

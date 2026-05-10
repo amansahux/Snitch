@@ -80,7 +80,7 @@ const UpdateProductModal = ({ isOpen, onClose, product, onUpdate }) => {
     const existingUrls = images
       .filter((img) => img.isExisting)
       .map((img) => img.preview);
-    
+
     images
       .filter((img) => !img.isExisting)
       .forEach((img) => {
@@ -117,7 +117,6 @@ const UpdateProductModal = ({ isOpen, onClose, product, onUpdate }) => {
           onSubmit={handleSubmit(onSubmit)}
           className="p-10 space-y-8 max-h-[70vh] overflow-y-auto no-scrollbar"
         >
-
           <InputField
             id="title"
             label="Collection Title"
@@ -160,4 +159,3 @@ const UpdateProductModal = ({ isOpen, onClose, product, onUpdate }) => {
 };
 
 export default UpdateProductModal;
-
