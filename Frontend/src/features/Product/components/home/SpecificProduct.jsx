@@ -80,8 +80,6 @@ const SpecificProduct = () => {
   };
   const fetchSimilarProducts = async () => {
     try {
-      if (similarProducts?.length > 0) return;
-
       await handleGetSimilarProducts(id);
     } catch {}
   };

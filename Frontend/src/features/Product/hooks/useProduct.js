@@ -33,6 +33,7 @@ const useProduct = () => {
     error,
     productCache,
     variantCache,
+    similarCache,
   } = useSelector((state) => state.product);
 
   const handleCreateProduct = useCallback(
@@ -177,6 +178,10 @@ const useProduct = () => {
 
   const handleGetSimilarProducts = useCallback(
     async (id) => {
+      if (similarCache && similarCache[id]) {
+        dispatch(setSimilarProducts(similarCache[id]));
+        return { success: true, data: similarCache[id] };
+      }
       dispatch(setLoading(true));
       dispatch(setError(null));
       try {
@@ -185,8 +190,10 @@ const useProduct = () => {
           dispatch(
             setError(response?.message || "Failed to fetch similar products"),
           );
+        } else {
+          dispatch(setSimilarProducts(response.data));
+          dispatch(setSimilarCache({ id, data: response.data }));
         }
-        dispatch(setSimilarProducts(response.data));
         return response;
       } catch (error) {
         dispatch(setError("An unexpected error occurred"));
@@ -195,7 +202,7 @@ const useProduct = () => {
         dispatch(setLoading(false));
       }
     },
-    [dispatch],
+    [dispatch, similarCache],
   );
 
   const handleAddVariant = useCallback(

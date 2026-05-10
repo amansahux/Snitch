@@ -11,6 +11,7 @@ const productSlice = createSlice({
     // caches for individual product details and variant lists
     productCache: {}, // { [productId]: productData }
     variantCache: {}, // { [productId]: variantsArray }
+    similarCache: {}, // { [productId]: similarProductsArray }
   },
   reducers: {
     setSellerProducts: (state, action) => {
@@ -37,6 +38,10 @@ const productSlice = createSlice({
       const { id, variants } = action.payload;
       state.variantCache[id] = variants;
     },
+    setSimilarCache: (state, action) => {
+      const { id, data } = action.payload;
+      state.similarCache[id] = data;
+    },
   },
 });
 
@@ -48,5 +53,6 @@ export const {
   setSimilarProducts,
   setProductCache,
   setVariantCache,
+  setSimilarCache,
 } = productSlice.actions;
 export default productSlice.reducer;
