@@ -94,9 +94,13 @@ export const googleCallback = asyncHandler(async (req, res, next) => {
     }
 
     // Set token
-    const token = jwt.sign({ id: user._id, role: user.role }, config.JWT_SECRET, {
-      expiresIn: "7d",
-    });
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      config.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      },
+    );
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -180,7 +184,7 @@ export const logoutController = asyncHandler(async (req, res, next) => {
     error.statusCode = 400;
     return next(error);
   }
-  await redis.set(token, Date.now().toString(), "EX", 7 * 24 * 60 * 60); // Store token in redis for 7 days
+  await redis.set(token, Date.now().toString(), "EX", 24 * 60 * 60); // Store token in redis for 1 day
   res.clearCookie("token");
   res.status(200).json({
     success: true,

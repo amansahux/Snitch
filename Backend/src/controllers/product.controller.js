@@ -3,6 +3,7 @@ import uploadFile from "../services/storage.service.js";
 import productModel from "../models/product.model.js";
 import VariantModel from "../models/varient.model.js";
 import mongoose from "mongoose";
+import { deleteCache, getCache, setCache } from "../utils/redis.utils.js";
 
 export const createProduct = asyncHandler(async (req, res, next) => {
   const {
@@ -48,7 +49,8 @@ export const createProduct = asyncHandler(async (req, res, next) => {
       description,
       seller,
       category,
-      coverImage: images && images.length > 0 ? { url: images[0].url } : undefined,
+      coverImage:
+        images && images.length > 0 ? { url: images[0].url } : undefined,
     });
     await product.save({ session });
 
@@ -60,7 +62,7 @@ export const createProduct = asyncHandler(async (req, res, next) => {
 
     const variant = new VariantModel({
       product: product._id,
-      sku: `${product._id.toString()}-${size || 'NA'}-${(color || 'NA').replace(/\s+/g, '_')}`,
+      sku: `${product._id.toString()}-${size || "NA"}-${(color || "NA").replace(/\s+/g, "_")}`,
       size,
       color,
       fit,
@@ -75,6 +77,7 @@ export const createProduct = asyncHandler(async (req, res, next) => {
 
     await session.commitTransaction();
     session.endSession();
+    await deleteCache(`products:all`);
 
     return res.status(201).json({
       message: "Product created successfully",
@@ -90,34 +93,6 @@ export const createProduct = asyncHandler(async (req, res, next) => {
   }
 });
 
-export const deleteProduct = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-  const seller = req.user.id;
-
-  const product = await productModel.findById(id);
-
-  if (!product) {
-    const error = new Error("Product not found");
-    error.statusCode = 404;
-    return next(error);
-  }
-
-  if (product.seller.toString() !== seller) {
-    const error = new Error("Unauthorized");
-    error.statusCode = 401;
-    return next(error);
-  }
-
-  await product.deleteOne();
-
-  return res.status(200).json({
-    message: "Product deleted successfully",
-    success: true,
-    data: null,
-    error: null,
-  });
-});
-
 export const getSellerProducts = asyncHandler(async (req, res, next) => {
   const seller = req.user.id;
 
@@ -125,7 +100,10 @@ export const getSellerProducts = asyncHandler(async (req, res, next) => {
 
   // Attach default variant data for backwards compatibility (price, stock, images)
   const productIds = products.map((p) => p._id);
-  const variants = await VariantModel.find({ product: { $in: productIds }, isDefault: true });
+  const variants = await VariantModel.find({
+    product: { $in: productIds },
+    isDefault: true,
+  });
   const variantMap = new Map(variants.map((v) => [v.product.toString(), v]));
 
   const enriched = products.map((p) => {
@@ -148,10 +126,15 @@ export const getSellerProducts = asyncHandler(async (req, res, next) => {
 });
 
 export const getAllProducts = asyncHandler(async (req, res, next) => {
-  const products = await productModel.find().populate("seller", "fullname email");
+  const products = await productModel
+    .find()
+    .populate("seller", "fullname email");
 
   const productIds = products.map((p) => p._id);
-  const variants = await VariantModel.find({ product: { $in: productIds }, isDefault: true });
+  const variants = await VariantModel.find({
+    product: { $in: productIds },
+    isDefault: true,
+  });
   const variantMap = new Map(variants.map((v) => [v.product.toString(), v]));
 
   const enriched = products.map((p) => {
@@ -164,45 +147,32 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
     }
     return po;
   });
+  const cacheKey = `products:all`;
+
+  const cachedProducts = await getCache(cacheKey);
+  if (cachedProducts) {
+    console.log("serving from cache");
+    return res.status(200).json({
+      message: "Products fetched successfully",
+      success: true,
+      data: cachedProducts,
+      source: "redis",
+      error: null,
+    });
+  }
+  await setCache(cacheKey, enriched);
 
   return res.status(200).json({
     message: "Products fetched successfully",
     success: true,
     data: enriched,
-    error: null,
-  });
-});
-
-export const getProductById = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-  const product = await productModel
-    .findById(id)
-    .populate("seller", "fullname email");
-
-  if (!product) {
-    const error = new Error("Product not found");
-    error.statusCode = 404;
-    return next(error);
-  }
-
-  // Fetch variants from Variant collection
-  const variants = await VariantModel.find({ product: id });
-
-  return res.status(200).json({
-    message: "Product fetched successfully",
-    success: true,
-    data: { product, variants },
+    source: "db",
     error: null,
   });
 });
 
 export const updateProduct = asyncHandler(async (req, res, next) => {
-  const {
-    title,
-    description,
-    category,
-    existingImages,
-  } = req.body;
+  const { title, description, category, existingImages } = req.body;
   const seller = req.user.id;
 
   let newImages = [];
@@ -266,11 +236,78 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
   }
 
   await product.save();
+  await deleteCache(`products:all`);
 
   return res.status(200).json({
     message: "Product updated successfully",
     success: true,
     data: product,
+    error: null,
+  });
+});
+
+export const deleteProduct = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const seller = req.user.id;
+
+  const product = await productModel.findById(id);
+
+  if (!product) {
+    const error = new Error("Product not found");
+    error.statusCode = 404;
+    return next(error);
+  }
+
+  if (product.seller.toString() !== seller) {
+    const error = new Error("Unauthorized");
+    error.statusCode = 401;
+    return next(error);
+  }
+
+  await product.deleteOne();
+
+  await deleteCache(`products:all`);
+
+  return res.status(200).json({
+    message: "Product deleted successfully",
+    success: true,
+    data: null,
+    error: null,
+  });
+});
+
+export const getProductById = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const product = await productModel
+    .findById(id)
+    .populate("seller", "fullname email");
+
+  if (!product) {
+    const error = new Error("Product not found");
+    error.statusCode = 404;
+    return next(error);
+  }
+
+  // Fetch variants from Variant collection
+  const variants = await VariantModel.find({ product: id });
+
+  const cacheKey = `product:${id}`;
+  const cachedProduct = await getCache(cacheKey);
+  if (cachedProduct) {
+    return res.status(200).json({
+      message: "Product fetched successfully",
+      success: true,
+      data: cachedProduct,
+      source: "redis",
+      error: null,
+    });
+  }
+  await setCache(cacheKey, { product, variants });
+  return res.status(200).json({
+    message: "Product fetched successfully",
+    success: true,
+    data: { product, variants },
+    source: "db",
     error: null,
   });
 });
@@ -290,7 +327,10 @@ export const similarProduct = asyncHandler(async (req, res, next) => {
   }
 
   // Get default variant for the requested product to use as comparison baseline
-  const baseVariant = await VariantModel.findOne({ product: id, isDefault: true });
+  const baseVariant = await VariantModel.findOne({
+    product: id,
+    isDefault: true,
+  });
 
   // Fetch other products in same category
   const others = await productModel.find({
@@ -304,9 +344,15 @@ export const similarProduct = asyncHandler(async (req, res, next) => {
       const v = await VariantModel.findOne({ product: p._id, isDefault: true });
       let score = 0;
       if (baseVariant && v) {
-        if (v.color && baseVariant.color && v.color === baseVariant.color) score += 3;
+        if (v.color && baseVariant.color && v.color === baseVariant.color)
+          score += 3;
         if (v.fit && baseVariant.fit && v.fit === baseVariant.fit) score += 2;
-        if (v.material && baseVariant.material && v.material === baseVariant.material) score += 2;
+        if (
+          v.material &&
+          baseVariant.material &&
+          v.material === baseVariant.material
+        )
+          score += 2;
       }
       return { product: p, variant: v, score };
     }),
@@ -320,6 +366,18 @@ export const similarProduct = asyncHandler(async (req, res, next) => {
     score: s.score,
   }));
 
+  const cacheKey = `similar:${id}`;
+  const cachedSimilar = await getCache(cacheKey);
+  if (cachedSimilar) {
+    return res.status(200).json({
+      message: "Similar products fetched successfully",
+      success: true,
+      data: cachedSimilar,
+      source: "redis",
+      error: null,
+    });
+  }
+  await setCache(cacheKey, top);
   return res.status(200).json({
     message: "Similar products fetched successfully",
     success: true,
