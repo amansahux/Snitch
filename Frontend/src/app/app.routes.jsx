@@ -25,6 +25,8 @@ import OrderDetail from "../features/profile/pages/OrderDetail.jsx";
 import Wishlist from "../features/wishlist/pages/Wishlist.jsx";
 
 import SellerLayout from "../features/Dashboard/components/dashboard/SellerLayout.jsx";
+import Analytics from "../features/Dashboard/pages/Analytics.jsx";
+import ManageOrders from "../features/Dashboard/pages/ManageOrders.jsx";
 
 export const routes = createBrowserRouter([
   {
@@ -149,6 +151,14 @@ export const routes = createBrowserRouter([
       {
         path: "dashboard",
         element: <Dashboard />,
+      },
+      {
+        path: "analytics",
+        element: <Analytics />,
+      },
+      {
+        path: "orders",
+        element: <ManageOrders />,
       },
       {
         path: "create-product",

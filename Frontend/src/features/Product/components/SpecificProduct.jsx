@@ -33,6 +33,7 @@ const SpecificProduct = () => {
   const { similarProducts, loading } = useSelector((state) => state.product);
 
   const [product, setProduct] = useState(null);
+  const [localLoading, setLocalLoading] = useState(true);
   const [variants, setVariants] = useState([]);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
@@ -60,6 +61,7 @@ const SpecificProduct = () => {
   }, [id]);
   const fetchData = async () => {
     try {
+      setLocalLoading(true);
       const [prodRes, variantRes] = await Promise.all([
         handleGetProductById(id),
         handleGetVariant(id),
@@ -76,7 +78,9 @@ const SpecificProduct = () => {
         setActiveVariant(defaultVariant);
         setActiveImage(0);
       }
-    } catch {}
+    } catch {} finally {
+      setLocalLoading(false);
+    }
   };
   const fetchSimilarProducts = async () => {
     try {
@@ -164,7 +168,7 @@ const SpecificProduct = () => {
     fetchSimilarProducts();
   }, [id]);
 
-  if (loading) {
+  if (loading || localLoading) {
     return <ProductDetailsSkeleton />;
   }
 

@@ -6,8 +6,9 @@ import {
   Plus,
   X,
   ArrowRightLeft,
-  Settings,
   ShieldCheck,
+  ShoppingBag,
+  LineChart,
 } from "lucide-react";
 import useAuth from "../../../Auth/hooks/useAuth.js";
 
@@ -19,6 +20,9 @@ const NAV_LINKS = [
     end: true,
   },
   { label: "Inventory", icon: Package, to: "/seller/products" },
+
+  { label: "Orders", icon: ShoppingBag, to: "/seller/orders" },
+  { label: "Analytics", icon: LineChart, to: "/seller/analytics" },
   { label: "New Piece", icon: Plus, to: "/seller/create-product" },
   { label: "Switch to Shop", icon: ArrowRightLeft, to: "/" },
 ];
@@ -43,12 +47,18 @@ const NavItem = ({ link, onClick }) => {
         <>
           <Icon
             className={`w-4 h-4 transition-transform duration-300 group-hover:scale-110 ${
-              isActive ? "text-white" : "text-charcoal-light group-hover:text-gold"
+              isActive
+                ? "text-white"
+                : "text-charcoal-light group-hover:text-gold"
             }`}
           />
-          <span className={`text-[11px] font-bold uppercase tracking-[0.2em] truncate ${
-            isActive ? "text-white" : "text-charcoal-light group-hover:text-charcoal"
-          }`}>
+          <span
+            className={`text-[11px] font-bold uppercase tracking-[0.2em] truncate ${
+              isActive
+                ? "text-white"
+                : "text-charcoal-light group-hover:text-charcoal"
+            }`}
+          >
             {label}
           </span>
           {isActive && (
@@ -62,7 +72,7 @@ const NavItem = ({ link, onClick }) => {
 
 const Sidebar = ({ isOpen, onClose }) => {
   const { user } = useAuth();
-  
+
   return (
     <>
       {/* Mobile overlay */}
@@ -81,10 +91,13 @@ const Sidebar = ({ isOpen, onClose }) => {
       >
         {/* Logo Section */}
         <div className="flex items-center justify-between px-8 py-10">
-          <Link to="/" className="text-3xl font-serif font-bold tracking-[0.3em] text-charcoal">
+          <Link
+            to="/"
+            className="text-3xl font-serif font-bold tracking-[0.3em] text-charcoal"
+          >
             SNICH<span className="text-gold">.</span>
           </Link>
-          
+
           <button
             onClick={onClose}
             className="lg:hidden p-2 rounded-xl text-charcoal/40 hover:text-charcoal hover:bg-gold/5 transition-all cursor-pointer"
@@ -96,8 +109,10 @@ const Sidebar = ({ isOpen, onClose }) => {
         {/* Studio Label */}
         <div className="px-8 mb-6">
           <div className="flex items-center gap-3">
-             <span className="w-4 h-[1px] bg-gold/30"></span>
-             <p className="text-[9px] font-black uppercase tracking-[0.3em] text-gold">Seller Studio</p>
+            <span className="w-4 h-[1px] bg-gold/30"></span>
+            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-gold">
+              Seller Studio
+            </p>
           </div>
         </div>
 
@@ -113,17 +128,25 @@ const Sidebar = ({ isOpen, onClose }) => {
           <div className="p-4 rounded-[1.5rem] bg-white shadow-luxury border border-charcoal/5 flex items-center gap-3 group">
             <div className="w-10 h-10 rounded-full bg-cream-dark border border-charcoal/5 flex items-center justify-center text-gold font-serif text-lg overflow-hidden relative">
               {user?.profilePic ? (
-                <img src={user?.profilePic} className="w-full h-full object-cover" alt="Avatar" />
-              ) : ( 
+                <img
+                  src={user?.profilePic}
+                  className="w-full h-full object-cover"
+                  alt="Avatar"
+                />
+              ) : (
                 user?.fullname?.[0]?.toUpperCase()
               )}
               <div className="absolute inset-0 bg-gold/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
             </div>
             <div className="min-w-0 pr-2">
-              <p className="text-xs font-bold text-charcoal truncate tracking-tight">{user?.fullname}</p>
+              <p className="text-xs font-bold text-charcoal truncate tracking-tight">
+                {user?.fullname}
+              </p>
               <div className="flex items-center gap-1 mt-0.5">
-                  <ShieldCheck className="w-2.5 h-2.5 text-gold" />
-                  <p className="text-[9px] text-charcoal-light font-medium uppercase tracking-widest">Atelier Admin</p>
+                <ShieldCheck className="w-2.5 h-2.5 text-gold" />
+                <p className="text-[9px] text-charcoal-light font-medium uppercase tracking-widest">
+                  Atelier Admin
+                </p>
               </div>
             </div>
           </div>
@@ -133,4 +156,4 @@ const Sidebar = ({ isOpen, onClose }) => {
   );
 };
 
-export default Sidebar; 
+export default Sidebar;
