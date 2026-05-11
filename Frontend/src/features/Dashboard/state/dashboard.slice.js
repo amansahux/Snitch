@@ -4,6 +4,7 @@ const dashboardSlice = createSlice({
   name: "dashboard",
   initialState: {
     sellerProducts: [],
+    sellerOrders: [],
     loading: false,
     error: null,
     stats: {
@@ -24,6 +25,9 @@ const dashboardSlice = createSlice({
     },
     setStats: (state, action) => {
       state.stats = action.payload;
+    },
+    setSellerOrders: (state, action) => {
+      state.sellerOrders = action.payload;
     }
   },
 });
@@ -33,6 +37,7 @@ export const {
   setLoading,
   setError,
   setStats,
+  setSellerOrders,
 } = dashboardSlice.actions;
 
 export default dashboardSlice.reducer;

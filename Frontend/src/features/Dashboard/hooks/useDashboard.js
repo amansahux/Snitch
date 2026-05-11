@@ -5,6 +5,7 @@ import {
   setLoading,
   setError,
   setStats,
+  setSellerOrders,
 } from "../state/dashboard.slice.js";
 import {
   createProducts,
@@ -19,10 +20,11 @@ import {
   updateVariant,
   getVariants,
 } from "../../Product/services/variant.api.js";
+import { getSellerOrders, updateOrderStatus } from "../service/dashboard.api.js";
 
 const useDashboard = () => {
   const dispatch = useDispatch();
-  const { sellerProducts, loading, error, stats } = useSelector(
+  const { sellerProducts, loading, error, stats, sellerOrders } = useSelector(
     (state) => state.dashboard
   );
 
@@ -212,8 +214,50 @@ const useDashboard = () => {
     [dispatch]
   );
 
+  const handleGetSellerOrders = useCallback(
+    async () => {
+      dispatch(setLoading(true));
+      dispatch(setError(null));
+      try {
+        const response = await getSellerOrders();
+        if (!response?.success) {
+          dispatch(setError(response?.message || "Failed to get seller orders"));
+        }
+        dispatch(setSellerOrders(response.data));
+        return response;
+      } catch (error) {
+        dispatch(setError("An unexpected error occurred"));
+        return undefined;
+      } finally {
+        dispatch(setLoading(false));
+      }
+    },
+    [dispatch]
+  );
+
+  const handleUpdateOrderStatus = useCallback(
+    async (orderId, orderStatus) => {
+      dispatch(setLoading(true));
+      dispatch(setError(null));
+      try {
+        const response = await updateOrderStatus(orderId, orderStatus);
+        if (response?.success) {
+          handleGetSellerOrders();
+        }
+        return response;
+      } catch (error) {
+        dispatch(setError("Failed to update order status"));
+        return undefined;
+      } finally {
+        dispatch(setLoading(false));
+      }
+    },
+    [dispatch, handleGetSellerOrders]
+  );
+
   return {
     sellerProducts,
+    sellerOrders,
     loading,
     error,
     stats,
@@ -226,6 +270,8 @@ const useDashboard = () => {
     handleAddVariant,
     handleUpdateVariant,
     handleDeleteVariant,
+    handleGetSellerOrders,
+    handleUpdateOrderStatus,
   };
 };
 

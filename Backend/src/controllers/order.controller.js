@@ -7,6 +7,7 @@ import { createOrder } from "../services/payment.service.js";
 import { validatePaymentVerification } from "razorpay/dist/utils/razorpay-utils.js";
 import config from "../config/config.js";
 import VariantModel from "../models/varient.model.js";
+import productModel from "../models/product.model.js";
 
 const resolveUserId = (req) => {
   const userId = req?.user?.id || req?.user?._id || req?.user?.userId;
@@ -282,11 +283,15 @@ export const updateOrderStatus = asyncHandler(async (req, res, next) => {
 export const getSellerOrders = asyncHandler(async (req, res, next) => {
   const userId = resolveUserId(req);
 
+  const sellerProducts = await productModel.find({ seller: userId }).select("_id");
+  const productIds = sellerProducts.map((p) => p._id);
+
   const orders = await orderModel
-    .find({ "items.product.seller": userId })
-    .populate("user", "name email")
+    .find({ "items.product": { $in: productIds } })
+    .populate("user", "name email fullname")
     .populate("items.product", "title coverImage category")
     .populate("items.variant", "color size images")
+    .populate("shippingAddress")
     .sort({ createdAt: -1 });
 
   return res.status(200).json({
