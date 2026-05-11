@@ -278,3 +278,21 @@ export const updateOrderStatus = asyncHandler(async (req, res, next) => {
     error: null,
   });
 });
+
+export const getSellerOrders = asyncHandler(async (req, res, next) => {
+  const userId = resolveUserId(req);
+
+  const orders = await orderModel
+    .find({ "items.product.seller": userId })
+    .populate("user", "name email")
+    .populate("items.product", "title coverImage category")
+    .populate("items.variant", "color size images")
+    .sort({ createdAt: -1 });
+
+  return res.status(200).json({
+    success: true,
+    message: "Orders fetched successfully",
+    data: orders,
+    error: null,
+  });
+});
