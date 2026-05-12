@@ -4,9 +4,8 @@ import { useNavigate, Link } from "react-router-dom";
 import useDashboard from "../hooks/useDashboard";
 
 const Inventory = () => {
-  const { sellerProducts, handleGetSellerProducts } = useDashboard();
+  const { sellerProducts } = useDashboard();
   const [searchQuery, setSearchQuery] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   const filteredProducts = useMemo(() => {
@@ -16,22 +15,8 @@ const Inventory = () => {
         p?.category?.toLowerCase().includes(searchQuery.toLowerCase()),
     );
   }, [sellerProducts, searchQuery]);
-  useEffect(() => {
-    const fetch = async () => {
-      setIsLoading(true);
-      if (!sellerProducts || sellerProducts.length === 0) {
-        await handleGetSellerProducts();
-      }
-      setIsLoading(false);
-    };
-    fetch();
-  }, []);
 
-  return isLoading ? (
-    <div className="flex justify-center items-center h-screen">
-      <Loader2 className="animate-spin" />
-    </div>
-  ) : (
+  return(
     <div className="pt-8 pb-20 px-6 lg:px-12 bg-[#FBF9F6]">
       {/* Header Section */}
       <header className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-16">

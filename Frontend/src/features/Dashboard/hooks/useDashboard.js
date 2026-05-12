@@ -9,7 +9,6 @@ import {
 } from "../state/dashboard.slice.js";
 import {
   createProducts,
-  getSellerProducts,
   updateProduct,
   deleteProduct,
   getProductById,
@@ -24,8 +23,14 @@ import { getSellerOrders, updateOrderStatus, updatePaymentStatus } from "../serv
 
 const useDashboard = () => {
   const dispatch = useDispatch();
-  const { sellerProducts, loading, error, stats, sellerOrders } = useSelector(
+  const { loading, error, stats, sellerOrders } = useSelector(
     (state) => state.dashboard
+  );
+  const { products } = useSelector((state) => state.product);
+  const { user } = useSelector((state) => state.auth);
+
+  const sellerProducts = products.filter(
+    (p) => p.seller?._id === user?._id || p.seller === user?._id
   );
 
   const handleGetProductById = useCallback(async (id) => {
@@ -73,26 +78,6 @@ const useDashboard = () => {
     }
   }, [dispatch]);
 
-  const handleGetSellerProducts = useCallback(async () => {
-    dispatch(setLoading(true));
-    dispatch(setError(null));
-    try {
-      const response = await getSellerProducts();
-      if (response?.success) {
-        dispatch(setSellerProducts(response.data));
-      } else {
-        dispatch(
-          setError(response?.message || "Failed to fetch seller products")
-        );
-      }
-      return response;
-    } catch (error) {
-      dispatch(setError("An unexpected error occurred"));
-      return undefined;
-    } finally {
-      dispatch(setLoading(false));
-    }
-  }, [dispatch]);
 
   const handleCreateProduct = useCallback(
     async (data) => {
@@ -280,7 +265,6 @@ const useDashboard = () => {
     loading,
     error,
     stats,
-    handleGetSellerProducts,
     handleGetProductById,
     handleGetVariant,
     handleCreateProduct,

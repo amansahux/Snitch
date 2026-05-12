@@ -10,25 +10,27 @@ const ManageOrders = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeFilter, setActiveFilter] = useState("All Orders");
 
-  const { sellerOrders, handleGetSellerOrders } = useDashboard();
-
-  useEffect(() => {
-    if (!sellerOrders || sellerOrders?.length === 0) {
-      handleGetSellerOrders();
-    }
-  }, [handleGetSellerOrders]);
+  const { sellerOrders } = useDashboard();
 
   const handleViewDetails = (order) => {
     setSelectedOrder(order);
     setIsDrawerOpen(true);
   };
 
-  // const filteredOrders = sellerOrders?.filter(
-  //   (order) =>
-  //     order?.fullname?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //     order?.orderId?.toLowerCase().includes(searchQuery.toLowerCase()),
-  // );
+  const filteredOrders = sellerOrders?.filter((order) => {
+    const searchLower = searchQuery.toLowerCase();
+    const matchesSearch =
+      order._id.toLowerCase().includes(searchLower) ||
+      order.shippingAddress?.fullName?.toLowerCase().includes(searchLower);
+
+    const matchesStatus =
+      activeFilter === "All Orders" ||
+      order.orderStatus.toLowerCase() === activeFilter.toLowerCase();
+
+    return matchesSearch && matchesStatus;
+  });
 
   return (
     <div className="min-h-screen bg-[#FBF9F6] p-4 md:p-12 max-w-[1600px] mx-auto animate-in fade-in slide-in-from-bottom-4 duration-1000">
@@ -41,12 +43,6 @@ const ManageOrders = () => {
           <h1 className="text-5xl font-serif text-slate-900 leading-tight">
             Order <br /> Logistics
           </h1>
-        </div>
-        <div className="flex items-center space-x-4 pb-2 ">
-          <button className="flex items-center px-6 py-3 cursor-pointer bg-white border border-amber-100 rounded-2xl text-[10px] font-bold uppercase tracking-widest text-gold hover:bg-amber-50 transition-all shadow-luxury">
-            <Download className="w-4 h-4 mr-2" />
-            Archive CSV
-          </button>
         </div>
       </div>
 
@@ -71,16 +67,18 @@ const ManageOrders = () => {
               "Shipped",
               "Out_for_Delivery",
               "Delivered",
+              "Cancelled",
             ].map((label) => (
               <button
                 key={label}
-                className={`flex items-center px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest whitespace-nowrap transition-all ${
-                  label === "All Orders" && searchQuery === ""
+                onClick={() => setActiveFilter(label)}
+                className={`flex items-center px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest whitespace-nowrap transition-all cursor-pointer ${
+                  activeFilter === label
                     ? "bg-slate-900 text-white shadow-lg shadow-slate-200"
                     : "bg-white text-slate-400 border border-amber-50 hover:border-gold/30 hover:text-gold"
                 }`}
               >
-                {label}
+                {label.replace(/_/g, " ")}
               </button>
             ))}
             <div className="h-8 w-px bg-amber-100 mx-2 hidden lg:block"></div>
@@ -92,19 +90,19 @@ const ManageOrders = () => {
       </div>
 
       {/* Orders List */}
-      {sellerOrders?.length > 0 ? (
+      {filteredOrders?.length > 0 ? (
         <>
           {/* Desktop View */}
           <div className="hidden md:block">
             <OrdersTable
-              orders={sellerOrders}
+              orders={filteredOrders}
               onViewDetails={handleViewDetails}
             />
           </div>
 
           {/* Mobile View */}
           <div className="md:hidden space-y-4">
-            {sellerOrders?.map((order) => (
+            {filteredOrders?.map((order) => (
               <OrderCardMobile
                 key={order._id}
                 order={order}
@@ -116,9 +114,12 @@ const ManageOrders = () => {
       ) : (
         <EmptyState
           title="No orders found"
-          description={`We couldn't find any orders matching "${searchQuery}". Try a different search term.`}
-          actionLabel="Clear Search"
-          onAction={() => setSearchQuery("")}
+          description={`We couldn't find any orders matching your criteria. Try adjusting your search or filters.`}
+          actionLabel="Clear All Filters"
+          onAction={() => {
+            setSearchQuery("");
+            setActiveFilter("All Orders");
+          }}
         />
       )}
 
