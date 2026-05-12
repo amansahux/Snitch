@@ -65,20 +65,24 @@ const ManageOrders = () => {
           </div>
 
           <div className="flex items-center gap-4 overflow-x-auto pb-2 lg:pb-0 no-scrollbar">
-            {["All Orders", "Processing", "Shipped", "Delivered"].map(
-              (label) => (
-                <button
-                  key={label}
-                  className={`flex items-center px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest whitespace-nowrap transition-all ${
-                    label === "All Orders" && searchQuery === ""
-                      ? "bg-slate-900 text-white shadow-lg shadow-slate-200"
-                      : "bg-white text-slate-400 border border-amber-50 hover:border-gold/30 hover:text-gold"
-                  }`}
-                >
-                  {label}
-                </button>
-              ),
-            )}
+            {[
+              "All Orders",
+              "Placed",
+              "Shipped",
+              "Out_for_Delivery",
+              "Delivered",
+            ].map((label) => (
+              <button
+                key={label}
+                className={`flex items-center px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest whitespace-nowrap transition-all ${
+                  label === "All Orders" && searchQuery === ""
+                    ? "bg-slate-900 text-white shadow-lg shadow-slate-200"
+                    : "bg-white text-slate-400 border border-amber-50 hover:border-gold/30 hover:text-gold"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
             <div className="h-8 w-px bg-amber-100 mx-2 hidden lg:block"></div>
             <button className="p-3 bg-white border border-amber-100 text-gold rounded-xl hover:bg-amber-50 transition-all">
               <Filter className="w-4 h-4" />

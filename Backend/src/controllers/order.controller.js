@@ -279,6 +279,29 @@ export const updateOrderStatus = asyncHandler(async (req, res, next) => {
     error: null,
   });
 });
+export const updatePaymentStatus = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const { paymentStatus } = req.body;
+
+  const order = await orderModel.findById(id);
+
+  if (!order) {
+    const error = new Error("Order not found");
+    error.statusCode = 404;
+    return next(error);
+  }
+
+  order.paymentStatus = paymentStatus;
+
+  await order.save();
+
+  return res.status(200).json({
+    success: true,
+    message: "Payment status updated successfully",
+    data: order,
+    error: null,
+  });
+});
 
 export const getSellerOrders = asyncHandler(async (req, res, next) => {
   const userId = resolveUserId(req);

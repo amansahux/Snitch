@@ -14,8 +14,13 @@ import ShipmentTimeline from "./ShipmentTimeline";
 import useDashboard from "../../hooks/useDashboard";
 
 const OrderDrawer = ({ isOpen, onClose, order }) => {
-  const { handleUpdateOrderStatus } = useDashboard();
+  const { handleUpdateOrderStatus, handleUpdatePaymentStatus } = useDashboard();
   if (!order) return null;
+
+  const STATUS_SEQUENCE = ["placed", "shipped", "out_for_delivery", "delivered"];
+  const currentStatusIndex = STATUS_SEQUENCE.indexOf(order?.orderStatus);
+  const isCancelled = order?.orderStatus === "cancelled";
+  const isDelivered = order?.orderStatus === "delivered";
 
   return (
     <AnimatePresence>
@@ -191,27 +196,98 @@ const OrderDrawer = ({ isOpen, onClose, order }) => {
               </div>
 
               {/* Status Update Controls */}
+              {!isCancelled && !isDelivered && (
+                <div className="mb-6">
+                  <p className="text-[10px] font-bold text-gold uppercase tracking-[0.2em] mb-4">
+                    Advance Order Workflow
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {["placed", "shipped", "out_for_delivery", "delivered", "cancelled"].map(
+                      (status) => {
+                        const statusIndex = STATUS_SEQUENCE.indexOf(status);
+                        const isBackward =
+                          statusIndex !== -1 &&
+                          currentStatusIndex !== -1 &&
+                          statusIndex <= currentStatusIndex;
+
+                        const isDisabled = status !== "cancelled" && isBackward;
+
+                        return (
+                          <button
+                            key={status}
+                            disabled={isDisabled}
+                            onClick={async () => {
+                              const response = await handleUpdateOrderStatus(
+                                order._id,
+                                status
+                              );
+                              if (response?.success) {
+                                onClose();
+                              }
+                            }}
+                            className={`px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${
+                              order.orderStatus === status
+                                ? "bg-gold text-white shadow-lg shadow-gold/20"
+                                : isDisabled
+                                ? "bg-slate-50 border border-slate-100 text-slate-300 cursor-not-allowed opacity-60"
+                                : "bg-white border border-amber-50 text-slate-400 hover:border-gold/30 hover:text-gold cursor-pointer"
+                            }`}
+                          >
+                            {status.replace(/_/g, " ")}
+                          </button>
+                        );
+                      }
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Payment Status Update Controls */}
               <div className="mb-6">
-                <p className="text-[10px] font-bold text-gold uppercase tracking-[0.2em] mb-4">Advance Workflow</p>
+                <p className="text-[10px] font-bold text-gold uppercase tracking-[0.2em] mb-4">
+                  Payment Settlement
+                </p>
                 <div className="flex flex-wrap gap-2">
-                  {['placed', 'shipped', 'out_for_delivery', 'delivered', 'cancelled'].map((status) => (
-                    <button
-                      key={status}
-                      onClick={async () => {
-                        const response = await handleUpdateOrderStatus(order._id, status);
-                        if (response?.success) {
-                          onClose();
-                        }
-                      }}
-                      className={`px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${
-                        order.orderStatus === status
-                          ? 'bg-gold text-white shadow-lg shadow-gold/20'
-                          : 'bg-white border border-amber-50 text-slate-400 hover:border-gold/30 hover:text-gold'
-                      }`}
-                    >
-                      {status.replace(/_/g, ' ')}
-                    </button>
-                  ))}
+                  {["paid", "refunded", "failed"].map((pStatus) => {
+                    const isPaymentFailed = order.paymentStatus === "failed";
+                    const isPaymentRefunded = order.paymentStatus === "refunded";
+                    const isAfterPlaced = currentStatusIndex >= 1; // index 1 is 'shipped'
+                    
+                    // Logic: 
+                    // 1. If failed, nothing is changeable.
+                    // 2. If refunded, cannot go back to paid.
+                    // 3. If refunded, cannot go to failed.
+                    // 4. If order is shipped or beyond, cannot mark as refunded or failed from here.
+                    const isPStatusDisabled = 
+                      isPaymentFailed || 
+                      (isPaymentRefunded && (pStatus === "paid" || pStatus === "failed")) ||
+                      (isAfterPlaced && (pStatus === "refunded" || pStatus === "failed"));
+
+                    return (
+                      <button
+                        key={pStatus}
+                        disabled={isPStatusDisabled}
+                        onClick={async () => {
+                          const response = await handleUpdatePaymentStatus(
+                            order._id,
+                            pStatus
+                          );
+                          if (response?.success) {
+                            onClose();
+                          }
+                        }}
+                        className={`px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${
+                          order.paymentStatus === pStatus
+                            ? "bg-emerald-600 text-white shadow-lg shadow-emerald-200"
+                            : isPStatusDisabled
+                            ? "bg-slate-50 border border-slate-100 text-slate-300 cursor-not-allowed opacity-60"
+                            : "bg-white border border-amber-50 text-slate-400 hover:border-emerald-300 hover:text-emerald-600 cursor-pointer"
+                        }`}
+                      >
+                        {pStatus}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 

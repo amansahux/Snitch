@@ -20,7 +20,7 @@ import {
   updateVariant,
   getVariants,
 } from "../../Product/services/variant.api.js";
-import { getSellerOrders, updateOrderStatus } from "../service/dashboard.api.js";
+import { getSellerOrders, updateOrderStatus, updatePaymentStatus } from "../service/dashboard.api.js";
 
 const useDashboard = () => {
   const dispatch = useDispatch();
@@ -254,6 +254,25 @@ const useDashboard = () => {
     },
     [dispatch, handleGetSellerOrders]
   );
+  const handleUpdatePaymentStatus = useCallback(
+    async (orderId, paymentStatus) => {
+      dispatch(setLoading(true));
+      dispatch(setError(null));
+      try {
+        const response = await updatePaymentStatus(orderId, paymentStatus);
+        if (response?.success) {
+          handleGetSellerOrders();
+        }
+        return response;
+      } catch (error) {
+        dispatch(setError("Failed to update payment status"));
+        return undefined;
+      } finally {
+        dispatch(setLoading(false));
+      }
+    },
+    [dispatch, handleGetSellerOrders]
+  );
 
   return {
     sellerProducts,
@@ -272,6 +291,7 @@ const useDashboard = () => {
     handleDeleteVariant,
     handleGetSellerOrders,
     handleUpdateOrderStatus,
+    handleUpdatePaymentStatus,
   };
 };
 
