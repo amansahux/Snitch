@@ -25,7 +25,7 @@ const Overview = () => {
 
   useEffect(() => {
     if (sellerOrders) {
-      setrecentOrders(sellerOrders.slice(0, 5));
+      setrecentOrders(sellerOrders.slice(0, 8));
     }
   }, [sellerOrders]);
 
@@ -127,7 +127,7 @@ const Overview = () => {
           </DashboardSection>
 
           <DashboardSection title="Top Performing Products">
-            <div className="space-y-4">
+            <div className="space-y-4 lg:space-y-9">
               {topProducts.map((product, idx) => (
                 <TopProductCard key={idx} product={product} />
               ))}

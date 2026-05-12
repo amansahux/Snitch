@@ -33,24 +33,6 @@ const TopNavbar = ({ onMenuClick, pageTitle = "Dashboard", user }) => {
 
       {/* Right Section */}
       <div className="flex items-center gap-4">
-        {/* Luxury Desktop Search */}
-        <div className="hidden md:block relative group">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-charcoal/20 group-focus-within:text-gold transition-colors pointer-events-none" />
-          <input
-            type="text"
-            placeholder="Search archive..."
-            className="pl-10 pr-4 py-2.5 w-64 bg-white border border-charcoal/5 rounded-xl text-[11px] font-bold tracking-wider text-charcoal placeholder-charcoal/20 focus:outline-none focus:border-gold focus:ring-4 focus:ring-gold/5 transition-all"
-          />
-        </div>
-
-        {/* Mobile search toggle */}
-        <button
-          className="md:hidden flex items-center justify-center w-10 h-10 rounded-xl text-charcoal/40 hover:text-charcoal hover:bg-gold/5 transition-all cursor-pointer"
-          onClick={() => setSearchOpen((p) => !p)}
-        >
-          <Search className="w-4 h-4" />
-        </button>
-
         {/* Notifications */}
         <button className="relative flex items-center justify-center w-10 h-10 rounded-xl text-charcoal/40 hover:text-charcoal hover:bg-gold/5 transition-all cursor-pointer">
           <Bell className="w-4 h-4" />
