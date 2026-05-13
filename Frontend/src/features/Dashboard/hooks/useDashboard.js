@@ -6,6 +6,8 @@ import {
   setError,
   setStats,
   setSellerOrders,
+  setTopProducts,
+  setStockIntelligence,
 } from "../state/dashboard.slice.js";
 import {
   createProducts,
@@ -19,7 +21,7 @@ import {
   updateVariant,
   getVariants,
 } from "../../Product/services/variant.api.js";
-import { getSellerOrders, updateOrderStatus, updatePaymentStatus } from "../service/dashboard.api.js";
+import { getSellerOrders, updateOrderStatus, updatePaymentStatus, getDashboardStats } from "../service/dashboard.api.js";
 
 const useDashboard = () => {
   const dispatch = useDispatch();
@@ -259,6 +261,31 @@ const useDashboard = () => {
     [dispatch, handleGetSellerOrders]
   );
 
+  const handleGetDashboardStats = useCallback(
+    async () => {
+      dispatch(setLoading(true));
+      dispatch(setError(null));
+      try {
+        const response = await getDashboardStats();
+        if (response?.success) {
+          dispatch(setStats(response.data.stats));
+          dispatch(setTopProducts(response.data.topProducts || []));
+          dispatch(setStockIntelligence(response.data.stockIntelligence || []));
+          return response;
+        } else {
+          dispatch(setError(response?.message || "Failed to get dashboard stats"));
+        }
+        return response;
+      } catch (error) {
+        dispatch(setError("An unexpected error occurred"));
+        return undefined;
+      } finally {
+        dispatch(setLoading(false));
+      }
+    },
+    [dispatch]
+  );
+
   return {
     sellerProducts,
     sellerOrders,
@@ -276,6 +303,7 @@ const useDashboard = () => {
     handleGetSellerOrders,
     handleUpdateOrderStatus,
     handleUpdatePaymentStatus,
+    handleGetDashboardStats,
   };
 };
 

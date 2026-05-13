@@ -1,31 +1,48 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AnalyticsOverview from "../components/dashboard/AnalyticsOverview";
 import DashboardSection from "../components/dashboard/DashboardSection";
 import OrdersTable from "../components/dashboard/OrdersTable";
 import LowStockAlert from "../components/dashboard/LowStockAlert";
 import TopProductCard from "../components/dashboard/TopProductCard";
 import OrderDrawer from "../components/dashboard/OrderDrawer";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import useDashboard from "../hooks/useDashboard";
-import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
 const Overview = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const [recentOrders, setrecentOrders] = useState([]);
+  const [recentOrders, setRecentOrders] = useState([]);
+  
   const navigate = useNavigate();
-  const { sellerOrders, handleGetSellerOrders } = useDashboard();
+  const { 
+    handleGetSellerOrders, 
+    handleGetDashboardStats,
+    loading 
+  } = useDashboard();
 
+  const { stats, sellerOrders, topProducts, stockIntelligence } = useSelector((state) => state.dashboard);
+
+  // 1. Fetch Orders and Stats on Mount (only if not already loaded)
   useEffect(() => {
-    if (!sellerOrders || sellerOrders?.length === 0) {
-      handleGetSellerOrders();
-    }
-  }, [sellerOrders]);
+    const initDashboard = async () => {
+      // Avoid redundant calls if data already exists in Redux
+      if (sellerOrders.length > 0 && stats) return;
 
+      // Parallel fetch for speed
+      await Promise.all([
+        handleGetSellerOrders(),
+        handleGetDashboardStats(),
+      ]);
+    };
+    initDashboard();
+  }, []);
+
+  // 2. Sync Recent Orders
   useEffect(() => {
     if (sellerOrders) {
-      setrecentOrders(sellerOrders.slice(0, 8));
+      setRecentOrders(sellerOrders.slice(0, 9));
     }
   }, [sellerOrders]);
 
@@ -33,53 +50,67 @@ const Overview = () => {
     setSelectedOrder(order);
     setIsDrawerOpen(true);
   };
-  // Hardcoded Data
+
+  // 3. Map Stats to UI Format
   const dashboardStats = [
     {
       title: "Total Revenue",
-      value: "₹1,28,430",
-      change: "+12.5%",
+      value: `₹${(stats?.totalRevenue || 0).toLocaleString()}`,
+      change: "+0%",
       trend: "up",
       iconType: "revenue",
       description: "Total sales across all channels",
     },
     {
       title: "Total Orders",
-      value: "452",
-      change: "+18.2%",
+      value: stats?.totalOrders || "0",
+      change: "+0%",
       trend: "up",
       iconType: "orders",
       description: "Volume of orders processed",
     },
     {
-      title: "New Customers",
-      value: "84",
-      change: "-2.4%",
-      trend: "down",
+      title: "Delivered Orders",
+      value: stats?.deliveredOrders || "0",
+      change: "+0%",
+      trend: "up",
       iconType: "customers",
-      description: "Unique customer acquisitions",
+      description: "Orders successfully received",
     },
     {
-      title: "Conversion Rate",
-      value: "3.2%",
-      change: "+0.5%",
+      title: "Total Products",
+      value: stats?.totalProducts || "0",
+      change: "+0%",
       trend: "up",
       iconType: "conversion",
-      description: "Visitor to customer ratio",
+      description: "Active products in inventory",
+    },
+    {
+      title: "Cancelled Orders",
+      value: stats?.cancelledOrders || "0",
+      change: "0%",
+      trend: "down",
+      iconType: "X",
+      description: "Cancelled orders",
+    },
+    {
+      title: "Low Stocks",
+      value: stats?.lowStocks || "0",
+      change: "0%",
+      trend: "down",
+      iconType: "exclamation",
+      description: "Low stock variants alert",
     },
   ];
 
-  const lowStockProducts = [
-    { id: 1, name: "Premium Linen Shirt", sku: "SN-LS-001", stock: 3 },
-    { id: 2, name: "Slim Fit Chinos", sku: "SN-CH-005", stock: 5 },
-    { id: 3, name: "Graphic Print Tee", sku: "SN-GT-012", stock: 2 },
-  ];
-
-  const topProducts = [
-    { name: "Oversized Cotton Hoodie", sales: 124, revenue: 371876, rank: 1 },
-    { name: "Relaxed Fit Cargo Pants", sales: 98, revenue: 244902, rank: 2 },
-    { name: "Classic White Sneakers", sales: 86, revenue: 343914, rank: 3 },
-  ];
+  // Show loader only on initial load
+  if (loading && !stats) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-gold animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#FBF9F6] p-4 md:p-12 max-w-[1600px] mx-auto animate-in fade-in slide-in-from-bottom-4 duration-1000">
@@ -123,14 +154,28 @@ const Overview = () => {
         {/* Right Column: Inventory & Top Products */}
         <div className="space-y-8">
           <DashboardSection title="Inventory Health">
-            <LowStockAlert products={lowStockProducts} />
+            <LowStockAlert products={stockIntelligence} />
           </DashboardSection>
 
           <DashboardSection title="Top Performing Products">
-            <div className="space-y-4 lg:space-y-9">
+            <div className="space-y-4">
               {topProducts.map((product, idx) => (
-                <TopProductCard key={idx} product={product} />
+                <TopProductCard
+                  key={idx}
+                  product={{
+                    name: product.title,
+                    sales: product.totalUnits,
+                    revenue: product.totalRevenue,
+                    rank: product.rank,
+                    image: product.image,
+                  }}
+                />
               ))}
+              {topProducts.length === 0 && (
+                <p className="text-xs text-slate-400 text-center py-8">
+                  No high-performing products yet.
+                </p>
+              )}
             </div>
           </DashboardSection>
         </div>

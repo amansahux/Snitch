@@ -3,9 +3,9 @@ import { TrendingUp } from 'lucide-react';
 
 const TopProductCard = ({ product }) => {
   return (
-    <div className="bg-white p-5 rounded-3xl border border-amber-100 shadow-luxury flex items-center group hover:border-gold/30 hover:scale-[1.02] transition-all duration-500">
+    <div className="bg-white p-3 rounded-3xl border border-amber-100 shadow-luxury flex items-center group hover:border-gold/30 hover:scale-[1.02] transition-all duration-500">
       <div className="w-20 h-20 bg-[#FBF9F6] rounded-2xl overflow-hidden mr-5 border border-amber-50 flex items-center justify-center relative">
-        <TrendingUp className="w-8 h-8 text-gold/20" />
+      <img src={product.image} alt="" className='w-full h-full object-cover' />
         <div className="absolute inset-0 bg-gradient-to-tr from-gold/5 to-transparent"></div>
       </div>
       <div className="flex-1">

@@ -7,11 +7,9 @@ const dashboardSlice = createSlice({
     sellerOrders: [],
     loading: false,
     error: null,
-    stats: {
-      totalProducts: 0,
-      totalOrders: 0,
-      totalRevenue: 0,
-    }
+    stats: null,
+    topProducts: [],
+    stockIntelligence: []
   },
   reducers: {
     setSellerProducts: (state, action) => {
@@ -28,6 +26,12 @@ const dashboardSlice = createSlice({
     },
     setSellerOrders: (state, action) => {
       state.sellerOrders = action.payload;
+    },
+    setTopProducts: (state, action) => {
+      state.topProducts = action.payload;
+    },
+    setStockIntelligence: (state, action) => {
+      state.stockIntelligence = action.payload;
     }
   },
 });
@@ -38,6 +42,8 @@ export const {
   setError,
   setStats,
   setSellerOrders,
+  setTopProducts,
+  setStockIntelligence
 } = dashboardSlice.actions;
 
 export default dashboardSlice.reducer;
