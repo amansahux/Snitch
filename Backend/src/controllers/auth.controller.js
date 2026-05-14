@@ -60,6 +60,7 @@ export const loginController = asyncHandler(async (req, res, next) => {
     fullname: user.fullname,
     contact: user.contact,
     role: user.role,
+    profilePic: user.profilePic,
   };
   sendTokenResponse(res, userResponse, "User logged in successfully");
 });

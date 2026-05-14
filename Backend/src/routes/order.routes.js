@@ -10,6 +10,7 @@ import {
   verifyOrderPayment,
   getSellerOrders,
   updatePaymentStatus,
+  orderCancelByUser,
 } from "../controllers/order.controller.js";
 
 const orderRouter = Router();
@@ -26,5 +27,6 @@ orderRouter.get("/my-orders/:id", authenticateUser, getOrderById);
 orderRouter.put("/my-orders/:id/status", authenticateUser, updateOrderStatus);
 orderRouter.put("/payment/:id/status", authenticateUser, updatePaymentStatus);
 orderRouter.get("/seller", authenticateUser, getSellerOrders);
+orderRouter.put("/:id/cancel", authenticateUser, orderCancelByUser);
 
 export default orderRouter;

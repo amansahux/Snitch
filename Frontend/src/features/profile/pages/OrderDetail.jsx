@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
@@ -15,14 +16,31 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import useOrder from "../../orders/hooks/useOrder.js";
+import useProfile from "../hooks/useProfile.js";
 
 const OrderDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { handleGetOrderById } = useOrder();
-
+  const { handleOrderCancelByUser } = useProfile();
+  const { loading: cancelling } = useSelector((state) => state.profile);
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+
+  const onConfirmCancel = async () => {
+    const res = await handleOrderCancelByUser({ orderId: order._id });
+    if (res?.success) {
+      setOrder((prev) => ({
+        ...prev,
+        orderStatus: "cancelled",
+        isCancelled: true,
+        cancelledAt: new Date(),
+      }));
+      handleGetOrderById(id);
+      setShowCancelModal(false);
+    }
+  };
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -205,7 +223,6 @@ const OrderDetail = () => {
                   const currentStep = getStatusStep(order.orderStatus);
                   const isCompleted = currentStep >= idx;
                   const isCurrent = currentStep === idx;
-
                   return (
                     <div
                       key={idx}
@@ -390,6 +407,7 @@ const OrderDetail = () => {
                 disabled={["shipped", "delivered", "cancelled"].includes(
                   order.orderStatus?.toLowerCase(),
                 )}
+                onClick={() => setShowCancelModal(true)}
                 className={`flex items-center justify-center gap-3 py-5 rounded-3xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-500 
                   ${
                     ["shipped", "delivered", "cancelled"].includes(
@@ -426,6 +444,57 @@ const OrderDetail = () => {
           </p>
         </div>
       </footer>
+
+      {/* Cancel Confirmation Modal */}
+      <AnimatePresence>
+        {showCancelModal && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowCancelModal(false)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              className="relative w-full max-w-md bg-white rounded-[2.5rem] p-10 shadow-2xl"
+            >
+              <div className="w-16 h-16 bg-rose-50 rounded-full flex items-center justify-center mb-8 mx-auto">
+                <XCircle className="text-rose-500" size={32} />
+              </div>
+              <h3 className="font-serif text-3xl text-center mb-4 text-[#1b1c1a]">
+                Cancel Order?
+              </h3>
+              <p className="text-sm text-[#7a6e63] text-center mb-10 leading-relaxed">
+                Are you sure you want to cancel this order? This action cannot
+                be undone. Your refund will be processed within 24 hours.
+              </p>
+              <div className="grid grid-cols-2 gap-4">
+                <button
+                  onClick={() => setShowCancelModal(false)}
+                  className="py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-[#e6dfd5] hover:bg-gray-50 transition-all cursor-pointer"
+                >
+                  Go Back
+                </button>
+                <button
+                  disabled={cancelling}
+                  onClick={onConfirmCancel}
+                  className="py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest bg-rose-500 text-white hover:bg-rose-600 transition-all shadow-lg shadow-rose-500/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                >
+                  {cancelling ? (
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    "Confirm Cancel"
+                  )}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

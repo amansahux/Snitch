@@ -279,6 +279,7 @@ export const updateOrderStatus = asyncHandler(async (req, res, next) => {
     error: null,
   });
 });
+
 export const updatePaymentStatus = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
   const { paymentStatus } = req.body;
@@ -306,7 +307,9 @@ export const updatePaymentStatus = asyncHandler(async (req, res, next) => {
 export const getSellerOrders = asyncHandler(async (req, res, next) => {
   const userId = resolveUserId(req);
 
-  const sellerProducts = await productModel.find({ seller: userId }).select("_id");
+  const sellerProducts = await productModel
+    .find({ seller: userId })
+    .select("_id");
   const productIds = sellerProducts.map((p) => p._id);
 
   const orders = await orderModel
@@ -321,6 +324,45 @@ export const getSellerOrders = asyncHandler(async (req, res, next) => {
     success: true,
     message: "Orders fetched successfully",
     data: orders,
+    error: null,
+  });
+});
+
+export const orderCancelByUser = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+
+  const order = await orderModel.findById(id);
+
+  if (!order) {
+    const error = new Error("Order not found");
+    error.statusCode = 404;
+    return next(error);
+  }
+
+  const userId = resolveUserId(req);
+  
+  if (order.user._id.toString() !== userId && req.user?.role !== "admin") {
+    const error = new Error("Not authorized to cancel this order");
+    error.statusCode = 403;
+    return next(error);
+  }
+
+  if (order.orderStatus === "delivered" || order.orderStatus === "cancelled") {
+    const error = new Error("Order cannot be cancelled");
+    error.statusCode = 400;
+    return next(error);
+  }
+
+  order.orderStatus = "cancelled";
+  order.isCancelled = true;
+  order.cancelledAt = new Date();
+
+  await order.save();
+
+  return res.status(200).json({
+    success: true,
+    message: "Order cancelled successfully",
+    data: order,
     error: null,
   });
 });
