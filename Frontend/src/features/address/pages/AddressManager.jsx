@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
 import { Plus, MapPin, Pencil, Trash2, X, AlertTriangle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useAddress from "../hooks/useAddress.js";
 import { addressFormSchema } from "../validation/Address.validation.js";
+import { notify } from "../../../app/toast/toast.system.jsx";
 
 const initialAddressForm = {
   fullName: "",
@@ -80,17 +80,17 @@ const AddressManager = ({
       if (editingAddress?._id) {
         const res = await handleUpdateAddress(editingAddress._id, payload);
         handleSelectAddress(res?.data || null);
-        toast.success("Address updated successfully");
+        notify.success("Address updated successfully.");
       } else {
         const res = await handleCreateAddress(payload);
         handleSelectAddress(res?.data || null);
-        toast.success("Address added successfully");
+        notify.success("Address added successfully.");
       }
       setIsAddressModalOpen(false);
       reset(initialAddressForm);
       setEditingAddress(null);
     } catch (err) {
-      toast.error(err?.response?.data?.message || "Failed to save address");
+      notify.error(err?.response?.data?.message || "Failed to save address.");
     }
   };
 
@@ -114,9 +114,9 @@ const AddressManager = ({
   const handleDeleteAddressById = async (id) => {
     try {
       await handleDeleteAddress(id);
-      toast.success("Address deleted successfully");
+      notify.success("Address deleted successfully.");
     } catch (err) {
-      toast.error(err?.response?.data?.message || "Failed to delete address");
+      notify.error(err?.response?.data?.message || "Failed to delete address.");
     } finally {
       setDeleteConfirmId(null);
     }

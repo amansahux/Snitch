@@ -1,7 +1,8 @@
 import React from "react";
 import { motion as Motion, AnimatePresence } from "framer-motion";
+import { notify } from "../../../app/toast/toast.system.jsx";
 
-const LogoutModal = ({ showLogoutModal, setShowLogoutModal, handleLogout, navigate, toast }) => {
+const LogoutModal = ({ showLogoutModal, setShowLogoutModal, handleLogout, navigate }) => {
   return (
     <AnimatePresence>
       {showLogoutModal && (
@@ -40,12 +41,12 @@ const LogoutModal = ({ showLogoutModal, setShowLogoutModal, handleLogout, naviga
                       setShowLogoutModal(false);
                       if (res.success) {
                         navigate("/login");
-                        toast.success("Logged out successfully");
+                        notify.success("Logged out successfully.");
                       } else {
-                        toast.error("Logout failed");
+                        notify.error("Logout failed.");
                       }
                     } catch {
-                      toast.error("Logout failed");
+                      notify.error("Logout failed.");
                     }
                   }}
                   className="flex-1 px-8 py-4 bg-[#1b1c1a] text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full hover:bg-[#C9A96E] transition-all duration-300 shadow-lg cursor-pointer"

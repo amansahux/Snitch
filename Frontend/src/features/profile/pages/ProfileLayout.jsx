@@ -9,7 +9,6 @@ import {
   Menu,
   ArrowLeft,
 } from "lucide-react";
-import { toast } from "react-hot-toast";
 
 // Hooks
 import useAuth from "../../Auth/hooks/useAuth.js";
@@ -95,7 +94,6 @@ const ProfileLayout = () => {
         setShowLogoutModal={setShowLogoutModal}
         handleLogout={handleLogout}
         navigate={navigate}
-        toast={toast}
       />
     </div>
   );

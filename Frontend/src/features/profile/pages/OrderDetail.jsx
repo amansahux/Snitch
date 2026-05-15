@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+﻿import React, { useState, useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -102,16 +102,16 @@ const OrderDetail = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#fbf9f6] text-[#1b1c1a] font-sans pb-32 selection:bg-[#C9A96E] selection:text-white">
+    <div className="min-h-screen overflow-x-hidden bg-[#fbf9f6] text-[#1b1c1a] font-sans pb-24 sm:pb-32 selection:bg-[#C9A96E] selection:text-white">
       {/* Sticky Header */}
-      <header className="sticky top-0 z-[100] bg-[#fbf9f6]/80 backdrop-blur-2xl border-b border-[#e6dfd5]/30 px-6 lg:px-16 py-6 transition-all duration-500">
+      <header className="sticky top-0 z-[100] bg-[#fbf9f6]/80 backdrop-blur-2xl border-b border-[#e6dfd5]/30 px-4 sm:px-6 lg:px-16 py-4 sm:py-6 transition-all duration-500">
         <div className="max-w-[1200px] mx-auto flex items-center justify-between">
           <button
             onClick={() => navigate("/profile/orders")}
-            className="group flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] hover:text-[#C9A96E] transition-all duration-500 cursor-pointer"
+            className="group flex items-center gap-2 sm:gap-3 text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] hover:text-[#C9A96E] transition-all duration-500 cursor-pointer"
           >
-            <div className="w-8 h-8 rounded-full border border-[#e6dfd5] flex items-center justify-center group-hover:border-[#C9A96E] transition-all">
-              <ArrowLeft size={14} />
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-[#e6dfd5] flex items-center justify-center group-hover:border-[#C9A96E] transition-all">
+              <ArrowLeft size={13} />
             </div>
             Back to Orders
           </button>
@@ -127,17 +127,17 @@ const OrderDetail = () => {
         </div>
       </header>
 
-      <main className="max-w-[1200px] mx-auto px-6 lg:px-16 py-12 lg:py-16">
+      <main className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-16 py-8 sm:py-12 lg:py-16">
         {/* Order Identifier Header */}
-        <div className="mb-12 space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-          <h1 className="font-serif text-[2.5rem] lg:text-[3.5rem] leading-none text-[#1b1c1a]">
+        <div className="mb-10 sm:mb-12 space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <h1 className="font-serif text-[1.9rem] sm:text-[2.5rem] lg:text-[3.5rem] leading-none text-[#1b1c1a] break-words">
             Order{" "}
             <span className="text-[#7a6e63]">
               #SN-{order._id.slice(-8).toUpperCase()}
             </span>
           </h1>
-          <div className="flex flex-wrap items-center gap-6">
-            <p className="text-sm font-medium text-[#7a6e63]">
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+            <p className="text-xs sm:text-sm font-medium text-[#7a6e63]">
               Placed on{" "}
               {new Date(order.createdAt).toLocaleDateString("en-US", {
                 month: "long",
@@ -145,28 +145,28 @@ const OrderDetail = () => {
                 year: "numeric",
               })}
             </p>
-            <div className="flex gap-2">
-              <span className="px-4 py-1 rounded-full bg-[#efeeeb] text-[9px] font-black uppercase tracking-widest text-[#1b1c1a]">
+            <div className="flex flex-wrap gap-2">
+              <span className="px-3 sm:px-4 py-1 rounded-full bg-[#efeeeb] text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-[#1b1c1a]">
                 {order.paymentStatus}
               </span>
-              <span className="px-4 py-1 rounded-full bg-[#C9A96E]/20 text-[9px] font-black uppercase tracking-widest text-[#C9A96E]">
+              <span className="px-3 sm:px-4 py-1 rounded-full bg-[#C9A96E]/20 text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-[#C9A96E]">
                 {order.orderStatus}
               </span>
             </div>
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+        <div className="grid lg:grid-cols-12 gap-8 sm:gap-12 lg:gap-16 items-start">
           {/* LEFT: Tracking & Items (Col 7) */}
-          <div className="lg:col-span-7 space-y-16">
+          <div className="lg:col-span-7 space-y-10 sm:space-y-16">
             {/* Order Status Timeline */}
-            <section className="bg-white rounded-[3rem] p-10 lg:p-12 border border-[#e6dfd5]/20 shadow-sm">
-              <h3 className="font-serif text-2xl mb-12 text-[#1b1c1a]">
+            <section className="bg-white rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-10 lg:p-12 border border-[#e6dfd5]/20 shadow-sm">
+              <h3 className="font-serif text-xl sm:text-2xl mb-8 sm:mb-12 text-[#1b1c1a]">
                 Order Status
               </h3>
               <div className="space-y-0 relative">
                 {/* Background Line */}
-                <div className="absolute left-[1.2rem] top-2 bottom-2 w-px bg-[#f3eee8]" />
+                <div className="absolute left-[0.95rem] sm:left-[1.2rem] top-2 bottom-2 w-px bg-[#f3eee8]" />
 
                 {/* Dynamic Progress Line */}
                 <Motion.div
@@ -181,7 +181,7 @@ const OrderDetail = () => {
                             ? "60%"
                             : "90%",
                   }}
-                  className="absolute left-[1.2rem] top-2 w-px bg-[#C9A96E] z-0 transition-all duration-1000"
+                  className="absolute left-[0.95rem] sm:left-[1.2rem] top-2 w-px bg-[#C9A96E] z-0 transition-all duration-1000"
                 />
 
                 {[
@@ -222,14 +222,14 @@ const OrderDetail = () => {
                   return (
                     <div
                       key={idx}
-                      className={`relative pl-14 pb-16 last:pb-0 transition-opacity duration-500 ${isCompleted ? "opacity-100" : "opacity-40"}`}
+                      className={`relative pl-11 sm:pl-14 pb-10 sm:pb-16 last:pb-0 transition-opacity duration-500 ${isCompleted ? "opacity-100" : "opacity-40"}`}
                     >
                       {/* Node */}
                       <div
-                        className={`absolute left-0 top-0 w-10 h-10 rounded-full flex items-center justify-center z-10 transition-all duration-700 shadow-sm ${isCompleted ? "bg-[#C9A96E] text-white" : "bg-white border border-[#e6dfd5] text-[#d0c5b5]"}`}
+                        className={`absolute left-0 top-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center z-10 transition-all duration-700 shadow-sm ${isCompleted ? "bg-[#C9A96E] text-white" : "bg-white border border-[#e6dfd5] text-[#d0c5b5]"}`}
                       >
                         {isCompleted ? (
-                          <CheckCircle2 size={18} />
+                          <CheckCircle2 size={16} />
                         ) : (
                           <div className="w-1.5 h-1.5 rounded-full bg-current" />
                         )}
@@ -237,7 +237,7 @@ const OrderDetail = () => {
 
                       <div className="space-y-1">
                         <p
-                          className={`text-xl font-serif ${isCompleted ? "text-[#1b1c1a]" : "text-[#7a6e63]"}`}
+                          className={`text-base sm:text-xl font-serif ${isCompleted ? "text-[#1b1c1a]" : "text-[#7a6e63]"}`}
                         >
                           {step.label}
                         </p>
@@ -253,15 +253,15 @@ const OrderDetail = () => {
 
             {/* Items List */}
             <section className="space-y-8">
-              <h3 className="font-serif text-2xl text-[#1b1c1a]">Items</h3>
+              <h3 className="font-serif text-xl sm:text-2xl text-[#1b1c1a]">Items</h3>
               <div className="space-y-6">
                 {order.items?.map((item) => (
                   <Motion.div
                     layout
                     key={item._id}
-                    className="group bg-white rounded-[2.5rem] p-6 lg:p-8 flex flex-col sm:flex-row gap-8 hover:shadow-[0_40px_80px_rgba(27,28,26,0.06)] transition-all duration-700"
+                    className="group bg-white rounded-[1.8rem] sm:rounded-[2.5rem] p-4 sm:p-6 lg:p-8 flex flex-col sm:flex-row gap-5 sm:gap-8 hover:shadow-[0_40px_80px_rgba(27,28,26,0.06)] transition-all duration-700"
                   >
-                    <div className="w-full sm:w-40 h-56 lg:h-64 rounded-[1.5rem] overflow-hidden bg-[#fbf9f6] shrink-0 border border-[#f3eee8]">
+                    <div className="w-full sm:w-40 h-48 sm:h-56 lg:h-64 rounded-[1.25rem] sm:rounded-[1.5rem] overflow-hidden bg-[#fbf9f6] shrink-0 border border-[#f3eee8]">
                       <img
                         src={
                           item.product?.coverImage?.url ||
@@ -278,7 +278,7 @@ const OrderDetail = () => {
                           <p className="text-[9px] font-black uppercase tracking-[0.3em] text-[#C9A96E]">
                             {item.product?.category}
                           </p>
-                          <h4 className="font-serif text-2xl text-[#1b1c1a] leading-tight">
+                          <h4 className="font-serif text-xl sm:text-2xl text-[#1b1c1a] leading-tight">
                             {item.product?.title}
                           </h4>
                         </div>
@@ -302,10 +302,10 @@ const OrderDetail = () => {
                         </div>
                         <div className="pt-2 flex items-baseline gap-4">
                           <span className="text-[#7a6e63] line-through text-sm">
-                            ₹{item.price.toLocaleString("en-IN")}
+                            &#8377;{item.price.toLocaleString("en-IN")}
                           </span>
                           <span className="text-xl font-serif font-bold text-[#1b1c1a]">
-                            ₹{item.discountedPrice.toLocaleString("en-IN")}
+                            &#8377;{item.discountedPrice.toLocaleString("en-IN")}
                           </span>
                         </div>
                       </div>
@@ -322,21 +322,21 @@ const OrderDetail = () => {
           </div>
 
           {/* RIGHT: Financials & Address (Col 5) */}
-          <div className="lg:col-span-5 space-y-10 lg:sticky lg:top-32">
+          <div className="lg:col-span-5 space-y-6 sm:space-y-10 lg:sticky lg:top-32">
             {/* Order Summary */}
-            <section className="bg-white/60 backdrop-blur-sm rounded-[3rem] p-10 lg:p-12 space-y-10 border border-[#e6dfd5]/20">
-              <h3 className="font-serif text-2xl text-[#1b1c1a]">
+            <section className="bg-white/60 backdrop-blur-sm rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-10 lg:p-12 space-y-8 sm:space-y-10 border border-[#e6dfd5]/20">
+              <h3 className="font-serif text-xl sm:text-2xl text-[#1b1c1a]">
                 Order Summary
               </h3>
               <div className="space-y-5">
                 <div className="flex justify-between items-center text-sm font-medium text-[#7a6e63]">
                   <span>Total MRP</span>
-                  <span>₹{financials.totalMRP.toLocaleString("en-IN")}</span>
+                  <span>&#8377;{financials.totalMRP.toLocaleString("en-IN")}</span>
                 </div>
                 <div className="flex justify-between items-center text-sm font-medium text-[#7a6e63]">
                   <span>Discount on MRP</span>
                   <span className="text-emerald-600">
-                    - ₹{financials.discount.toLocaleString("en-IN")}
+                    - &#8377;{financials.discount.toLocaleString("en-IN")}
                   </span>
                 </div>
                 <div className="flex justify-between items-center text-sm font-medium text-[#7a6e63]">
@@ -344,26 +344,26 @@ const OrderDetail = () => {
                   <span className="text-emerald-600">
                     {financials.shipping === 0
                       ? "Free"
-                      : `₹${financials.shipping}`}
+                      : `\u20B9${financials.shipping}`}
                   </span>
                 </div>
                 <div className="h-px bg-[#e6dfd5] w-full" />
-                <div className="flex justify-between items-end pt-2">
-                  <span className="text-[15px] font-black uppercase tracking-[0.3em] text-[#1b1c1a]">
+                <div className="flex justify-between items-end gap-4 pt-2">
+                  <span className="text-[12px] sm:text-[15px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] text-[#1b1c1a]">
                     Final Amount
                   </span>
-                  <span className="text-4xl font-serif font-black text-[#1b1c1a]">
-                    ₹{order.totalAmount.toLocaleString("en-IN")}
+                  <span className="text-2xl sm:text-4xl font-serif font-black text-[#1b1c1a]">
+                    &#8377;{order.totalAmount.toLocaleString("en-IN")}
                   </span>
                 </div>
               </div>
             </section>
 
             {/* Shipping Address */}
-            <section className="bg-white/60 backdrop-blur-sm rounded-[3rem] p-10 lg:p-12 space-y-8 border border-[#e6dfd5]/20">
+            <section className="bg-white/60 backdrop-blur-sm rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-10 lg:p-12 space-y-8 border border-[#e6dfd5]/20">
               <div className="flex items-center gap-3">
                 <Truck size={20} className="text-[#C9A96E]" />
-                <h3 className="font-serif text-2xl text-[#1b1c1a]">
+                <h3 className="font-serif text-xl sm:text-2xl text-[#1b1c1a]">
                   Shipping Address
                 </h3>
               </div>
@@ -395,7 +395,7 @@ const OrderDetail = () => {
             </section>
 
             {/* Support Actions */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <button className="flex items-center justify-center gap-3 bg-[#C9A96E]/10 text-[#C9A96E] py-5 rounded-3xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-[#C9A96E] hover:text-white transition-all duration-500 cursor-pointer">
                 <FileDown size={16} /> Invoice
               </button>
@@ -421,22 +421,22 @@ const OrderDetail = () => {
       </main>
 
       {/* Brand Assurance Bar */}
-      <footer className="mt-12 py-12 border-t border-[#e6dfd5]/30">
-        <div className="max-w-[1200px] mx-auto px-6 lg:px-16 flex flex-col md:flex-row justify-between items-center gap-8 opacity-60">
+      <footer className="mt-10 sm:mt-12 py-10 sm:py-12 border-t border-[#e6dfd5]/30">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-16 flex flex-col md:flex-row justify-between items-center gap-6 sm:gap-8 opacity-60">
           <div className="flex items-center gap-4">
             <ShieldCheck className="text-[#C9A96E]" size={20} />
-            <span className="text-[10px] font-black uppercase tracking-[0.3em]">
+            <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em] text-center">
               Insured Custody
             </span>
           </div>
           <div className="flex items-center gap-4">
             <Truck className="text-[#C9A96E]" size={20} />
-            <span className="text-[10px] font-black uppercase tracking-[0.3em]">
+            <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em] text-center">
               Global Logistics
             </span>
           </div>
-          <p className="text-[9px] font-medium uppercase tracking-widest">
-            © 2024 SNICH ATELIER
+          <p className="text-[9px] font-medium uppercase tracking-widest text-center">
+            &copy; 2024 SNICH ATELIER
           </p>
         </div>
       </footer>
@@ -444,7 +444,7 @@ const OrderDetail = () => {
       {/* Cancel Confirmation Modal */}
       <AnimatePresence>
         {showCancelModal && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6">
             <Motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -456,19 +456,19 @@ const OrderDetail = () => {
               initial={{ scale: 0.95, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              className="relative w-full max-w-md bg-white rounded-[2.5rem] p-10 shadow-2xl"
+              className="relative w-full max-w-md bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 shadow-2xl"
             >
               <div className="w-16 h-16 bg-rose-50 rounded-full flex items-center justify-center mb-8 mx-auto">
                 <XCircle className="text-rose-500" size={32} />
               </div>
-              <h3 className="font-serif text-3xl text-center mb-4 text-[#1b1c1a]">
+              <h3 className="font-serif text-2xl sm:text-3xl text-center mb-4 text-[#1b1c1a]">
                 Cancel Order?
               </h3>
               <p className="text-sm text-[#7a6e63] text-center mb-10 leading-relaxed">
                 Are you sure you want to cancel this order? This action cannot
                 be undone. Your refund will be processed within 24 hours.
               </p>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <button
                   onClick={() => setShowCancelModal(false)}
                   className="py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-[#e6dfd5] hover:bg-gray-50 transition-all cursor-pointer"
@@ -496,4 +496,5 @@ const OrderDetail = () => {
 };
 
 export default OrderDetail;
+
 

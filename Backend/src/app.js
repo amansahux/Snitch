@@ -14,6 +14,14 @@ import orderRouter from "./routes/order.routes.js";
 import WishlistRouter from "./routes/wishlist.routes.js";
 import { authenticateSeller } from "./middlewares/auth.middleware.js";
 import DashboardRouter from "./routes/dashboard.routes.js";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+});
+
 const app = express();
 
 app.use(morgan("dev"));
@@ -21,6 +29,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(cookieParser());
 app.use(passport.initialize());
+app.use(helmet());
+app.use(limiter);
 
 passport.use(
   new GoogleStrategy(

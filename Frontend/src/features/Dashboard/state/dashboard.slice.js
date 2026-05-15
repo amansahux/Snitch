@@ -8,7 +8,21 @@ const dashboardSlice = createSlice({
     error: null,
     stats: null,
     topProducts: [],
-    stockIntelligence: []
+    stockIntelligence: [],
+    actionLoading: {
+      fetchProductById: false,
+      fetchVariants: false,
+      createProduct: false,
+      updateProduct: false,
+      deleteProduct: false,
+      addVariant: false,
+      updateVariant: false,
+      deleteVariant: false,
+      fetchSellerOrders: false,
+      updateOrderStatus: false,
+      updatePaymentStatus: false,
+      fetchDashboardStats: false,
+    },
   },
   reducers: {
     setLoading: (state, action) => {
@@ -28,7 +42,15 @@ const dashboardSlice = createSlice({
     },
     setStockIntelligence: (state, action) => {
       state.stockIntelligence = action.payload;
-    }
+    },
+    setActionLoading: (state, action) => {
+      const { key, value } = action.payload;
+      if (!Object.prototype.hasOwnProperty.call(state.actionLoading, key)) {
+        return;
+      }
+      state.actionLoading[key] = value;
+      state.loading = Object.values(state.actionLoading).some(Boolean);
+    },
   },
 });
 
@@ -38,7 +60,8 @@ export const {
   setStats,
   setSellerOrders,
   setTopProducts,
-  setStockIntelligence
+  setStockIntelligence,
+  setActionLoading,
 } = dashboardSlice.actions;
 
 export default dashboardSlice.reducer;

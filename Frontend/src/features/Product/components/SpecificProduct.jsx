@@ -16,8 +16,8 @@ import {
 import ProductDetailsSkeleton from "./ProductDetailsSkeleton";
 import Product from "./Product";
 import useCart from "../../cart/hooks/useCart.js";
-import toast from "react-hot-toast";
 import useWishlist from "../../wishlist/hooks/useWishlist.js";
+import { notify } from "../../../app/toast/toast.system.jsx";
 
 const SpecificProduct = () => {
   const { id } = useParams();
@@ -94,7 +94,7 @@ const SpecificProduct = () => {
 
   const handleCart = async () => {
     if (!product?._id || !activeVariant?._id) {
-      toast.error("This variant is currently unavailable");
+      notify.error("This variant is currently unavailable.");
       return;
     }
 
@@ -107,14 +107,14 @@ const SpecificProduct = () => {
       });
 
       if (res?.success) {
-        toast.success("Item added to cart");
+        notify.success("Item added to cart.");
       } else {
-        toast.error(res?.message || "Could not add item to cart");
+        notify.error(res?.message || "Could not add item to cart.");
       }
     } catch (error) {
       const message =
         error?.response?.data?.message || "Could not add item to cart";
-      toast.error(message);
+      notify.error(message);
     } finally {
       setIsAddingToCart(false);
     }
@@ -132,21 +132,11 @@ const SpecificProduct = () => {
         await navigator.share(shareData);
       } else {
         await navigator.clipboard.writeText(shareData.url);
-        toast.success("Product link copied!", {
-          style: {
-            borderRadius: "10px",
-            background: "#1b1c1a",
-            color: "#fff",
-            fontSize: "12px",
-            fontWeight: "bold",
-            letterSpacing: "1px",
-            textTransform: "uppercase",
-          },
-        });
+        notify.success("Product link copied.");
       }
     } catch (error) {
       if (error.name !== "AbortError") {
-        toast.error("Failed to share product");
+        notify.error("Failed to share product.");
       }
     }
   };

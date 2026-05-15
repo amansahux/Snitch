@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Search, Filter } from "lucide-react";
 import OrdersTable from "../components/dashboard/OrdersTable";
 import OrderCardMobile from "../components/dashboard/OrderCardMobile";
@@ -12,7 +12,13 @@ const ManageOrders = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("All Orders");
 
-  const { sellerOrders } = useDashboard();
+  const { sellerOrders, handleGetSellerOrders, actionLoading } = useDashboard();
+
+  useEffect(() => {
+    if (sellerOrders.length === 0) {
+      handleGetSellerOrders();
+    }
+  }, [handleGetSellerOrders, sellerOrders.length]);
 
   const handleViewDetails = (order) => {
     setSelectedOrder(order);
@@ -90,7 +96,13 @@ const ManageOrders = () => {
       </div>
 
       {/* Orders List */}
-      {filteredOrders?.length > 0 ? (
+      {actionLoading.fetchSellerOrders && sellerOrders.length === 0 ? (
+        <div className="space-y-4 animate-pulse">
+          {Array.from({ length: 5 }).map((_, idx) => (
+            <div key={idx} className="h-24 rounded-3xl bg-white border border-amber-100/60" />
+          ))}
+        </div>
+      ) : filteredOrders?.length > 0 ? (
         <>
           {/* Desktop View */}
           <div className="hidden md:block">

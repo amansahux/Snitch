@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { registerSchema } from "../validation/auth.validation";
 import useAuth from "../hooks/useAuth";
 import GoogleBtn from "../components/GoogleBtn";
-import { toast } from "react-hot-toast";
+import { notify } from "../../../app/toast/toast.system.jsx";
 
 const Register = () => {
   const { handleRegister } = useAuth();
@@ -25,11 +25,11 @@ const Register = () => {
   const onSubmit = async (data) => {
     const res = await handleRegister(data);
     if (res?.success) {
-      toast.success("Account created successfully. Welcome to the collective!");
+      notify.success("Account created. Welcome to the collective.");
       navigate("/");
       reset();
     } else {
-      toast.error(res?.error || "Registration failed. Please try again.");
+      notify.error(res?.error || "Registration failed. Please try again.");
     }
   };
 

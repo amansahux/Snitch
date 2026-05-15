@@ -19,7 +19,7 @@ const Overview = () => {
   const { 
     handleGetSellerOrders, 
     handleGetDashboardStats,
-    loading 
+    actionLoading,
   } = useDashboard();
 
   const { stats, sellerOrders, topProducts, stockIntelligence } = useSelector((state) => state.dashboard);
@@ -37,7 +37,12 @@ const Overview = () => {
       ]);
     };
     initDashboard();
-  }, []);
+  }, [
+    handleGetDashboardStats,
+    handleGetSellerOrders,
+    sellerOrders.length,
+    stats,
+  ]);
 
   // 2. Sync Recent Orders
   useEffect(() => {
@@ -104,7 +109,7 @@ const Overview = () => {
   ];
 
   // Show loader only on initial load
-  if (loading && !stats) {
+  if ((actionLoading.fetchSellerOrders || actionLoading.fetchDashboardStats) && !stats) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-gold animate-spin" />
@@ -127,7 +132,15 @@ const Overview = () => {
       </div>
 
       {/* Stats Grid */}
-      <AnalyticsOverview stats={dashboardStats} />
+      {actionLoading.fetchDashboardStats && !stats ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 animate-pulse">
+          {Array.from({ length: 6 }).map((_, idx) => (
+            <div key={idx} className="h-36 rounded-3xl bg-white border border-amber-100/60" />
+          ))}
+        </div>
+      ) : (
+        <AnalyticsOverview stats={dashboardStats} />
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mt-12">
         {/* Left Column: Recent Orders */}
@@ -144,10 +157,18 @@ const Overview = () => {
               </button>
             }
           >
-            <OrdersTable
-              orders={recentOrders}
-              onViewDetails={handleViewDetails}
-            />
+            {actionLoading.fetchSellerOrders && recentOrders.length === 0 ? (
+              <div className="space-y-4 animate-pulse">
+                {Array.from({ length: 4 }).map((_, idx) => (
+                  <div key={idx} className="h-20 rounded-2xl bg-white border border-amber-100/60" />
+                ))}
+              </div>
+            ) : (
+              <OrdersTable
+                orders={recentOrders}
+                onViewDetails={handleViewDetails}
+              />
+            )}
           </DashboardSection>
         </div>
 

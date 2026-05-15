@@ -11,11 +11,11 @@ import {
   Trash2,
   Truck,
 } from "lucide-react";
-import toast from "react-hot-toast";
 import useCart from "../hooks/useCart.js";
 import AddressManager from "../../address/pages/AddressManager.jsx";
 import { useRazorpay } from "react-razorpay";
 import useOrder from "../../orders/hooks/useOrder.js";
+import { notify } from "../../../app/toast/toast.system.jsx";
 
 const formatCurrency = (value) =>
   `₹${Math.round(Number(value || 0)).toLocaleString("en-IN")}`;
@@ -46,7 +46,7 @@ const CartPage = () => {
 
     if (nextQuantity < 1) return;
     if (Number.isFinite(maxStock) && nextQuantity > maxStock) {
-      toast.error("No more stock available for this variant");
+      notify.error("No more stock available for this variant.");
       return;
     }
 
@@ -56,7 +56,7 @@ const CartPage = () => {
     } catch (updateError) {
       const message =
         updateError?.response?.data?.message || "Could not update quantity";
-      toast.error(message);
+      notify.error(message);
     } finally {
       setUpdatingItemId(null);
     }
@@ -66,11 +66,11 @@ const CartPage = () => {
     try {
       setRemovingItemId(itemId);
       await handleRemoveCartItem(itemId);
-      toast.success("Item removed from cart");
+      notify.success("Item removed from cart.");
     } catch (removeError) {
       const message =
         removeError?.response?.data?.message || "Could not remove cart item";
-      toast.error(message);
+      notify.error(message);
     } finally {
       setRemovingItemId(null);
     }
@@ -78,18 +78,18 @@ const CartPage = () => {
 
   const proceedToCheckout = async () => {
     if (!items.length) {
-      toast.error("Your cart is currently empty");
+      notify.error("Your cart is currently empty.");
       return;
     }
     if (!selectedAddress) {
-      toast.error("Please select a delivery address");
+      notify.error("Please select a delivery address.");
       return;
     }
 
     try {
       const { razorpayOrder } = await handleCreateOrder();
       if (!razorpayOrder?.id) {
-        toast.error("Unable to create payment order");
+        notify.error("Unable to create payment order.");
         return;
       }
 
@@ -126,7 +126,7 @@ const CartPage = () => {
           const res = await handleVerifyOrderPayment(response);
           if (res?.success) {
             hasSyncedPaymentState = true;
-            toast.success("Payment Successful!");
+            notify.success("Payment successful.");
             sessionStorage.setItem("orderSuccessAccess", "true");
             navigate(`/order-success/${res?.data?._id}`, {
               state: { fromCheckout: true },
@@ -139,12 +139,12 @@ const CartPage = () => {
             razorpay_order_id: razorpayOrder.id,
             razorpay_payment_id: response?.razorpay_payment_id,
           });
-          toast.error("Payment verification failed");
+          notify.error("Payment verification failed.");
         },
         modal: {
           ondismiss: async () => {
             await markPaymentFailed({ razorpay_order_id: razorpayOrder.id });
-            toast.error("Payment cancelled");
+            notify.info("Payment cancelled.");
           },
         },
         prefill: {
@@ -164,11 +164,11 @@ const CartPage = () => {
           razorpay_order_id: metadata?.order_id || razorpayOrder.id,
           razorpay_payment_id: metadata?.payment_id || "",
         });
-        toast.error("Payment Failed");
+        notify.error("Payment failed.");
       });
       razorpay.open();
     } catch {
-      toast.error("Unable to initiate checkout");
+      notify.error("Unable to initiate checkout.");
     }
   };
 

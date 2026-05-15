@@ -1,12 +1,12 @@
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  setLoading,
   setError,
   setStats,
   setSellerOrders,
   setTopProducts,
   setStockIntelligence,
+  setActionLoading,
 } from "../state/dashboard.slice.js";
 import {
   createProducts,
@@ -20,269 +20,201 @@ import {
   updateVariant,
   getVariants,
 } from "../../Product/services/variant.api.js";
-import { getSellerOrders, updateOrderStatus, updatePaymentStatus, getDashboardStats } from "../service/dashboard.api.js";
+import {
+  getSellerOrders,
+  updateOrderStatus,
+  updatePaymentStatus,
+  getDashboardStats,
+} from "../service/dashboard.api.js";
 
 const useDashboard = () => {
   const dispatch = useDispatch();
-  const { loading, error, stats, sellerOrders } = useSelector(
-    (state) => state.dashboard
+  const { loading, error, stats, sellerOrders, actionLoading } = useSelector(
+    (state) => state.dashboard,
   );
   const { products } = useSelector((state) => state.product);
   const { user } = useSelector((state) => state.auth);
 
   const sellerProducts = products.filter(
-    (p) => p.seller?._id === user?._id || p.seller === user?._id
+    (p) => p.seller?._id === user?._id || p.seller === user?._id,
   );
 
-  const handleGetProductById = useCallback(async (id) => {
-    dispatch(setLoading(true));
-    dispatch(setError(null));
-    try {
-      const response = await getProductById(id);
-      if (response && response.data && response.data.product) {
-        const prod = response.data.product;
-        const variants = response.data.variants || [];
-        const defaultVariant =
-          variants.find((v) => v.isDefault) || variants[0];
-        if (defaultVariant) {
-          prod.price = prod.price || defaultVariant.price;
-          prod.stock = prod.stock ?? defaultVariant.stock;
-          prod.images =
-            prod.images && prod.images.length > 0
-              ? prod.images
-              : defaultVariant.images;
-        }
-        return { ...response, data: prod };
-      } else {
-        dispatch(setError(response?.message || "Failed to fetch product"));
-      }
-      return response;
-    } catch {
-      dispatch(setError("An unexpected error occurred"));
-      return undefined;
-    } finally {
-      dispatch(setLoading(false));
-    }
-  }, [dispatch]);
-
-  const handleGetVariant = useCallback(async (id) => {
-    dispatch(setLoading(true));
-    dispatch(setError(null));
-    try {
-      const response = await getVariants(id);
-      return response;
-    } catch {
-      dispatch(setError("An unexpected error occurred"));
-      return undefined;
-    } finally {
-      dispatch(setLoading(false));
-    }
-  }, [dispatch]);
-
-
-  const handleCreateProduct = useCallback(
-    async (data) => {
-      dispatch(setLoading(true));
+  const runAction = useCallback(
+    async (key, fn, fallbackError) => {
+      dispatch(setActionLoading({ key, value: true }));
       dispatch(setError(null));
       try {
+        return await fn();
+      } catch {
+        dispatch(setError(fallbackError || "An unexpected error occurred"));
+        return undefined;
+      } finally {
+        dispatch(setActionLoading({ key, value: false }));
+      }
+    },
+    [dispatch],
+  );
+
+  const handleGetProductById = useCallback(
+    async (id) =>
+      runAction("fetchProductById", async () => {
+        const response = await getProductById(id);
+        if (response?.data?.product) {
+          const prod = response.data.product;
+          const variants = response.data.variants || [];
+          const defaultVariant = variants.find((v) => v.isDefault) || variants[0];
+          if (defaultVariant) {
+            prod.price = prod.price || defaultVariant.price;
+            prod.stock = prod.stock ?? defaultVariant.stock;
+            prod.images =
+              prod.images && prod.images.length > 0
+                ? prod.images
+                : defaultVariant.images;
+          }
+          return { ...response, data: prod };
+        }
+        dispatch(setError(response?.message || "Failed to fetch product"));
+        return response;
+      }, "Failed to fetch product"),
+    [dispatch, runAction],
+  );
+
+  const handleGetVariant = useCallback(
+    async (id) =>
+      runAction("fetchVariants", async () => {
+        const response = await getVariants(id);
+        if (!response?.success) {
+          dispatch(setError(response?.message || "Failed to fetch variants"));
+        }
+        return response;
+      }, "Failed to fetch variants"),
+    [dispatch, runAction],
+  );
+
+  const handleCreateProduct = useCallback(
+    async (data) =>
+      runAction("createProduct", async () => {
         const response = await createProducts(data);
         if (!response?.success) {
           dispatch(setError(response?.message || "Failed to create product"));
         }
         return response;
-      } catch {
-        dispatch(setError("An unexpected error occurred"));
-        return undefined;
-      } finally {
-        dispatch(setLoading(false));
-      }
-    },
-    [dispatch]
+      }, "Failed to create product"),
+    [dispatch, runAction],
   );
 
   const handleUpdateProduct = useCallback(
-    async (id, data) => {
-      dispatch(setLoading(true));
-      dispatch(setError(null));
-      try {
+    async (id, data) =>
+      runAction("updateProduct", async () => {
         const response = await updateProduct(id, data);
         if (!response?.success) {
           dispatch(setError(response?.message || "Failed to update product"));
         }
         return response;
-      } catch {
-        dispatch(setError("An unexpected error occurred"));
-        return undefined;
-      } finally {
-        dispatch(setLoading(false));
-      }
-    },
-    [dispatch]
+      }, "Failed to update product"),
+    [dispatch, runAction],
   );
 
   const handleDeleteProduct = useCallback(
-    async (id) => {
-      dispatch(setLoading(true));
-      dispatch(setError(null));
-      try {
+    async (id) =>
+      runAction("deleteProduct", async () => {
         const response = await deleteProduct(id);
         if (!response?.success) {
           dispatch(setError(response?.message || "Failed to delete product"));
         }
         return response;
-      } catch {
-        dispatch(setError("An unexpected error occurred"));
-        return undefined;
-      } finally {
-        dispatch(setLoading(false));
-      }
-    },
-    [dispatch]
+      }, "Failed to delete product"),
+    [dispatch, runAction],
   );
 
   const handleAddVariant = useCallback(
-    async (id, data) => {
-      dispatch(setLoading(true));
-      dispatch(setError(null));
-      try {
+    async (id, data) =>
+      runAction("addVariant", async () => {
         const response = await createVariant(id, data);
         if (!response?.success) {
           dispatch(setError(response?.message || "Failed to add variant"));
         }
         return response;
-      } catch {
-        dispatch(setError("An unexpected error occurred"));
-        return undefined;
-      } finally {
-        dispatch(setLoading(false));
-      }
-    },
-    [dispatch]
+      }, "Failed to add variant"),
+    [dispatch, runAction],
   );
 
   const handleUpdateVariant = useCallback(
-    async (variantId, data) => {
-      dispatch(setLoading(true));
-      dispatch(setError(null));
-      try {
+    async (variantId, data) =>
+      runAction("updateVariant", async () => {
         const response = await updateVariant(variantId, data);
         if (!response?.success) {
           dispatch(setError(response?.message || "Failed to update variant"));
         }
         return response;
-      } catch {
-        dispatch(setError("An unexpected error occurred"));
-        return undefined;
-      } finally {
-        dispatch(setLoading(false));
-      }
-    },
-    [dispatch]
+      }, "Failed to update variant"),
+    [dispatch, runAction],
   );
 
   const handleDeleteVariant = useCallback(
-    async (variantId) => {
-      dispatch(setLoading(true));
-      dispatch(setError(null));
-      try {
+    async (variantId) =>
+      runAction("deleteVariant", async () => {
         const response = await deleteVariant(variantId);
         if (!response?.success) {
           dispatch(setError(response?.message || "Failed to delete variant"));
         }
         return response;
-      } catch {
-        dispatch(setError("An unexpected error occurred"));
-        return undefined;
-      } finally {
-        dispatch(setLoading(false));
-      }
-    },
-    [dispatch]
+      }, "Failed to delete variant"),
+    [dispatch, runAction],
   );
 
   const handleGetSellerOrders = useCallback(
-    async () => {
-      dispatch(setLoading(true));
-      dispatch(setError(null));
-      try {
+    async () =>
+      runAction("fetchSellerOrders", async () => {
         const response = await getSellerOrders();
         if (!response?.success) {
           dispatch(setError(response?.message || "Failed to get seller orders"));
+          return response;
         }
         dispatch(setSellerOrders(response.data));
         return response;
-      } catch {
-        dispatch(setError("An unexpected error occurred"));
-        return undefined;
-      } finally {
-        dispatch(setLoading(false));
-      }
-    },
-    [dispatch]
+      }, "Failed to get seller orders"),
+    [dispatch, runAction],
   );
 
   const handleUpdateOrderStatus = useCallback(
-    async (orderId, orderStatus) => {
-      dispatch(setLoading(true));
-      dispatch(setError(null));
-      try {
+    async (orderId, orderStatus) =>
+      runAction("updateOrderStatus", async () => {
         const response = await updateOrderStatus(orderId, orderStatus);
         if (response?.success) {
-          handleGetSellerOrders();
+          await handleGetSellerOrders();
         }
         return response;
-      } catch {
-        dispatch(setError("Failed to update order status"));
-        return undefined;
-      } finally {
-        dispatch(setLoading(false));
-      }
-    },
-    [dispatch, handleGetSellerOrders]
+      }, "Failed to update order status"),
+    [handleGetSellerOrders, runAction],
   );
+
   const handleUpdatePaymentStatus = useCallback(
-    async (orderId, paymentStatus) => {
-      dispatch(setLoading(true));
-      dispatch(setError(null));
-      try {
+    async (orderId, paymentStatus) =>
+      runAction("updatePaymentStatus", async () => {
         const response = await updatePaymentStatus(orderId, paymentStatus);
         if (response?.success) {
-          handleGetSellerOrders();
+          await handleGetSellerOrders();
         }
         return response;
-      } catch {
-        dispatch(setError("Failed to update payment status"));
-        return undefined;
-      } finally {
-        dispatch(setLoading(false));
-      }
-    },
-    [dispatch, handleGetSellerOrders]
+      }, "Failed to update payment status"),
+    [handleGetSellerOrders, runAction],
   );
 
   const handleGetDashboardStats = useCallback(
-    async () => {
-      dispatch(setLoading(true));
-      dispatch(setError(null));
-      try {
+    async () =>
+      runAction("fetchDashboardStats", async () => {
         const response = await getDashboardStats();
         if (response?.success) {
           dispatch(setStats(response.data.stats));
           dispatch(setTopProducts(response.data.topProducts || []));
           dispatch(setStockIntelligence(response.data.stockIntelligence || []));
           return response;
-        } else {
-          dispatch(setError(response?.message || "Failed to get dashboard stats"));
         }
+        dispatch(setError(response?.message || "Failed to get dashboard stats"));
         return response;
-      } catch {
-        dispatch(setError("An unexpected error occurred"));
-        return undefined;
-      } finally {
-        dispatch(setLoading(false));
-      }
-    },
-    [dispatch]
+      }, "Failed to get dashboard stats"),
+    [dispatch, runAction],
   );
 
   return {
@@ -291,6 +223,7 @@ const useDashboard = () => {
     loading,
     error,
     stats,
+    actionLoading,
     handleGetProductById,
     handleGetVariant,
     handleCreateProduct,
@@ -307,4 +240,3 @@ const useDashboard = () => {
 };
 
 export default useDashboard;
-

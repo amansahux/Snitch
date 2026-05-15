@@ -12,9 +12,9 @@ import {
 } from "../components/CreateProduct/FormElements";
 import { ImageUploadZone } from "../components/CreateProduct/ImageUploadZone";
 import useDashboard from "../hooks/useDashboard";
-import { toast } from "react-hot-toast";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { notify } from "../../../app/toast/toast.system.jsx";
 
 const CreateProduct = () => {
   const { handleCreateProduct } = useDashboard();
@@ -47,7 +47,7 @@ const CreateProduct = () => {
 
   const onSubmit = async (data) => {
     setIsSubmitting(true);
-    const loadingToast = toast.loading("Publishing to collection...");
+    const loadingToast = notify.loading("Publishing to collection...");
     try {
       const formData = new FormData();
       formData.append("title", data.title);
@@ -67,11 +67,11 @@ const CreateProduct = () => {
 
       await handleCreateProduct(formData);
       data.images.forEach((img) => URL.revokeObjectURL(img.preview));
-      toast.success("Product published successfully!", { id: loadingToast });
+      notify.success("Product published successfully.", { id: loadingToast });
       reset();
       navigate("/seller/dashboard");
     } catch {
-      toast.error("Failed to publish product.", { id: loadingToast });
+      notify.error("Failed to publish product.", { id: loadingToast });
     } finally {
       setIsSubmitting(false);
     }

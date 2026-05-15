@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { loginSchema } from "../validation/auth.validation";
 import useAuth from "../hooks/useAuth";
 import GoogleBtn from "../components/GoogleBtn";
-import { toast } from "react-hot-toast";
+import { notify } from "../../../app/toast/toast.system.jsx";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ const Login = () => {
   const onSubmit = async (data) => {
     const res = await handleLogin(data);
     if (res?.success) {
-      toast.success("Welcome back to Snitch!");
+      notify.success("Welcome back to Snitch.");
       if (res?.data?.role === "buyer") {
         navigate("/");
       } else if (res?.data?.role === "seller") {
@@ -33,7 +33,7 @@ const Login = () => {
       }
       reset();
     } else {
-      toast.error(res?.error || "Invalid credentials. Please try again.");
+      notify.error(res?.error || "Invalid credentials. Please try again.");
     }
   };
 

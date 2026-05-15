@@ -11,7 +11,7 @@ import {
   setLoading,
   setError,
 } from "../state/wishlist.slice.js";
-import toast from "react-hot-toast";
+import { notify } from "../../../app/toast/toast.system.jsx";
 
 const useWishlist = () => {
   const dispatch = useDispatch();
@@ -36,20 +36,10 @@ const useWishlist = () => {
       const res = await addToWishlist(productId);
       if (res.success) {
         dispatch(addWishlistItem({ product: productData, addedAt: new Date() }));
-        toast.success("Added to wishlist", {
-          style: {
-            borderRadius: "10px",
-            background: "#1b1c1a",
-            color: "#fff",
-            fontSize: "12px",
-            fontWeight: "bold",
-            letterSpacing: "1px",
-            textTransform: "uppercase",
-          },
-        });
+        notify.success("Added to wishlist.");
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to add to wishlist");
+      notify.error(err.response?.data?.message || "Failed to add to wishlist.");
     }
   };
 
@@ -58,20 +48,10 @@ const useWishlist = () => {
       const res = await removeFromWishlist(productId);
       if (res.success) {
         dispatch(removeWishlistItem(productId));
-        toast.success("Removed from wishlist", {
-          style: {
-            borderRadius: "10px",
-            background: "#1b1c1a",
-            color: "#fff",
-            fontSize: "12px",
-            fontWeight: "bold",
-            letterSpacing: "1px",
-            textTransform: "uppercase",
-          },
-        });
+        notify.success("Removed from wishlist.");
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to remove from wishlist");
+      notify.error(err.response?.data?.message || "Failed to remove from wishlist.");
     }
   };
 

@@ -9,6 +9,7 @@ import {
   Trash2,
   Image as ImageIcon,
   Edit2,
+  Loader2,
 } from "lucide-react";
 import useDashboard from "../hooks/useDashboard";
 import UpdateProductModal from "../components/dashboard/UpdateProductModal";
@@ -27,19 +28,26 @@ const SellerProductDetail = () => {
     handleDeleteProduct,
     handleDeleteVariant,
     handleUpdateVariant,
+    actionLoading,
   } = useDashboard();
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("variants"); // "details" | "variants"
   const [activeImage, setActiveImage] = useState(0);
-  const [variants, setVariants] = useState(null);
+  const [variants, setVariants] = useState([]);
 
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isVariantModalOpen, setIsVariantModalOpen] = useState(false);
   const [editingVariant, setEditingVariant] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedVariantId, setSelectedVariantId] = useState(null);
+
+  const isUpdatingProduct = actionLoading.updateProduct;
+  const isMutatingVariant = actionLoading.addVariant || actionLoading.updateVariant;
+  const isDeletingProduct = actionLoading.deleteProduct;
+  const isDeletingVariant = actionLoading.deleteVariant;
+  const isVariantsLoading = actionLoading.fetchVariants;
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -54,11 +62,14 @@ const SellerProductDetail = () => {
 
   const fetchProduct = useCallback(async () => {
     setLoading(true);
-    const response = await handleGetProductById(id);
-    if (response?.success) {
-      setProduct(response.data);
+    try {
+      const response = await handleGetProductById(id);
+      if (response?.success) {
+        setProduct(response.data);
+      }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, [id, handleGetProductById]);
 
   const fetchVariants = useCallback(async () => {
@@ -152,13 +163,15 @@ const SellerProductDetail = () => {
         <div className="flex items-center gap-4">
           <button
             onClick={() => setIsUpdateModalOpen(true)}
-            className="p-3 bg-white rounded-full cursor-pointer text-[#7a6e63] hover:text-[#C9A96E] hover:shadow-xl transition-all border border-[#e8e2da]/50 group"
+            disabled={isUpdatingProduct || isDeletingProduct}
+            className="p-3 bg-white rounded-full cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 text-[#7a6e63] hover:text-[#C9A96E] hover:shadow-xl transition-all border border-[#e8e2da]/50 group"
           >
             <Edit size={16} />
           </button>
           <button
             onClick={() => setIsDeleteModalOpen(true)}
-            className="p-3 bg-white rounded-full cursor-pointer text-[#7a6e63] hover:text-red-500 hover:shadow-xl transition-all border border-[#e8e2da]/50 group"
+            disabled={isUpdatingProduct || isDeletingProduct}
+            className="p-3 bg-white rounded-full cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 text-[#7a6e63] hover:text-red-500 hover:shadow-xl transition-all border border-[#e8e2da]/50 group"
           >
             <Trash2 size={16} />
           </button>
@@ -171,8 +184,8 @@ const SellerProductDetail = () => {
           {/* Left: Image Gallery */}
           <div className="lg:col-span-6 space-y-6">
             <div className="aspect-[4/5] bg-[#f3eee8] overflow-hidden rounded-3xl shadow-xl relative group">
-              <img
-                src={product.images?.[activeImage]?.url || variants[0]?.images?.[0]?.url}
+                <img
+                src={product.images?.[activeImage]?.url || variants?.[0]?.images?.[0]?.url}
                 alt={product.title}
                 className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-105"
               />
@@ -253,18 +266,31 @@ const SellerProductDetail = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <button
                 onClick={() => setIsUpdateModalOpen(true)}
-                className="flex-1 bg-[#1b1c1a] text-white cursor-pointer py-6 rounded-xl text-[11px] font-black uppercase tracking-[0.3em] hover:bg-[#C9A96E] transition-all shadow-luxury active:scale-95"
+                disabled={isUpdatingProduct || isDeletingProduct}
+                className="flex-1 bg-[#1b1c1a] text-white cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 py-6 rounded-xl text-[11px] font-black uppercase tracking-[0.3em] hover:bg-[#C9A96E] transition-all shadow-luxury active:scale-95"
               >
-                Modify Base Details
+                {isUpdatingProduct ? (
+                  <span className="inline-flex items-center gap-2">
+                    <Loader2 size={14} className="animate-spin" />
+                    Saving...
+                  </span>
+                ) : (
+                  "Modify Base Details"
+                )}
               </button>
               <button
                 onClick={() => setIsDeleteModalOpen(true)}
-                className="sm:w-24 bg-white border cursor-pointer border-[#e8e2da] text-[#7a6e63] py-6 rounded-xl flex items-center justify-center hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-all active:scale-95 group"
+                disabled={isUpdatingProduct || isDeletingProduct}
+                className="sm:w-24 bg-white border cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 border-[#e8e2da] text-[#7a6e63] py-6 rounded-xl flex items-center justify-center hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-all active:scale-95 group"
               >
-                <Trash2
-                  size={20}
-                  className="group-hover:scale-110 transition-transform"
-                />
+                {isDeletingProduct ? (
+                  <Loader2 size={20} className="animate-spin" />
+                ) : (
+                  <Trash2
+                    size={20}
+                    className="group-hover:scale-110 transition-transform"
+                  />
+                )}
               </button>
             </div>
           </div>
@@ -317,15 +343,30 @@ const SellerProductDetail = () => {
                 </h3>
                 <button
                   onClick={() => setIsVariantModalOpen(true)}
-                  className="flex cursor-pointer items-center gap-3 px-6 py-3 border border-[#e8e2da] rounded-full text-[10px] font-black uppercase tracking-widest text-[#1b1c1a] hover:border-[#C9A96E] hover:text-[#C9A96E] transition-all w-full sm:w-auto justify-center"
+                  disabled={isMutatingVariant || isDeletingVariant || isVariantsLoading}
+                  className="flex cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 items-center gap-3 px-6 py-3 border border-[#e8e2da] rounded-full text-[10px] font-black uppercase tracking-widest text-[#1b1c1a] hover:border-[#C9A96E] hover:text-[#C9A96E] transition-all w-full sm:w-auto justify-center"
                 >
-                  <Plus size={14} />
-                  Add Variation
+                  {isMutatingVariant ? (
+                    <>
+                      <Loader2 size={14} className="animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Plus size={14} />
+                      Add Variation
+                    </>
+                  )}
                 </button>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {variants?.map((v, idx) => (
+                {isVariantsLoading ? (
+                  Array.from({ length: 6 }).map((_, idx) => (
+                    <div key={idx} className="h-72 rounded-2xl border border-[#e8e2da] bg-white/70 animate-pulse" />
+                  ))
+                ) : (
+                  variants?.map((v, idx) => (
                   <div
                     key={idx}
                     className="bg-white p-6 rounded-2xl border border-[#e8e2da] hover:border-[#C9A96E]/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-500 group relative flex flex-col h-full"
@@ -396,22 +437,33 @@ const SellerProductDetail = () => {
                             setEditingVariant(v);
                             setIsVariantModalOpen(true);
                           }}
-                          className="flex cursor-pointer items-center gap-3 px-4 py-3 border border-[#e8e2da] rounded-full text-[10px] font-black uppercase tracking-widest text-[#1b1c1a] hover:border-[#C9A96E] hover:text-[#C9A96E] transition-all w-full sm:w-auto justify-center"
+                          disabled={isMutatingVariant || isDeletingVariant}
+                          className="flex cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 items-center gap-3 px-4 py-3 border border-[#e8e2da] rounded-full text-[10px] font-black uppercase tracking-widest text-[#1b1c1a] hover:border-[#C9A96E] hover:text-[#C9A96E] transition-all w-full sm:w-auto justify-center"
                         >
-                          <Edit2 size={14} />
+                          {isMutatingVariant && editingVariant?._id === v._id ? (
+                            <Loader2 size={14} className="animate-spin" />
+                          ) : (
+                            <Edit2 size={14} />
+                          )}
                         </button>
 
                         <button
                           onClick={() => setSelectedVariantId(v._id)}
-                          className="flex cursor-pointer items-center gap-3 px-4 py-3 border border-[#e8e2da] rounded-full text-[10px] font-black uppercase tracking-widest text-[#1b1c1a] hover:border-[#C9A96E] hover:text-[#C9A96E] transition-all w-full sm:w-auto justify-center"
+                          disabled={isMutatingVariant || isDeletingVariant}
+                          className="flex cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 items-center gap-3 px-4 py-3 border border-[#e8e2da] rounded-full text-[10px] font-black uppercase tracking-widest text-[#1b1c1a] hover:border-[#C9A96E] hover:text-[#C9A96E] transition-all w-full sm:w-auto justify-center"
                         >
-                          <Trash2 size={14} />
+                          {isDeletingVariant && selectedVariantId === v._id ? (
+                            <Loader2 size={14} className="animate-spin" />
+                          ) : (
+                            <Trash2 size={14} />
+                          )}
                         </button>
                       </div>
                     </div>
-                  </div>
-                ))}
-                {(!variants || variants.length === 0) && (
+                    </div>
+                  ))
+                )}
+                {!isVariantsLoading && variants.length === 0 && (
                   <div className="col-span-full py-20 text-center bg-[#f3eee8]/30 rounded-3xl border-2 border-dashed border-[#e8e2da]">
                     <p className="text-xl font-serif text-[#7a6e63]/50 italic">
                       No variations found in this archive.
@@ -451,6 +503,7 @@ const SellerProductDetail = () => {
         message={`This action will permanently delete ${product.title} and all its variations. This process cannot be undone.`}
         cancelLabel="Cancel"
         confirmLabel="Delete"
+        isLoading={isDeletingProduct}
         onCancel={() => {
           setIsDeleteModalOpen(false);
         }}
@@ -464,6 +517,7 @@ const SellerProductDetail = () => {
         message="This action will permanently delete this specific variation from the archive. This process cannot be undone."
         cancelLabel="Cancel"
         confirmLabel="Delete Variant"
+        isLoading={isDeletingVariant}
         onCancel={() => {
           setSelectedVariantId(null);
         }}
