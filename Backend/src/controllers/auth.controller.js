@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import config from "../config/config.js";
 import redis from "../config/cache.js";
 import uploadFile from "../services/storage.service.js";
+import { sendEmail } from "../services/mail.service.js";
 
 export const registerController = asyncHandler(async (req, res, next) => {
   const { email, contact } = req.body;
@@ -35,6 +36,10 @@ export const registerController = asyncHandler(async (req, res, next) => {
     contact: user.contact,
     role: user.role,
   };
+  const emailSubject = 'Welcome to Snitch'
+  const emailFormat = `<h1>Welcome to Snitch</h1><p>Thank you for registering with us. Your account has been created successfully.</p>`
+
+  await sendEmail(user.email, emailSubject, '', emailFormat)
 
   // 5. Send response
   sendTokenResponse(res, userResponse, "User registered successfully", 201);
