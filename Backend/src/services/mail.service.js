@@ -24,7 +24,7 @@ transporter.verify((error, success) => {
 export const sendEmail = async (to, subject, text, html) => {
   try {
     await transporter.sendMail({
-      from: `"Snitch" <${config.GOOGLE_USER_ID}>`,
+      from: `"Snitch Atelier" <${config.GOOGLE_USER_ID}>`,
       to,
       subject,
       text,

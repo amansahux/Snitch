@@ -6,6 +6,7 @@ import config from "../config/config.js";
 import redis from "../config/cache.js";
 import uploadFile from "../services/storage.service.js";
 import { sendEmail } from "../services/mail.service.js";
+import { welcomeEmailTemplate } from "../utils/emailTemplates.js";
 
 export const registerController = asyncHandler(async (req, res, next) => {
   const { email, contact } = req.body;
@@ -36,8 +37,8 @@ export const registerController = asyncHandler(async (req, res, next) => {
     contact: user.contact,
     role: user.role,
   };
-  const emailSubject = 'Welcome to Snitch'
-  const emailFormat = `<h1>Welcome to Snitch</h1><p>Thank you for registering with us. Your account has been created successfully.</p>`
+  const emailSubject = 'The Snitch Manifest: Welcome to the Inner Circle'
+  const emailFormat = welcomeEmailTemplate(user.fullname)
 
   await sendEmail(user.email, emailSubject, '', emailFormat)
 
@@ -93,6 +94,11 @@ export const googleCallback = asyncHandler(async (req, res, next) => {
         email: email,
         googleId: id,
       });
+
+      // Send luxury welcome email
+      const emailSubject = 'The Snitch Manifest: Welcome to the Inner Circle';
+      const emailFormat = welcomeEmailTemplate(displayName);
+      await sendEmail(email, emailSubject, '', emailFormat);
     } else if (!user.googleId) {
       // User exists, but might have signed up normally before. Update googleId.
       user.googleId = id;
