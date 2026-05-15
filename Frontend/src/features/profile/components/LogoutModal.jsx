@@ -1,19 +1,19 @@
 import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion as Motion, AnimatePresence } from "framer-motion";
 
 const LogoutModal = ({ showLogoutModal, setShowLogoutModal, handleLogout, navigate, toast }) => {
   return (
     <AnimatePresence>
       {showLogoutModal && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center px-6">
-          <motion.div
+          <Motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setShowLogoutModal(false)}
             className="absolute inset-0 bg-[#1b1c1a]/40 backdrop-blur-md"
           />
-          <motion.div
+          <Motion.div
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
@@ -44,7 +44,7 @@ const LogoutModal = ({ showLogoutModal, setShowLogoutModal, handleLogout, naviga
                       } else {
                         toast.error("Logout failed");
                       }
-                    } catch (error) {
+                    } catch {
                       toast.error("Logout failed");
                     }
                   }}
@@ -54,7 +54,7 @@ const LogoutModal = ({ showLogoutModal, setShowLogoutModal, handleLogout, naviga
                 </button>
               </div>
             </div>
-          </motion.div>
+          </Motion.div>
         </div>
       )}
     </AnimatePresence>
@@ -62,3 +62,4 @@ const LogoutModal = ({ showLogoutModal, setShowLogoutModal, handleLogout, naviga
 };
 
 export default LogoutModal;
+

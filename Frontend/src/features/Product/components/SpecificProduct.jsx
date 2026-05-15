@@ -78,14 +78,18 @@ const SpecificProduct = () => {
         setActiveVariant(defaultVariant);
         setActiveImage(0);
       }
-    } catch {} finally {
+    } catch {
+      // Errors are surfaced through local/Redux state in called hooks.
+    } finally {
       setLocalLoading(false);
     }
   };
   const fetchSimilarProducts = async () => {
     try {
       await handleGetSimilarProducts(id);
-    } catch {}
+    } catch {
+      // Keep page functional even if similar products fail.
+    }
   };
 
   const handleCart = async () => {
@@ -142,7 +146,6 @@ const SpecificProduct = () => {
       }
     } catch (error) {
       if (error.name !== "AbortError") {
-        console.error("Error sharing:", error);
         toast.error("Failed to share product");
       }
     }

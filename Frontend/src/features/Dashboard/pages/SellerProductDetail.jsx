@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useParams, useNavigate, useLocation, Link } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import {
-  ArrowLeft,
   Plus,
   Tag,
   Info,
@@ -473,18 +472,21 @@ const SellerProductDetail = () => {
   );
 };
 
-const DetailCard = ({ icon: Icon, title, value }) => (
-  <div className="bg-white p-10 rounded-2xl border border-[#e8e2da]/40 space-y-6 hover:shadow-luxury transition-all group">
-    <div className="w-12 h-12 bg-[#f3eee8] rounded-xl flex items-center justify-center text-[#C9A96E] group-hover:bg-[#C9A96E] group-hover:text-white transition-all">
-      <Icon size={20} />
+const DetailCard = ({ icon, title, value }) => {
+  const iconElement = React.createElement(icon, { size: 20 });
+  return (
+    <div className="bg-white p-10 rounded-2xl border border-[#e8e2da]/40 space-y-6 hover:shadow-luxury transition-all group">
+      <div className="w-12 h-12 bg-[#f3eee8] rounded-xl flex items-center justify-center text-[#C9A96E] group-hover:bg-[#C9A96E] group-hover:text-white transition-all">
+        {iconElement}
+      </div>
+      <div className="space-y-2">
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#7a6e63]/50">
+          {title}
+        </p>
+        <p className="text-xl font-serif text-[#1b1c1a]">{value}</p>
+      </div>
     </div>
-    <div className="space-y-2">
-      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#7a6e63]/50">
-        {title}
-      </p>
-      <p className="text-xl font-serif text-[#1b1c1a]">{value}</p>
-    </div>
-  </div>
-);
+  );
+};
 
 export default SellerProductDetail;

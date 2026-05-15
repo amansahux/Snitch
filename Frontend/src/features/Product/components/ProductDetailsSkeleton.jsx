@@ -1,14 +1,6 @@
 import React from "react";
 
 const ProductDetailsSkeleton = () => {
-
-    const handleUser = () => {
-    if (user) {
-      ("Add Card Feature");
-    } else {
-      navigate(`/login`);
-    }
-  };
   return (
     <div className="min-h-screen bg-white font-sans animate-pulse">
       {/* Breadcrumb */}

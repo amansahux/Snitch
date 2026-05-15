@@ -84,7 +84,7 @@ TextAreaField.displayName = "TextAreaField";
 
 // Custom Premium Select Field
 export const SelectField = React.forwardRef(
-  ({ id, label, options, error, required, value, onChange, className = "", ...props }, ref) => {
+  ({ id, label, options, error, required, value, onChange, className = "" }) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
 

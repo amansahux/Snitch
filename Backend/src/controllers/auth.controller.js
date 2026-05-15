@@ -165,7 +165,6 @@ export const uploadProfilePic = asyncHandler(async (req, res, next) => {
     error.statusCode = 404;
     return next(error);
   }
-  // console.log(req.file.buffer)
   const image = await uploadFile({
     buffer: req.file.buffer,
     fileName: req.file.originalname,

@@ -7,7 +7,6 @@ import useCart from "../features/cart/hooks/useCart.js";
 import { Toaster } from "react-hot-toast";
 import useProduct from "../features/Product/hooks/useProduct.js";
 import useWishlist from "../features/wishlist/hooks/useWishlist.js";
-import useAddress from "../features/address/hooks/useAddress.js";
 
 const App = () => {
   const { handleGetProfile, user } = useAuth();

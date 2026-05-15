@@ -1,10 +1,9 @@
-import React, { useState } from "react";
-import { Menu, Bell, Search, Sparkles } from "lucide-react";
+import React from "react";
+import { Menu, Bell, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const TopNavbar = ({ onMenuClick, pageTitle = "Dashboard", user }) => {
-  const [searchOpen, setSearchOpen] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <header className="h-20 bg-cream border-b border-charcoal/5 flex items-center justify-between px-6 lg:px-10 flex-shrink-0 sticky top-0 z-50">
@@ -65,20 +64,6 @@ const TopNavbar = ({ onMenuClick, pageTitle = "Dashboard", user }) => {
         </div>
       </div>
 
-      {/* Mobile search expanded */}
-      {searchOpen && (
-        <div className="absolute top-20 left-0 right-0 bg-cream/95 backdrop-blur-xl border-b border-charcoal/5 p-4 md:hidden animate-in slide-in-from-top-4 duration-300">
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-charcoal/20 pointer-events-none" />
-            <input
-              type="text"
-              placeholder="Search products..."
-              className="w-full pl-11 pr-4 py-3 bg-white border border-charcoal/5 rounded-xl text-xs text-charcoal focus:outline-none focus:border-gold transition-all"
-              autoFocus
-            />
-          </div>
-        </div>
-      )}
     </header>
   );
 };

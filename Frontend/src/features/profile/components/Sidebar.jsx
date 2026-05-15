@@ -1,5 +1,5 @@
 import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion as Motion, AnimatePresence } from "framer-motion";
 import { NavLink } from "react-router-dom";
 import { 
   X, 
@@ -44,7 +44,7 @@ const Sidebar = ({
                   <item.icon size={18} className={`${isActive ? "text-[#C9A96E]" : "text-[#d0c5b5] group-hover:text-[#1b1c1a]"} transition-colors`} />
                   <span className="text-[10px] font-black uppercase tracking-[0.25em]">{item.label}</span>
                   {isActive && (
-                    <motion.div layoutId="activeNav" className="ml-auto w-1.5 h-1.5 rounded-full bg-[#C9A96E]" />
+                    <Motion.div layoutId="activeNav" className="ml-auto w-1.5 h-1.5 rounded-full bg-[#C9A96E]" />
                   )}
                 </>
               )}
@@ -67,14 +67,14 @@ const Sidebar = ({
       <AnimatePresence>
         {isMobileMenuOpen && (
           <>
-            <motion.div 
+            <Motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsMobileMenuOpen(false)}
               className="fixed inset-0 z-[100] bg-[#1b1c1a]/40 backdrop-blur-sm lg:hidden"
             />
-            <motion.aside
+            <Motion.aside
               initial={{ x: "-100%" }}
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
@@ -134,7 +134,7 @@ const Sidebar = ({
                   <span className="text-[10px] font-black uppercase tracking-[0.25em]">Logout</span>
                 </button>
               </div>
-            </motion.aside>
+            </Motion.aside>
           </>
         )}
       </AnimatePresence>
@@ -143,3 +143,4 @@ const Sidebar = ({
 };
 
 export default Sidebar;
+

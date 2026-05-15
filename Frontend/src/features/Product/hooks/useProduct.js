@@ -40,7 +40,7 @@ const useProduct = () => {
         dispatch(setError(response?.message || "Failed to fetch products"));
       }
       return response;
-    } catch (error) {
+    } catch {
       dispatch(setError("An unexpected error occurred"));
       return undefined;
     } finally {
@@ -78,7 +78,7 @@ const useProduct = () => {
           dispatch(setError(response?.message || "Failed to fetch product"));
         }
         return response;
-      } catch (error) {
+      } catch {
         dispatch(setError("An unexpected error occurred"));
         return undefined;
       } finally {
@@ -107,7 +107,7 @@ const useProduct = () => {
           dispatch(setSimilarCache({ id, data: response.data }));
         }
         return response;
-      } catch (error) {
+      } catch {
         dispatch(setError("An unexpected error occurred"));
         return undefined;
       } finally {
@@ -134,7 +134,7 @@ const useProduct = () => {
           dispatch(setVariantCache({ id, variants: response.variants }));
         }
         return response;
-      } catch (error) {
+      } catch {
         dispatch(setError("An unexpected error occurred"));
         return undefined;
       } finally {
@@ -156,3 +156,4 @@ const useProduct = () => {
 };
 
 export default useProduct;
+

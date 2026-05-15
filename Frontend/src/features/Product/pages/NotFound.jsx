@@ -1,5 +1,5 @@
 import React from "react";
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
 const NotFound = () => {
@@ -27,37 +27,37 @@ const NotFound = () => {
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-cream overflow-hidden">
-      <motion.div
+      <Motion.div
         variants={containerVariants}
         initial="hidden"
         animate="visible"
         className="max-w-2xl w-full px-6 text-center"
       >
-        <motion.span
+        <Motion.span
           variants={itemVariants}
           className="text-[10px] font-black uppercase tracking-[0.5em] text-gold mb-8 block"
         >
           Error Protocol 404
-        </motion.span>
+        </Motion.span>
 
-        <motion.div variants={itemVariants} className="relative mb-8">
+        <Motion.div variants={itemVariants} className="relative mb-8">
           <h1 className="text-[12rem] sm:text-[16rem] font-serif leading-none text-charcoal opacity-[0.03] absolute inset-0 flex items-center justify-center select-none pointer-events-none">
             404
           </h1>
           <h2 className="text-5xl sm:text-7xl font-serif text-charcoal relative z-10">
             Page Not Found
           </h2>
-        </motion.div>
+        </Motion.div>
 
-        <motion.p
+        <Motion.p
           variants={itemVariants}
           className="text-lg text-charcoal-light font-inter font-light max-w-md mx-auto mb-12 leading-relaxed"
         >
           The archive you are seeking is either restricted or no longer exists. 
           We suggest returning to the main collection.
-        </motion.p>
+        </Motion.p>
 
-        <motion.div
+        <Motion.div
           variants={itemVariants}
           className="flex flex-col sm:flex-row items-center justify-center gap-6"
         >
@@ -73,19 +73,20 @@ const NotFound = () => {
           >
             Explore Collection
           </button>
-        </motion.div>
+        </Motion.div>
 
-        <motion.div
+        <Motion.div
           variants={itemVariants}
           className="mt-20 pt-8 border-t border-charcoal/5"
         >
           <span className="text-[10px] font-black uppercase tracking-[0.4em] text-charcoal/20">
             Snich Atelier Archive
           </span>
-        </motion.div>
-      </motion.div>
+        </Motion.div>
+      </Motion.div>
     </div>
   );
 };
 
 export default NotFound;
+

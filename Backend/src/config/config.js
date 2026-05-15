@@ -12,9 +12,7 @@ if (
   !process.env.RAZORPAY_KEY_ID ||
   !process.env.RAZORPAY_KEY_SECRET ||
   !process.env.GOOGLE_REFRESH_TOKEN ||
-  !process.env.GOOGLE_USER_ID ||
-  !process.env.GOOGLE_CLIENT_ID ||
-  !process.env.GOOGLE_CLIENT_SECRET
+  !process.env.GOOGLE_USER_ID
 ) {
   console.error("Missing required environment variables");
   process.exit(1);
@@ -33,8 +31,6 @@ const config = {
   REDIS_HOST: process.env.REDIS_HOST,
   REDIS_PORT: process.env.REDIS_PORT,
   REDIS_PASSWORD: process.env.REDIS_PASSWORD,
-  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
-  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
   GOOGLE_REFRESH_TOKEN: process.env.GOOGLE_REFRESH_TOKEN,
   GOOGLE_USER_ID: process.env.GOOGLE_USER_ID,
 };

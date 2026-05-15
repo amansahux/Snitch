@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Heart, Trash2, ArrowRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import useWishlist from "../../wishlist/hooks/useWishlist.js";

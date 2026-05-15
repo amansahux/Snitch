@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Mail, Lock, Eye, EyeOff, LogIn, ArrowRight } from "lucide-react";
+import { Mail, Eye, EyeOff, ArrowRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginSchema } from "../validation/auth.validation";
 import useAuth from "../hooks/useAuth";
@@ -10,7 +10,7 @@ import { toast } from "react-hot-toast";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { handleLogin, loading } = useAuth();
+  const { handleLogin } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   
   const {

@@ -1,7 +1,7 @@
 import React from 'react';
-import { CheckCircle2, Circle } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 
-const ShipmentTimeline = ({ events, currentStatus = 'pending' }) => {
+const ShipmentTimeline = ({ currentStatus = 'pending' }) => {
   const statusOrder = ['placed', 'shipped', 'out_for_delivery', 'delivered'];
   
   const getMilestoneStatus = (milestone) => {

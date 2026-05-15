@@ -64,7 +64,7 @@ const useCart = () => {
       dispatch(setCartError(errorMessage));
       throw error;
     }
-    // No setCartLoading here — optimistic UI keeps cart interactive
+    // No setCartLoading here; optimistic UI keeps cart interactive.
   };
 
   const handleRemoveCartItem = async (itemId) => {
@@ -98,27 +98,14 @@ const useCart = () => {
       dispatch(setCartLoading(false));
     }
   };
-
-  // const handleCreateCartPaymentOrder = async () => {
-  //   try {
-  //     const res = await createCartPaymentOrder();
-  //     return res;
-  //   } catch (error) {
-  //     const errorMessage =
-  //       error?.response?.data?.message || "Failed to create cart payment order";
-  //     dispatch(setCartError(errorMessage));
-  //     throw error;
-  //   }
-  // };
-
   return {
     handleGetCart,
     handleAddToCart,
     handleUpdateCart,
     handleRemoveCartItem,
     handleClearCart,
-    // handleCreateCartPaymentOrder,
   };
 };
 
 export default useCart;
+

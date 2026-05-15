@@ -3,7 +3,6 @@ import { createSlice } from "@reduxjs/toolkit";
 const dashboardSlice = createSlice({
   name: "dashboard",
   initialState: {
-    sellerProducts: [],
     sellerOrders: [],
     loading: false,
     error: null,
@@ -12,9 +11,6 @@ const dashboardSlice = createSlice({
     stockIntelligence: []
   },
   reducers: {
-    setSellerProducts: (state, action) => {
-      state.sellerProducts = action.payload;
-    },
     setLoading: (state, action) => {
       state.loading = action.payload;
     },
@@ -37,7 +33,6 @@ const dashboardSlice = createSlice({
 });
 
 export const {
-  setSellerProducts,
   setLoading,
   setError,
   setStats,

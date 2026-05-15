@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import useDashboard from "../hooks/useDashboard";
+import React from "react";
 import Overview from "./Overview";
 
 const Dashboard = () => {

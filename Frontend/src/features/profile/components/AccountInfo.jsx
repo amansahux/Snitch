@@ -1,20 +1,17 @@
 import React from "react";
-import { Camera, Loader2 } from "lucide-react";
+import { Camera } from "lucide-react";
 import useAuth from "../../Auth/hooks/useAuth";
 import useProfile from "../hooks/useProfile";
-import { useState } from "react";
 import { useSelector } from "react-redux";
 import Skeleton from "./skeleton";
 
 const AccountInfo = () => {
   const { user } = useAuth();
   const { handleuploadProfilePic } = useProfile();
-  const [selectedImage, setSelectedImage] = useState(null);
   const { loading } = useSelector((state) => state.auth);
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      setSelectedImage(file);
       await handleuploadProfilePic({ image: file });
     }
   };
@@ -42,7 +39,6 @@ const AccountInfo = () => {
               <div
                 className={`w-24 h-24 rounded-full bg-[#f3eee8] flex items-center justify-center text-3xl font-serif text-[#1b1c1a] ${user?.profilePic ? "border border-[#C9A96E]" : ""} overflow-hidden `}
               >
-                {/* {console.log(user)} */}
                 {user?.profilePic ? (
                   <img
                     src={user?.profilePic}
@@ -53,14 +49,12 @@ const AccountInfo = () => {
                   user?.fullname?.[0]?.toUpperCase()
                 )}
               </div>
-              <form onSubmit={handleImageChange}>
-                <label
-                  htmlFor="profilePicture"
-                  className="absolute bottom-0 right-0 p-2 rounded-full bg-[#1b1c1a] text-white hover:bg-[#C9A96E] transition-all shadow-lg cursor-pointer"
-                >
-                  <Camera size={14} />
-                </label>
-              </form>
+              <label
+                htmlFor="profilePicture"
+                className="absolute bottom-0 right-0 p-2 rounded-full bg-[#1b1c1a] text-white hover:bg-[#C9A96E] transition-all shadow-lg cursor-pointer"
+              >
+                <Camera size={14} />
+              </label>
               <input
                 type="file"
                 id="profilePicture"

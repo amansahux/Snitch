@@ -1,10 +1,7 @@
 import React from "react";
 import { AlertCircle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
 
 const LowStockAlert = ({ products }) => {
-  const navigate = useNavigate();
   return (
     <div className="bg-white rounded-3xl border border-amber-100 shadow-luxury overflow-hidden">
       <div className="p-5 border-b border-amber-50 flex items-center bg-amber-50/30">

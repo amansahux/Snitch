@@ -151,7 +151,6 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
 
   const cachedProducts = await getCache(cacheKey);
   if (cachedProducts) {
-    console.log("serving from cache");
     return res.status(200).json({
       message: "Products fetched successfully",
       success: true,

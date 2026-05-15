@@ -1,7 +1,6 @@
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  setSellerProducts,
   setLoading,
   setError,
   setStats,
@@ -58,7 +57,7 @@ const useDashboard = () => {
         dispatch(setError(response?.message || "Failed to fetch product"));
       }
       return response;
-    } catch (error) {
+    } catch {
       dispatch(setError("An unexpected error occurred"));
       return undefined;
     } finally {
@@ -72,7 +71,7 @@ const useDashboard = () => {
     try {
       const response = await getVariants(id);
       return response;
-    } catch (error) {
+    } catch {
       dispatch(setError("An unexpected error occurred"));
       return undefined;
     } finally {
@@ -91,7 +90,7 @@ const useDashboard = () => {
           dispatch(setError(response?.message || "Failed to create product"));
         }
         return response;
-      } catch (error) {
+      } catch {
         dispatch(setError("An unexpected error occurred"));
         return undefined;
       } finally {
@@ -111,7 +110,7 @@ const useDashboard = () => {
           dispatch(setError(response?.message || "Failed to update product"));
         }
         return response;
-      } catch (error) {
+      } catch {
         dispatch(setError("An unexpected error occurred"));
         return undefined;
       } finally {
@@ -131,7 +130,7 @@ const useDashboard = () => {
           dispatch(setError(response?.message || "Failed to delete product"));
         }
         return response;
-      } catch (error) {
+      } catch {
         dispatch(setError("An unexpected error occurred"));
         return undefined;
       } finally {
@@ -151,7 +150,7 @@ const useDashboard = () => {
           dispatch(setError(response?.message || "Failed to add variant"));
         }
         return response;
-      } catch (error) {
+      } catch {
         dispatch(setError("An unexpected error occurred"));
         return undefined;
       } finally {
@@ -171,7 +170,7 @@ const useDashboard = () => {
           dispatch(setError(response?.message || "Failed to update variant"));
         }
         return response;
-      } catch (error) {
+      } catch {
         dispatch(setError("An unexpected error occurred"));
         return undefined;
       } finally {
@@ -191,7 +190,7 @@ const useDashboard = () => {
           dispatch(setError(response?.message || "Failed to delete variant"));
         }
         return response;
-      } catch (error) {
+      } catch {
         dispatch(setError("An unexpected error occurred"));
         return undefined;
       } finally {
@@ -212,7 +211,7 @@ const useDashboard = () => {
         }
         dispatch(setSellerOrders(response.data));
         return response;
-      } catch (error) {
+      } catch {
         dispatch(setError("An unexpected error occurred"));
         return undefined;
       } finally {
@@ -232,7 +231,7 @@ const useDashboard = () => {
           handleGetSellerOrders();
         }
         return response;
-      } catch (error) {
+      } catch {
         dispatch(setError("Failed to update order status"));
         return undefined;
       } finally {
@@ -251,7 +250,7 @@ const useDashboard = () => {
           handleGetSellerOrders();
         }
         return response;
-      } catch (error) {
+      } catch {
         dispatch(setError("Failed to update payment status"));
         return undefined;
       } finally {
@@ -276,7 +275,7 @@ const useDashboard = () => {
           dispatch(setError(response?.message || "Failed to get dashboard stats"));
         }
         return response;
-      } catch (error) {
+      } catch {
         dispatch(setError("An unexpected error occurred"));
         return undefined;
       } finally {
@@ -308,3 +307,4 @@ const useDashboard = () => {
 };
 
 export default useDashboard;
+

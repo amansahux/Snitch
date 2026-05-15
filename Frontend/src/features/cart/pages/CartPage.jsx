@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
@@ -167,8 +167,7 @@ const CartPage = () => {
         toast.error("Payment Failed");
       });
       razorpay.open();
-    } catch (error) {
-      console.log(error);
+    } catch {
       toast.error("Unable to initiate checkout");
     }
   };

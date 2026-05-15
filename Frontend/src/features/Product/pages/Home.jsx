@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import useProduct from "../hooks/useProduct";
@@ -33,8 +33,8 @@ const Home = () => {
   const fetchProducts = async () => {
     try {
       await handleGetAllProducts();
-    } catch (error) {
-      console.error(error);
+    } catch {
+      // Product hook handles error state.
     }
   };
 
@@ -264,7 +264,7 @@ const Home = () => {
               <Skeleton />
             ) : products?.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-12 gap-y-24">
-                {products.slice(0, 8).map((product, idx) => (
+                {products.slice(0, 8).map((product) => (
                   <Product key={product._id} product={product} />
                 ))}
               </div>

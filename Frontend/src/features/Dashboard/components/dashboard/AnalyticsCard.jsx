@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
 
-const AnalyticsCard = ({ title, value, change, trend, icon: Icon, description, isDark = false }) => {
+const AnalyticsCard = ({ title, value, change, trend, icon: Icon, isDark = false }) => {
   const isPositive = trend === 'up';
 
   return (

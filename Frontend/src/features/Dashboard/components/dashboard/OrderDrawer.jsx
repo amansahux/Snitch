@@ -1,5 +1,5 @@
 import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion as Motion, AnimatePresence } from "framer-motion";
 import {
   X,
   Package,
@@ -27,7 +27,7 @@ const OrderDrawer = ({ isOpen, onClose, order }) => {
       {isOpen && (
         <>
           {/* Overlay */}
-          <motion.div
+          <Motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -36,7 +36,7 @@ const OrderDrawer = ({ isOpen, onClose, order }) => {
           />
 
           {/* Drawer */}
-          <motion.div
+          <Motion.div
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
@@ -300,7 +300,7 @@ const OrderDrawer = ({ isOpen, onClose, order }) => {
                  </button>
               </div>
             </div>
-          </motion.div>
+          </Motion.div>
         </>
       )}
     </AnimatePresence>
@@ -308,3 +308,4 @@ const OrderDrawer = ({ isOpen, onClose, order }) => {
 };
 
 export default OrderDrawer;
+

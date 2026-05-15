@@ -4,9 +4,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   Package,
-  MapPin,
-  CreditCard,
-  Clock,
   CheckCircle2,
   ShieldCheck,
   Truck,
@@ -14,7 +11,7 @@ import {
   XCircle,
   Phone,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion as Motion, AnimatePresence } from "framer-motion";
 import useOrder from "../../orders/hooks/useOrder.js";
 import useProfile from "../hooks/useProfile.js";
 
@@ -47,8 +44,8 @@ const OrderDetail = () => {
       try {
         const res = await handleGetOrderById(id);
         setOrder(res.data);
-      } catch (error) {
-        console.error("Error fetching order:", error);
+      } catch {
+        // UI falls back to "Order not found" state.
       } finally {
         setLoading(false);
       }
@@ -172,7 +169,7 @@ const OrderDetail = () => {
                 <div className="absolute left-[1.2rem] top-2 bottom-2 w-px bg-[#f3eee8]" />
 
                 {/* Dynamic Progress Line */}
-                <motion.div
+                <Motion.div
                   initial={{ height: 0 }}
                   animate={{
                     height:
@@ -222,7 +219,6 @@ const OrderDetail = () => {
                 ].map((step, idx) => {
                   const currentStep = getStatusStep(order.orderStatus);
                   const isCompleted = currentStep >= idx;
-                  const isCurrent = currentStep === idx;
                   return (
                     <div
                       key={idx}
@@ -260,7 +256,7 @@ const OrderDetail = () => {
               <h3 className="font-serif text-2xl text-[#1b1c1a]">Items</h3>
               <div className="space-y-6">
                 {order.items?.map((item) => (
-                  <motion.div
+                  <Motion.div
                     layout
                     key={item._id}
                     className="group bg-white rounded-[2.5rem] p-6 lg:p-8 flex flex-col sm:flex-row gap-8 hover:shadow-[0_40px_80px_rgba(27,28,26,0.06)] transition-all duration-700"
@@ -319,7 +315,7 @@ const OrderDetail = () => {
                         </span>
                       </div>
                     </div>
-                  </motion.div>
+                  </Motion.div>
                 ))}
               </div>
             </section>
@@ -449,14 +445,14 @@ const OrderDetail = () => {
       <AnimatePresence>
         {showCancelModal && (
           <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
-            <motion.div
+            <Motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowCancelModal(false)}
               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             />
-            <motion.div
+            <Motion.div
               initial={{ scale: 0.95, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
@@ -491,7 +487,7 @@ const OrderDetail = () => {
                   )}
                 </button>
               </div>
-            </motion.div>
+            </Motion.div>
           </div>
         )}
       </AnimatePresence>
@@ -500,3 +496,4 @@ const OrderDetail = () => {
 };
 
 export default OrderDetail;
+

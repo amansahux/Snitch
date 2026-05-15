@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import useOrder from "../hooks/useOrder";
 
@@ -10,7 +10,6 @@ const OrderSuccess = () => {
   const { handleGetOrderById } = useOrder();
 
   const [isValidating, setIsValidating] = useState(true);
-  const [orderData, setOrderData] = useState(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -32,19 +31,16 @@ const OrderSuccess = () => {
         
         if (isMounted) {
           if (res?.success && res?.data?.paymentStatus === "paid") {
-            setOrderData(res.data);
             setIsValidating(false);
             
             // Only clear the session flag AFTER successful validation
             sessionStorage.removeItem("orderSuccessAccess");
           } else {
-            console.error("Order validation failed: Status not paid or success false");
             navigate("/404", { replace: true });
           }
         }
-      } catch (error) {
+      } catch {
         if (isMounted) {
-          console.error("Order validation error:", error);
           navigate("/404", { replace: true });
         }
       }
@@ -86,15 +82,15 @@ const OrderSuccess = () => {
     return (
       <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#fbf9f6]">
         <div className="flex flex-col items-center gap-4">
-          <motion.div
+          <Motion.div
             animate={{ opacity: [0.4, 1, 0.4] }}
             transition={{ duration: 1.5, repeat: Infinity }}
             className="text-[10px] font-black uppercase tracking-[0.5em] text-[#C9A96E]"
           >
             Verifying Your Order
-          </motion.div>
+          </Motion.div>
           <div className="h-0.5 w-24 bg-[#ece7df] overflow-hidden">
-            <motion.div 
+            <Motion.div 
               animate={{ x: ["-100%", "100%"] }}
               transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
               className="h-full w-full bg-[#C9A96E]"
@@ -107,7 +103,7 @@ const OrderSuccess = () => {
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#fbf9f6] overflow-hidden select-none">
-      <motion.div
+      <Motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
@@ -115,13 +111,13 @@ const OrderSuccess = () => {
       >
         {/* Animated Checkmark */}
         <div className="flex justify-center mb-10">
-          <motion.div
+          <Motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: "spring", stiffness: 200, damping: 20 }}
             className="relative h-24 w-24"
           >
-            <motion.div
+            <Motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 0.2, scale: 1.5 }}
               transition={{
@@ -136,7 +132,7 @@ const OrderSuccess = () => {
               className="w-full h-full overflow-visible"
               viewBox="0 0 100 100"
             >
-              <motion.circle
+              <Motion.circle
                 cx="50"
                 cy="50"
                 r="45"
@@ -147,7 +143,7 @@ const OrderSuccess = () => {
                 initial="hidden"
                 animate="visible"
               />
-              <motion.path
+              <Motion.path
                 d="M30 50L45 65L70 35"
                 fill="none"
                 stroke="#1b1c1a"
@@ -159,7 +155,7 @@ const OrderSuccess = () => {
                 animate="visible"
               />
             </svg>
-          </motion.div>
+          </Motion.div>
         </div>
 
         <h1 className="font-serif text-4xl sm:text-5xl text-[#1b1c1a] mb-4 tracking-tight">
@@ -202,9 +198,10 @@ const OrderSuccess = () => {
               Snich Atelier
            </span>
         </div>
-      </motion.div>
+      </Motion.div>
     </div>
   );
 };
 
 export default OrderSuccess;
+

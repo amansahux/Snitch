@@ -160,8 +160,8 @@ const AddressManager = ({
                       await handleUpdateAddress(address._id, {
                         isDefault: true,
                       });
-                    } catch (error) {
-                      console.error("Failed to set address as default", error);
+                    } catch {
+                      // Keep selection flow non-blocking if default sync fails.
                     }
                   }
                 }}
