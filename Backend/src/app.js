@@ -34,7 +34,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(cookieParser());
 app.use(passport.initialize());
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+        "img-src": ["'self'", "data:", "https://ik.imagekit.io/"],
+      },
+    },
+  }),
+);
 app.use(limiter);
 app.use(express.static("public"));
 
@@ -74,7 +83,5 @@ app.get("*name", (req, res) => {
 });
 
 app.use(errorMiddleware);
-
-
 
 export default app;
