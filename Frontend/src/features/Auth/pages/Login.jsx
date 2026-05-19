@@ -7,6 +7,7 @@ import { loginSchema } from "../validation/auth.validation";
 import useAuth from "../hooks/useAuth";
 import GoogleBtn from "../components/GoogleBtn";
 import { notify } from "../../../app/toast/toast.system.jsx";
+import { loginHeroImage } from "@/assets";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -41,7 +42,7 @@ const Login = () => {
     <div className="auth-page-wrapper min-h-screen flex bg-cream font-sans overflow-x-hidden relative">
       {/* Mobile Hero Background (Only Mobile) */}
       <div className="lg:hidden absolute top-0 left-0 w-full h-[40vh] z-0">
-        <img src="/images/login_hero.png" className="w-full h-full object-cover grayscale-[30%]" alt="Hero" />
+        <img src={loginHeroImage} className="w-full h-full object-cover grayscale-[30%]" alt="Hero" />
         <div className="absolute inset-0 bg-charcoal/40 backdrop-blur-sm"></div>
       </div>
 
@@ -178,7 +179,7 @@ const Login = () => {
       <div className="hidden lg:block lg:w-3/5 relative bg-charcoal">
         <div className="absolute inset-0">
           <img
-            src="/images/login_hero.png"
+            src={loginHeroImage}
             alt="Luxury Fashion"
             className="w-full h-full object-cover opacity-90 scale-105"
           />

@@ -1,0 +1,13 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000" viewBox="0 0 800 1000" role="img" aria-label="Product placeholder">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f7f4ef"/>
+      <stop offset="100%" stop-color="#e8e2da"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="1000" fill="url(#bg)"/>
+  <rect x="120" y="120" width="560" height="760" rx="48" fill="#fbf9f6" stroke="#d7cec2" stroke-width="10"/>
+  <circle cx="400" cy="380" r="110" fill="#d8c7ad" opacity="0.55"/>
+  <path d="M240 760c54-125 120-188 160-188s106 63 160 188" fill="none" stroke="#c9a96e" stroke-opacity="0.65" stroke-width="26" stroke-linecap="round"/>
+  <text x="400" y="860" text-anchor="middle" font-family="serif" font-size="40" letter-spacing="10" fill="#9b8a77">SNITCH</text>
+</svg>

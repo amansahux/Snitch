@@ -3,6 +3,7 @@ import { ShoppingBag, ArrowRight } from "lucide-react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import useOrder from "../../orders/hooks/useOrder.js";
+import { productPlaceholderImage } from "@/assets";
 
 const OrdersSection = () => {
   const navigate = useNavigate();
@@ -69,7 +70,7 @@ const OrdersSection = () => {
               firstItem?.product?.images?.[0]?.url ||
               firstItem?.images?.[0]?.url ||
               firstItem?.product?.coverImage?.url ||
-              "/placeholder-product.jpg";
+              productPlaceholderImage;
 
             return (
               <div
@@ -88,8 +89,7 @@ const OrdersSection = () => {
                         }}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 cursor-pointer"
                         onError={(e) => {
-                          e.target.src =
-                            "https://placehold.co/400x600/fbf9f6/1b1c1a?text=S";
+                          e.target.src = productPlaceholderImage;
                         }}
                       />
                     </div>

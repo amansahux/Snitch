@@ -7,6 +7,7 @@ import { registerSchema } from "../validation/auth.validation";
 import useAuth from "../hooks/useAuth";
 import GoogleBtn from "../components/GoogleBtn";
 import { notify } from "../../../app/toast/toast.system.jsx";
+import { registerHeroImage } from "@/assets";
 
 const Register = () => {
   const { handleRegister } = useAuth();
@@ -37,7 +38,7 @@ const Register = () => {
     <div className="auth-page-wrapper min-h-screen flex bg-cream font-sans overflow-x-hidden relative">
       {/* Mobile Hero Background (Only Mobile) */}
       <div className="lg:hidden absolute top-0 left-0 w-full h-[40vh] z-0">
-        <img src="/images/register_hero.png" className="w-full h-full object-cover grayscale-[20%]" alt="Hero" />
+        <img src={registerHeroImage} className="w-full h-full object-cover grayscale-[20%]" alt="Hero" />
         <div className="absolute inset-0 bg-charcoal/30 backdrop-blur-sm"></div>
       </div>
 
@@ -45,7 +46,7 @@ const Register = () => {
       <div className="hidden lg:block lg:w-[45%] relative bg-charcoal">
         <div className="absolute inset-0">
           <img
-            src="/images/register_hero.png"
+            src={registerHeroImage}
             alt="Luxury Register Hero"
             className="w-full h-full object-cover opacity-85 scale-110 grayscale-[20%] hover:grayscale-0 transition-all duration-700"
           />

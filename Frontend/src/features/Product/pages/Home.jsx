@@ -14,6 +14,7 @@ import {
   ShoppingBag,
   Sparkles as SparklesIcon,
 } from "lucide-react";
+import { homeHeroImage } from "@/assets";
 
 const Home = () => {
   const { products, handleGetAllProducts } = useProduct();
@@ -183,7 +184,7 @@ const Home = () => {
               <div className="relative group">
                 <div className="aspect-[4/5] rounded-[2rem] overflow-hidden shadow-2xl transition-all duration-1000 group-hover:shadow-luxury bg-[#f3eee8]">
                   <img
-                    src="/images/home_hero.png"
+                    src={homeHeroImage}
                     alt="SNITCH. Editorial"
                     className="w-full h-full object-cover transition-all duration-[1.5s] group-hover:scale-110"
                   />

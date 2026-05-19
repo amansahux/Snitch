@@ -18,6 +18,7 @@ import Product from "./Product";
 import useCart from "../../cart/hooks/useCart.js";
 import useWishlist from "../../wishlist/hooks/useWishlist.js";
 import { notify } from "../../../app/toast/toast.system.jsx";
+import { productPlaceholderImage } from "@/assets";
 
 const SpecificProduct = () => {
   const { id } = useParams();
@@ -263,7 +264,7 @@ const SpecificProduct = () => {
               <img
                 src={
                   displayImages[safeActiveImage]?.url ||
-                  "/placeholder-image.jpg"
+                  productPlaceholderImage
                 }
                 alt={displayTitle}
                 className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
@@ -284,7 +285,7 @@ const SpecificProduct = () => {
                   className={`flex-shrink-0 aspect-[4/5] w-20 md:w-full rounded-2xl overflow-hidden border-2 transition-all duration-500 hover:shadow-lg ${safeActiveImage === idx ? "border-[#C9A96E] scale-95" : "border-transparent opacity-50 hover:opacity-100"}`}
                 >
                   <img
-                    src={img.url || "/placeholder-image.jpg"}
+                    src={img.url || productPlaceholderImage}
                     className="w-full h-full object-cover"
                     alt=""
                   />
@@ -392,7 +393,7 @@ const SpecificProduct = () => {
                       src={
                         v.images?.[0]?.url ||
                         product.images?.[0]?.url ||
-                        "/placeholder-image.jpg"
+                        productPlaceholderImage
                       }
                       alt={`Variant ${i}`}
                       className="w-full h-full object-cover"

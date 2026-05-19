@@ -16,6 +16,7 @@ import AddressManager from "../../address/pages/AddressManager.jsx";
 import { useRazorpay } from "react-razorpay";
 import useOrder from "../../orders/hooks/useOrder.js";
 import { notify } from "../../../app/toast/toast.system.jsx";
+import { productPlaceholderImage } from "@/assets";
 
 const formatCurrency = (value) =>
   `₹${Math.round(Number(value || 0)).toLocaleString("en-IN")}`;
@@ -273,7 +274,7 @@ const CartPage = () => {
                 const imageUrl =
                   variant?.images?.[0]?.url ||
                   product?.coverImage?.url ||
-                  "/placeholder-image.jpg";
+                  productPlaceholderImage;
 
                 return (
                   <article

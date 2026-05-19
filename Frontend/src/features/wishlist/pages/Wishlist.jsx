@@ -2,6 +2,7 @@ import { Heart, Trash2, ShoppingBag, ArrowRight, ArrowLeft } from "lucide-react"
 import { useNavigate } from "react-router-dom";
 import useWishlist from "../hooks/useWishlist.js";
 import { Link } from "react-router-dom";
+import { productPlaceholderImage } from "@/assets";
 
 const Wishlist = () => {
   const { items, loading, handleRemoveWishlist } = useWishlist();
@@ -92,7 +93,7 @@ const Wishlist = () => {
                       navigate(`/shop/product/${item.product._id}`);
                     }}
                     src={
-                      item.product.coverImage?.url || "/placeholder-image.jpg"
+                      item.product.coverImage?.url || productPlaceholderImage
                     }
                     alt={item.product.title}
                     className="w-full h-full object-cover cursor-pointer transition-transform duration-[1500ms] ease-out group-hover:scale-110"
