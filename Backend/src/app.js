@@ -67,4 +67,9 @@ app.use((req, res, next) => {
 
 app.use(errorMiddleware);
 
+
+app.get("*name", (req, res) => {
+  res.sendFile("public/index.html", { root: __dirname });
+});
+
 export default app;
