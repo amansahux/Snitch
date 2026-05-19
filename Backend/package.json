@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --runInBand",
     "dev": "npx nodemon server.js"
   },
   "keywords": [],
@@ -31,5 +31,10 @@
     "passport-google-oauth20": "^2.0.0",
     "razorpay": "^2.9.6",
     "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "jest": "^30.4.2",
+    "mongodb-memory-server": "^11.1.0",
+    "supertest": "^7.2.2"
   }
 }

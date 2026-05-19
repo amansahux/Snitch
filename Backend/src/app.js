@@ -31,6 +31,7 @@ app.use(cookieParser());
 app.use(passport.initialize());
 app.use(helmet());
 app.use(limiter);
+app.use(express.static("./public"))
 
 passport.use(
   new GoogleStrategy(
