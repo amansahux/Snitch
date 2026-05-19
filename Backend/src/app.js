@@ -16,6 +16,11 @@ import { authenticateSeller } from "./middlewares/auth.middleware.js";
 import DashboardRouter from "./routes/dashboard.routes.js";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -61,15 +66,15 @@ app.use("/api/orders", orderRouter);
 app.use("/api/wishlist", WishlistRouter);
 app.use("/api/dashboard", authenticateSeller, DashboardRouter);
 
-app.use((req, res, next) => {
-  res.status(404).json({ status: "error", message: "Route not found" });
+// app.use((req, res, next) => {
+//   res.status(404).json({ status: "error", message: "Route not found" });
+// });
+app.get("*name", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "/public/index.html"));
 });
 
 app.use(errorMiddleware);
 
 
-app.get("*name", (req, res) => {
-  res.sendFile("public/index.html", { root: __dirname });
-});
 
 export default app;
