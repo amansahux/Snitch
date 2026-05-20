@@ -359,11 +359,7 @@ export const similarProduct = asyncHandler(async (req, res, next) => {
 
   scored.sort((a, b) => b.score - a.score);
 
-  const top = scored.slice(0, 4).map((s) => ({
-    product: s.product,
-    variant: s.variant,
-    score: s.score,
-  }));
+  const top = scored.slice(0, 4).map((s) => { const po = s.product.toObject(); if (s.variant) { po.price = s.variant.price; po.stock = s.variant.stock; po.images = s.variant.images; } return po; });
 
   const cacheKey = `similar:${id}`;
   const cachedSimilar = await getCache(cacheKey);
