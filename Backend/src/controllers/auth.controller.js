@@ -77,7 +77,7 @@ export const googleCallback = asyncHandler(async (req, res, next) => {
       return res.redirect(
         config.NODE_ENV === "development"
           ? "http://localhost:5173/login"
-          : "/login",
+          : "https://snitch-kd3p.onrender.com/login",
       );
     }
 
@@ -120,7 +120,7 @@ export const googleCallback = asyncHandler(async (req, res, next) => {
     });
 
     // Successfully logged in
-    const frontendUrl = "http://localhost:5173";
+    const frontendUrl = "https://snitch-kd3p.onrender.com";
     const redirectUrl =
       user.role === "seller"
         ? `${frontendUrl}/seller/dashboard`
@@ -132,7 +132,7 @@ export const googleCallback = asyncHandler(async (req, res, next) => {
     return res.redirect(
       config.NODE_ENV === "development"
         ? "http://localhost:5173/login"
-        : "/login",
+        : "https://snitch-kd3p.onrender.com//login",
     );
   }
 });
