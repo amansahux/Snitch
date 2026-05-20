@@ -263,8 +263,7 @@ const SpecificProduct = () => {
             <div className="flex-1 relative aspect-[4/5] overflow-hidden rounded-3xl bg-[#f3eee8] shadow-2xl group">
               <img
                 src={
-                  displayImages[safeActiveImage]?.url ||
-                  productPlaceholderImage
+                  displayImages[safeActiveImage]?.url || productPlaceholderImage
                 }
                 alt={displayTitle}
                 className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
@@ -387,7 +386,7 @@ const SpecificProduct = () => {
                       setActiveVariant(v);
                       setActiveImage(0);
                     }}
-                    className={`flex-shrink-0 w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all duration-500 ${activeVariant?._id === v._id ? "border-[#1b1c1a] scale-110 shadow-2xl z-10" : "border-[#e8e2da] opacity-70 hover:opacity-100"}`}
+                    className={`flex-shrink-0 w-20 h-20 rounded-2xl cursor-pointer  overflow-hidden border-2 transition-all duration-500 ${activeVariant?._id === v._id ? "border-[#1b1c1a] scale-110 shadow-2xl z-10" : "border-[#e8e2da] opacity-70 hover:opacity-100"}`}
                   >
                     <img
                       src={
@@ -396,7 +395,7 @@ const SpecificProduct = () => {
                         productPlaceholderImage
                       }
                       alt={`Variant ${i}`}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover cursor-pointer"
                     />
                   </button>
                 ))}

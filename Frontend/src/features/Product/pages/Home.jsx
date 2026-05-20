@@ -14,7 +14,7 @@ import {
   ShoppingBag,
   Sparkles as SparklesIcon,
 } from "lucide-react";
-import { homeHeroImage } from "@/assets";
+import { homeHeroImage, avatar1, avatar2, avatar3, avatar4 } from "@/assets";
 
 const Home = () => {
   const { products, handleGetAllProducts } = useProduct();
@@ -201,14 +201,15 @@ const Home = () => {
                       The Collector's <br /> Selection
                     </p>
                     <div className="pt-4 flex -space-x-4">
-                      {[1, 2, 3, 4].map((i) => (
+                      {[avatar1, avatar2, avatar3, avatar4].map((avatar, i) => (
                         <div
                           key={i}
                           className="w-10 h-10 rounded-full border-4 border-[#fbf9f6] bg-[#f3eee8] overflow-hidden"
                         >
                           <img
-                            src={`https://i.pravatar.cc/100?u=${i + 10}`}
+                            src={avatar}
                             alt="collector"
+                            className="w-full h-full object-cover"
                           />
                         </div>
                       ))}

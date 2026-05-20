@@ -24,7 +24,7 @@ const __dirname = path.dirname(__filename);
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: 1000,
 });
 
 const app = express();
@@ -39,7 +39,7 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-        "img-src": ["'self'", "data:", "https://ik.imagekit.io/"],
+        "img-src": ["'self'", "data:", "https://ik.imagekit.io/", "https://i.pravatar.cc"],
       },
     },
   }),
