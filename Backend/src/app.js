@@ -39,7 +39,12 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-        "img-src": ["'self'", "data:", "https://ik.imagekit.io/", "https://i.pravatar.cc"],
+        "img-src": [
+          "'self'",
+          "data:",
+          "https://ik.imagekit.io/",
+          "https://i.pravatar.cc",
+        ],
       },
     },
   }),
@@ -52,7 +57,7 @@ passport.use(
     {
       clientID: config.GOOGLE_CLIENT_ID,
       clientSecret: config.GOOGLE_CLIENT_SECRET,
-      callbackURL: config.NODE_ENV === "development" ? "/api/auth/google/callback" : "https://snitch-kd3p.onrender.com/api/auth/google/callback",
+      callbackURL: "https://snitch-kd3p.onrender.com/api/auth/google/callback",
     },
     (accessToken, refreshToken, profile, done) => {
       return done(null, profile);
