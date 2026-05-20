@@ -42,6 +42,7 @@ app.use(
         "img-src": [
           "'self'",
           "data:",
+          "blob:",
           "https://ik.imagekit.io/",
           "https://i.pravatar.cc",
         ],
