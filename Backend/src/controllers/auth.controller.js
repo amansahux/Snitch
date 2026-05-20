@@ -132,7 +132,7 @@ export const googleCallback = asyncHandler(async (req, res, next) => {
     return res.redirect(
       config.NODE_ENV === "development"
         ? "http://localhost:5173/login"
-        : "https://snitch-kd3p.onrender.com//login",
+        : "https://snitch-kd3p.onrender.com/login",
     );
   }
 });

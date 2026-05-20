@@ -3,7 +3,7 @@ import React from "react";
 const GoogleBtn = () => {
   return (
     <a
-      href="http://localhost:3000/api/auth/google"
+      href="https://snitch-kd3p.onrender.com/api/auth/google"
       className="w-full flex justify-center items-center py-2.5 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 transition-all duration-200"
     >
       <svg className="h-5 w-5 mr-3" viewBox="0 0 24 24">
