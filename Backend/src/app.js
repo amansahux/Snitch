@@ -46,6 +46,7 @@ app.use(
           "'unsafe-eval'",
           "https://checkout.razorpay.com",
           "https://cdn.razorpay.com",
+          "https://lumberjack.razorpay.com/v2/logz"
         ],
         "frame-src": ["'self'", "https://api.razorpay.com"],
       },
