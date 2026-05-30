@@ -44,11 +44,19 @@ app.use(
           "'self'",
           "'unsafe-inline'",
           "'unsafe-eval'",
+          "https://*.razorpay.com",
           "https://checkout.razorpay.com",
           "https://cdn.razorpay.com",
-          "https://lumberjack.razorpay.com/v2/logz"
+          "https://lumberjack.razorpay.com"
         ],
-        "frame-src": ["'self'", "https://api.razorpay.com"],
+        "frame-src": ["'self'", "https://*.razorpay.com", "https://api.razorpay.com"],
+        "connect-src": [
+          "'self'",
+          "https://*.razorpay.com",
+          "https://api.razorpay.com",
+          "https://lumberjack.razorpay.com",
+          "https://checkout.razorpay.com"
+        ],
       },
     },
   }),
