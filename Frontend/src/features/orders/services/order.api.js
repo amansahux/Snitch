@@ -4,8 +4,8 @@ const API = axios.create({
   baseURL: "/api/orders",
 });
 
-export const createOrder = async () => {
-  const response = await API.post("/create");
+export const createOrder = async (body) => {
+  const response = await API.post("/create", body);
   return response.data;
 };
 

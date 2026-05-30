@@ -88,12 +88,13 @@ const CartPage = () => {
     }
 
     try {
-      const { razorpayOrder } = await handleCreateOrder();
+      const { razorpayOrder } = await handleCreateOrder({
+        shippingAddress: selectedAddress?._id,
+      });
       if (!razorpayOrder?.id) {
         notify.error("Unable to create payment order.");
         return;
       }
-
       let hasSyncedPaymentState = false;
       let isSyncingPaymentState = false;
       const markPaymentFailed = async ({
