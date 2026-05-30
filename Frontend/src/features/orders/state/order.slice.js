@@ -5,6 +5,7 @@ const orderSlice = createSlice({
   initialState: {
     orders: [],
     isLoading: false,
+    isCheckoutLoading: false,
     error: null,
     orderCache: {}, // cache individual orders by id
   },
@@ -14,6 +15,9 @@ const orderSlice = createSlice({
     },
     setOrderLoading: (state, action) => {
       state.isLoading = action.payload;
+    },
+    setCheckoutLoading: (state, action) => {
+      state.isCheckoutLoading = action.payload;
     },
     setOrderError: (state, action) => {
       state.error = action.payload;
@@ -25,6 +29,6 @@ const orderSlice = createSlice({
   },
 });
 
-export const { setOrders, setOrderLoading, setOrderError, setOrderCache } = orderSlice.actions;
+export const { setOrders, setOrderLoading, setCheckoutLoading, setOrderError, setOrderCache } = orderSlice.actions;
 
 export default orderSlice.reducer;

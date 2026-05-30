@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   ArrowLeft,
   Heart,
@@ -10,9 +10,11 @@ import {
   ShoppingBag,
   Trash2,
   Truck,
+  Loader2,
 } from "lucide-react";
 import useCart from "../hooks/useCart.js";
 import AddressManager from "../../address/pages/AddressManager.jsx";
+import { setCheckoutLoading } from "../../orders/state/order.slice.js";
 import { useRazorpay } from "react-razorpay";
 import useOrder from "../../orders/hooks/useOrder.js";
 import { notify } from "../../../app/toast/toast.system.jsx";
@@ -23,8 +25,10 @@ const formatCurrency = (value) =>
 
 const CartPage = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { items, totalSelling, totalMrp, totalDiscount, isLoading, error } =
     useSelector((state) => state.cart);
+  const { isCheckoutLoading } = useSelector((state) => state.order);
   const {  handleUpdateCart, handleRemoveCartItem } = useCart();
   const { handleCreateOrder, handleVerifyOrderPayment } = useOrder();
   const { Razorpay } = useRazorpay();
@@ -86,13 +90,16 @@ const CartPage = () => {
       notify.error("Please select a delivery address.");
       return;
     }
+    if (isCheckoutLoading) return;
 
     try {
+      dispatch(setCheckoutLoading(true));
       const { razorpayOrder } = await handleCreateOrder({
         shippingAddress: selectedAddress?._id,
       });
       if (!razorpayOrder?.id) {
         notify.error("Unable to create payment order.");
+        dispatch(setCheckoutLoading(false));
         return;
       }
       let hasSyncedPaymentState = false;
@@ -169,8 +176,10 @@ const CartPage = () => {
         notify.error("Payment failed.");
       });
       razorpay.open();
+      dispatch(setCheckoutLoading(false));
     } catch {
       notify.error("Unable to initiate checkout.");
+      dispatch(setCheckoutLoading(false));
     }
   };
 
@@ -450,9 +459,17 @@ const CartPage = () => {
               <div className="mt-6 space-y-3">
                 <button
                   onClick={proceedToCheckout}
-                  className="w-full cursor-pointer rounded-full bg-[#1b1c1a] px-6 py-4 text-[11px] font-semibold uppercase tracking-[0.24em] text-white transition-all duration-300 hover:bg-[#C9A96E] active:scale-[0.99]"
+                  disabled={isCheckoutLoading}
+                  className="w-full flex items-center justify-center gap-2 cursor-pointer rounded-full bg-[#1b1c1a] px-6 py-4 text-[11px] font-semibold uppercase tracking-[0.24em] text-white transition-all duration-300 hover:bg-[#C9A96E] disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.99]"
                 >
-                  Proceed to Checkout
+                  {isCheckoutLoading ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    "Proceed to Checkout"
+                  )}
                 </button>
                 <button
                   onClick={() => navigate("/shop")}
@@ -503,9 +520,17 @@ const CartPage = () => {
             </div>
             <button
               onClick={proceedToCheckout}
-              className="ml-auto cursor-pointer rounded-full bg-[#1b1c1a] px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-white transition-all duration-300 active:scale-[0.98]"
+              disabled={isCheckoutLoading}
+              className="ml-auto flex items-center justify-center gap-2 cursor-pointer rounded-full bg-[#1b1c1a] px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-white transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.98]"
             >
-              Checkout
+              {isCheckoutLoading ? (
+                <>
+                  <Loader2 size={14} className="animate-spin" />
+                  Wait...
+                </>
+              ) : (
+                "Checkout"
+              )}
             </button>
           </div>
         </div>
