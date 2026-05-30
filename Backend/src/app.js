@@ -45,6 +45,7 @@ app.use(
           "'unsafe-inline'",
           "'unsafe-eval'",
           "https://checkout.razorpay.com",
+          "https://cdn.razorpay.com",
         ],
         "frame-src": ["'self'", "https://api.razorpay.com"],
       },
