@@ -15,7 +15,6 @@ import {
 import useCart from "../hooks/useCart.js";
 import AddressManager from "../../address/pages/AddressManager.jsx";
 import { setCheckoutLoading } from "../../orders/state/order.slice.js";
-import { useRazorpay } from "react-razorpay";
 import useOrder from "../../orders/hooks/useOrder.js";
 import { notify } from "../../../app/toast/toast.system.jsx";
 import { productPlaceholderImage } from "@/assets";
@@ -31,8 +30,21 @@ const CartPage = () => {
   const { isCheckoutLoading } = useSelector((state) => state.order);
   const { handleUpdateCart, handleRemoveCartItem } = useCart();
   const { handleCreateOrder, handleVerifyOrderPayment } = useOrder();
-  const { Razorpay } = useRazorpay();
   const { user } = useSelector((state) => state.auth);
+
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      if (window.Razorpay) {
+        resolve(true);
+        return;
+      }
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
 
   const [updatingItemId, setUpdatingItemId] = useState(null);
   const [removingItemId, setRemovingItemId] = useState(null);
@@ -94,6 +106,14 @@ const CartPage = () => {
 
     try {
       dispatch(setCheckoutLoading(true));
+      
+      const isLoaded = await loadRazorpayScript();
+      if (!isLoaded) {
+        notify.error("Unable to load Razorpay. Please check your internet connection.");
+        dispatch(setCheckoutLoading(false));
+        return;
+      }
+
       const { razorpayOrder } = await handleCreateOrder({
         shippingAddress: selectedAddress?._id,
       });
@@ -166,7 +186,7 @@ const CartPage = () => {
         },
       };
 
-      const razorpay = new Razorpay(options);
+      const razorpay = new window.Razorpay(options);
       razorpay.on("payment.failed", async (response) => {
         const metadata = response?.error?.metadata || {};
         await markPaymentFailed({
