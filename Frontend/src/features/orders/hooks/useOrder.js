@@ -12,10 +12,10 @@ const useOrder = () => {
   const dispatch = useDispatch();
   const { orderCache } = useSelector((state) => state.order);
 
-  const handleCreateOrder = useCallback(async () => {
+  const handleCreateOrder = useCallback(async (body) => {
     dispatch(setOrderLoading(true));
     try {
-      const res = await createOrder();
+      const res = await createOrder(body);
       dispatch(setOrders(res.data));
       return res.data;
     } catch (error) {

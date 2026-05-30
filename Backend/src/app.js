@@ -39,12 +39,14 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-        "img-src": [
-          "*",
+        "img-src": ["*", "'self'", "data:", "blob:"],
+        "script-src": [
           "'self'",
-          "data:",
-          "blob:",
+          "'unsafe-inline'",
+          "'unsafe-eval'",
+          "https://checkout.razorpay.com",
         ],
+        "frame-src": ["'self'", "https://api.razorpay.com"],
       },
     },
   }),
