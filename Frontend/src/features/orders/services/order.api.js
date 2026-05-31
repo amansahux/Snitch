@@ -2,6 +2,7 @@ import axios from "axios";
 
 const API = axios.create({
   baseURL: "/api/orders",
+  withCredentials: true,
 });
 
 export const createOrder = async (body) => {

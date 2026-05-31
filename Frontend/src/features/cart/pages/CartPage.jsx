@@ -114,7 +114,7 @@ const CartPage = () => {
         return;
       }
 
-      const { razorpayOrder } = await handleCreateOrder({
+      const { razorpayOrder, keyId } = await handleCreateOrder({
         shippingAddress: selectedAddress?._id,
       });
       if (!razorpayOrder?.id) {
@@ -145,7 +145,7 @@ const CartPage = () => {
       };
 
       const options = {
-        key: "rzp_test_ShNSkpxt3emQVJ",
+        key: keyId || "rzp_test_ShNSkpxt3emQVJ",
         amount: razorpayOrder.amount,
         currency: "INR",
         name: "Snitch",

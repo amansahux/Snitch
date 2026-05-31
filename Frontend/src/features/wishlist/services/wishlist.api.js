@@ -2,6 +2,7 @@ import axios from "axios";
 
 const API = axios.create({
   baseURL: "/api/wishlist",
+  withCredentials: true,
 });
 
 export const addToWishlist = async (productId) => {

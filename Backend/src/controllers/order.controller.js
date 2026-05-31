@@ -96,6 +96,7 @@ export const createOrderController = asyncHandler(async (req, res, next) => {
     data: {
       order: productOrder,
       razorpayOrder,
+      keyId: config.RAZORPAY_KEY_ID,
     },
     error: null,
   });
