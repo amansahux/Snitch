@@ -23,8 +23,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
+  windowMs: 5 * 60 * 1000,
   max: 200,
+  message: "Too many requests from this IP, please try again after 5 minutes",
+  statusCode: 429,
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
 const app = express();
