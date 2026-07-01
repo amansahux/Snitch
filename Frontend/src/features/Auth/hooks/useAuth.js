@@ -22,7 +22,6 @@ const useAuth = () => {
       dispatch(setLoading(false));
     }
   };
-
   const handleLogin = async (formData) => {
     try {
       dispatch(setLoading(true));
@@ -37,7 +36,6 @@ const useAuth = () => {
       dispatch(setLoading(false));
     }
   };
-
   const handleGetProfile = async () => {
     try {
       dispatch(setLoading(true));
