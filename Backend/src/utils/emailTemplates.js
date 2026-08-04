@@ -147,7 +147,7 @@ export const welcomeEmailTemplate = (userName) => {
             <!-- Header -->
             <tr>
                 <td class="header">
-                    <a href="https://snitch.co.in" class="logo">SNITCH</a>
+                    <a href="https://snitch-kd3p.onrender.com/" class="logo">SNITCH</a>
                 </td>
             </tr>
 
@@ -165,7 +165,7 @@ export const welcomeEmailTemplate = (userName) => {
                     <p class="message">
                         You have officially joined Snitch. Discover a world where high-end craftsmanship meets contemporary design. Your journey into redefined luxury begins now.
                     </p>
-                    <a href="https://snitch.co.in" class="cta-button">Explore the Collection</a>
+                    <a href="https://snitch-kd3p.onrender.com/" class="cta-button">Explore the Collection</a>
                 </td>
             </tr>
 

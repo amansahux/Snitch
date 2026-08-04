@@ -258,7 +258,7 @@ export const verifyOrderPayment = asyncHandler(async (req, res, next) => {
                       
                       <!-- Action Button -->
                       <div style="margin-top: 60px; text-align: center;">
-                        <a href="https://snitch.co.in/profile/orders" style="display: inline-block; padding: 22px 50px; background-color: #1B1C1A; color: #ffffff; text-decoration: none; border-radius: 50px; font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; box-shadow: 0 20px 40px rgba(27,28,26,0.15);">View Live Status</a>
+                        <a href="https://snitch-kd3p.onrender.com/profile/orders" style="display: inline-block; padding: 22px 50px; background-color: #1B1C1A; color: #ffffff; text-decoration: none; border-radius: 50px; font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; box-shadow: 0 20px 40px rgba(27,28,26,0.15);">View Live Status</a>
                       </div>
                     </td>
                   </tr>
@@ -279,7 +279,7 @@ export const verifyOrderPayment = asyncHandler(async (req, res, next) => {
                 
                 <!-- Support Link -->
                 <p style="margin-top: 30px; font-size: 12px; color: #7A6E63; font-weight: 500;">
-                  Need assistance? <a href="mailto:support@snitch.co.in" style="color: #1B1C1A; text-decoration: none; border-bottom: 1px solid #1B1C1A;">Contact Our Concierge</a>
+                  Need assistance? <a href="amansahu1166@gmail.com" style="color: #1B1C1A; text-decoration: none; border-bottom: 1px solid #1B1C1A;">Contact Our Concierge</a>
                 </p>
               </td>
             </tr>

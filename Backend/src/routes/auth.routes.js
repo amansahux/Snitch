@@ -28,7 +28,7 @@ AuthRouter.get(
     session: false,
     failureRedirect:
       config.NODE_ENV === "development"
-        ? "http://localhost:5173/login"
+        ? "http://localhost:3000/login"
         : "/login",
   }),
   googleCallback,

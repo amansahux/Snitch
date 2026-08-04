@@ -76,7 +76,7 @@ export const googleCallback = asyncHandler(async (req, res, next) => {
     if (!req.user) {
       return res.redirect(
         config.NODE_ENV === "development"
-          ? "http://localhost:5173/login"
+          ? "http://localhost:3000/login"
           : "https://snitch-kd3p.onrender.com/login",
       );
     }
@@ -137,7 +137,7 @@ export const googleCallback = asyncHandler(async (req, res, next) => {
     console.error("Google Auth Error:", error);
     return res.redirect(
       config.NODE_ENV === "development"
-        ? "http://localhost:5173/login"
+        ? "http://localhost:3000/login"
         : "https://snitch-kd3p.onrender.com/login",
     );
   }
