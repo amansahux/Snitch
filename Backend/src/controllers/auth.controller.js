@@ -82,9 +82,9 @@ export const googleCallback = asyncHandler(async (req, res, next) => {
     }
 
     const { id, displayName, emails } = req.user;
-    console.log("=================================================================================")
-    console.log(req.user)
-    console.log("=================================================================================")
+    // console.log("=================================================================================")
+    // console.log(req.user)
+    // console.log("=================================================================================")
     const email = emails[0].value;
 
     let user = await userModel.findOne({ email });
