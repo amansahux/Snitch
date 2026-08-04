@@ -82,6 +82,9 @@ export const googleCallback = asyncHandler(async (req, res, next) => {
     }
 
     const { id, displayName, emails } = req.user;
+    console.log("=================================================================================")
+    console.log(req.user)
+    console.log("=================================================================================")
     const email = emails[0].value;
 
     let user = await userModel.findOne({ email });
@@ -93,6 +96,7 @@ export const googleCallback = asyncHandler(async (req, res, next) => {
         fullname: displayName,
         email: email,
         googleId: id,
+        role: "buyer",
       });
 
       // Send luxury welcome email
@@ -120,7 +124,9 @@ export const googleCallback = asyncHandler(async (req, res, next) => {
     });
 
     // Successfully logged in
-    const frontendUrl = "https://snitch-kd3p.onrender.com";
+    const frontendUrl = config.NODE_ENV === "development"
+      ? "http://localhost:5173"
+      : "https://snitch-kd3p.onrender.com";
     const redirectUrl =
       user.role === "seller"
         ? `${frontendUrl}/seller/dashboard`

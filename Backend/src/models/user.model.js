@@ -22,6 +22,8 @@ const userSchema = new mongoose.Schema(
     contact: {
       type: String,
       match: [/^[0-9]{10}$/, "Contact must be 10 digits"],
+      unique: true,
+      index: true,
     },
 
     password: {

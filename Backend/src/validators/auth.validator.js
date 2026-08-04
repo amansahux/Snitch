@@ -12,9 +12,10 @@ export const registerSchema = z.object({
 
   contact: z.string().regex(/^[0-9]{10}$/).optional(),
 
-  password: z.string().min(6).max(20),
+  password: z.string().min(6).max(20).optional(),
 
-  role: z.enum(["buyer", "seller"]).optional(),
+  role: z.enum(["buyer", "seller"]).default("buyer"),
+  googleId: z.string().optional(),
 });
 
 export const loginSchema = z.object({
