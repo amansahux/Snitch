@@ -1,6 +1,7 @@
 import React from "react";
 
 const GoogleBtn = () => {
+  const NODE_ENV = "production"
   return (
     <a
       href={NODE_ENV === "development" ? "http://localhost:3000/api/auth/google" : "https://snitch-kd3p.onrender.com/api/auth/google"}
