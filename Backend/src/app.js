@@ -75,7 +75,7 @@ passport.use(
       clientSecret: config.GOOGLE_CLIENT_SECRET,
       callbackURL: config.NODE_ENV === "development"
         ? "http://localhost:3000/api/auth/google/callback"
-        : "https://snitch-kd3p.onrender.com/api/auth/google/callback",
+        : "https://snitch.up.railway.app/api/auth/google/callback",
     },
     (accessToken, refreshToken, profile, done) => {
       return done(null, profile);

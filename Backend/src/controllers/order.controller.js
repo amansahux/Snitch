@@ -258,7 +258,7 @@ export const verifyOrderPayment = asyncHandler(async (req, res, next) => {
                       
                       <!-- Action Button -->
                       <div style="margin-top: 60px; text-align: center;">
-                        <a href="https://snitch-kd3p.onrender.com/profile/orders" style="display: inline-block; padding: 22px 50px; background-color: #1B1C1A; color: #ffffff; text-decoration: none; border-radius: 50px; font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; box-shadow: 0 20px 40px rgba(27,28,26,0.15);">View Live Status</a>
+                        <a href="https://snitch.up.railway.app/profile/orders" style="display: inline-block; padding: 22px 50px; background-color: #1B1C1A; color: #ffffff; text-decoration: none; border-radius: 50px; font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; box-shadow: 0 20px 40px rgba(27,28,26,0.15);">View Live Status</a>
                       </div>
                     </td>
                   </tr>
