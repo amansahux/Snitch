@@ -8,7 +8,8 @@ export const sendTokenResponse = (res, user, message , statusCode = 200) => {
 
   res.cookie("token", token, {
     httpOnly: true,
-    secure: false, // production me true karna
+    secure: config.NODE_ENV === "production",
+    sameSite: config.NODE_ENV === "production" ? "strict" : "lax",
   });
 
   return res.status(statusCode).json({

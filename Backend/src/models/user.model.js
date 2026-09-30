@@ -16,15 +16,15 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
       trim: true,
-      match: [/^\S+@\S+\.\S+$/, "Please use a valid email"],
     },
 
     contact: {
-      type: String,
-      match: [/^[0-9]{10}$/, "Contact must be 10 digits"],
+      type: Number,
       unique: true,
       sparse: true,
       index: true,
+      minLength:10,
+      maxLength:10
     },
 
     password: {
