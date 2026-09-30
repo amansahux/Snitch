@@ -28,8 +28,8 @@ AuthRouter.get(
     session: false,
     failureRedirect:
       config.NODE_ENV === "development"
-        ? "http://localhost:3000/login"
-        : "/login",
+        ? "http://localhost:5173/login"
+        : "https://snitch-kd3p.onrender.com/login",
   }),
   googleCallback,
 );

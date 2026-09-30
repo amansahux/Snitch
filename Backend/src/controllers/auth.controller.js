@@ -37,10 +37,6 @@ export const registerController = asyncHandler(async (req, res, next) => {
     contact: user.contact,
     role: user.role,
   };
-  const emailSubject = 'The Snitch Manifest: Welcome to the Inner Circle'
-  const emailFormat = welcomeEmailTemplate(user.fullname)
-
-  await sendEmail(user.email, emailSubject, '', emailFormat)
 
   // 5. Send response
   sendTokenResponse(res, userResponse, "User registered successfully", 201);
@@ -72,41 +68,58 @@ export const loginController = asyncHandler(async (req, res, next) => {
 });
 
 export const googleCallback = asyncHandler(async (req, res, next) => {
+  const frontendUrl =
+    config.NODE_ENV === "development"
+      ? "http://localhost:5173"
+      : "https://snitch.up.railway.app";
+
   try {
     if (!req.user) {
-      return res.redirect(
-        config.NODE_ENV === "development"
-          ? "http://localhost:3000/login"
-          : "https://snitch.up.railway.app/login",
-      );
+      return res.redirect(`${frontendUrl}/login`);
     }
 
-    const { id, displayName, emails } = req.user;
-    // console.log("=================================================================================")
-    // console.log(req.user)
-    // console.log("=================================================================================")
-    const email = emails[0].value;
+    const { id, displayName, emails, photos } = req.user;
+    const email = emails?.[0]?.value;
+
+    if (!email) {
+      return res.redirect(`${frontendUrl}/login`);
+    }
 
     let user = await userModel.findOne({ email });
 
     if (!user) {
-      // Sign up the user
+      // Ensure fullname has at least 3 characters
+      let safeFullName = (displayName || "").trim();
+      if (!safeFullName || safeFullName.length < 3) {
+        safeFullName = email.split("@")[0] || "Snitch User";
+        if (safeFullName.length < 3) {
+          safeFullName = safeFullName.padEnd(3, "_");
+        }
+      }
 
+      const profilePic = photos?.[0]?.value || "";
+
+      // Sign up the new user
       user = await userModel.create({
-        fullname: displayName,
+        fullname: safeFullName,
         email: email,
         googleId: id,
+        profilePic: profilePic,
         role: "buyer",
       });
-
-      // Send luxury welcome email
-      const emailSubject = 'The Snitch Manifest: Welcome to the Inner Circle';
-      const emailFormat = welcomeEmailTemplate(displayName);
-      await sendEmail(email, emailSubject, '', emailFormat);
-    } else if (!user.googleId) {
-      // User exists, but might have signed up normally before. Update googleId.
-      user.googleId = id;
-      await user.save();
+    } else {
+      let needsSave = false;
+      if (!user.googleId) {
+        user.googleId = id;
+        needsSave = true;
+      }
+      if (!user.profilePic && photos?.[0]?.value) {
+        user.profilePic = photos[0].value;
+        needsSave = true;
+      }
+      if (needsSave) {
+        await user.save();
+      }
     }
 
     // Set token
@@ -120,26 +133,20 @@ export const googleCallback = asyncHandler(async (req, res, next) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false, // Set to true in production
+      secure: config.NODE_ENV === "production",
+      sameSite: config.NODE_ENV === "production" ? "strict" : "lax",
     });
 
     // Successfully logged in
-    const frontendUrl = config.NODE_ENV === "development"
-      ? "http://localhost:5173"
-      : "https://snitch-kd3p.onrender.com";
     const redirectUrl =
       user.role === "seller"
         ? `${frontendUrl}/seller/dashboard`
         : `${frontendUrl}`;
 
-    res.redirect(redirectUrl);
+    return res.redirect(redirectUrl);
   } catch (error) {
     console.error("Google Auth Error:", error);
-    return res.redirect(
-      config.NODE_ENV === "development"
-        ? "http://localhost:3000/login"
-        : "https://snitch.up.railway.app/login",
-    );
+    return res.redirect(`${frontendUrl}/login`);
   }
 });
 

@@ -22,9 +22,6 @@ const userSchema = new mongoose.Schema(
       type: Number,
       unique: true,
       sparse: true,
-      index: true,
-      minLength:10,
-      maxLength:10
     },
 
     password: {
@@ -65,4 +62,10 @@ userSchema.methods.comparePassword = async function (enteredPassword) {
 };
 
 const userModel = mongoose.model("users", userSchema);
+
+// Automatically remove stale non-sparse indexes (like old contact_1) in MongoDB
+userModel.syncIndexes().catch((err) => {
+  console.error("Failed to sync user indexes:", err);
+});
+
 export default userModel;
