@@ -62,6 +62,17 @@ const AddressManager = ({
     onSelectAddress(selectedAddress || null);
   }, [selectedAddress, onSelectAddress]);
 
+  useEffect(() => {
+    if (isAddressModalOpen || deleteConfirmId) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isAddressModalOpen, deleteConfirmId]);
+
   const resetFormAndOpen = () => {
     setEditingAddress(null);
     reset(initialAddressForm);
