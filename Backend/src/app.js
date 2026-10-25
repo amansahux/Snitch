@@ -66,6 +66,11 @@ app.use(
   }),
 );
 app.use(limiter);
+app.get("/health", (req, res) => {
+  res
+    .status(200)
+    .json({ status: "success", message: "Welcome to Snitch Backend API" });
+});
 app.use(express.static("public"));
 
 passport.use(
@@ -83,11 +88,7 @@ passport.use(
   ),
 );
 
-app.get("/health", (req, res) => {
-  res
-    .status(200)
-    .json({ status: "success", message: "Welcome to Snitch Backend API" });
-});
+
 
 app.use("/api/auth", AuthRouter);
 app.use("/api/products", productRouter);
