@@ -71,7 +71,7 @@ export const googleCallback = asyncHandler(async (req, res, next) => {
   const frontendUrl =
     config.NODE_ENV === "development"
       ? "http://localhost:5173"
-      : "https://snitch.up.railway.app";
+      : "https://snitch-kd3p.onrender.com";
 
   try {
     if (!req.user) {
